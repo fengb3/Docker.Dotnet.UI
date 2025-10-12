@@ -2,11 +2,21 @@
 @using Docker.DotNet
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
+@using Microsoft.AspNetCore.Components.Forms
+@implements IDisposable
 
 @inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.ImagesPageViewModel>
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
-    <MudText Typo="Typo.h4" Class="mb-4">Docker Images</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudText Typo="Typo.h4">Docker Images</MudText>
+        <MudButton Variant="Variant.Filled" 
+                   Color="Color.Primary" 
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="Vm.OpenAddImageDialog">
+            添加镜像
+        </MudButton>
+    </MudStack>
     
     @if (Vm.Images == null || Vm.Images.Count == 0)
     {
@@ -81,13 +91,13 @@
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                                Color="Color.Error"
                                                Size="Size.Small"
-                                               OnClick="@(() => HandleDeleteImage(image.ID))"
+                                               OnClick="@(() => Vm.DeleteImageAsync(image.ID))"
                                                Title="删除" />
                                 
                                 <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                Color="Color.Primary"
                                                Size="Size.Small"
-                                               OnClick="@(() => HandleViewDetails(image.ID))"
+                                               OnClick="@(() => Vm.GoToImageDetailsAsync(image.ID))"
                                                Title="详情" />
                             </MudStack>
                         </MudItem>
@@ -98,15 +108,129 @@
     }
 </MudContainer>
 
+<MudDialog @bind-Visible="Vm.ShowAddImageDialog" Options="Vm.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> 添加镜像
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTabs ApplyEffectsToContainer="true" PanelClass="pa-4" Style="min-height: 500px;">
+            <MudTabPanel Text="从注册表拉取" Icon="@Icons.Material.Filled.CloudDownload">
+                <MudStack Spacing="3">
+                    <MudTextField @bind-Value="Vm.PullImageName"
+                                  Label="镜像名称"
+                                  Placeholder="例如: nginx, mysql, ubuntu"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  Disabled="Vm.IsPulling" />
+                    
+                    <MudTextField @bind-Value="Vm.PullImageTag"
+                                  Label="标签"
+                                  Placeholder="例如: latest, 8.0"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  Disabled="Vm.IsPulling" />
+                    
+                    <MudPaper Class="pa-3" Elevation="0" Style="min-height: 200px;">
+                        @if (Vm.IsPulling)
+                        {
+                            <MudText Typo="Typo.subtitle2" Class="mb-2">拉取进度：</MudText>
+                            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+                            <MudPaper Class="pa-2" Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
+                                @foreach (var log in Vm.PullLogs)
+                                {
+                                    <div>@log</div>
+                                }
+                            </MudPaper>
+                        }
+                    </MudPaper>
+                    
+                    <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Text" 
+                                   OnClick="Vm.CloseDialog"
+                                   Disabled="Vm.IsPulling">
+                            取消
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" 
+                                   Color="Color.Primary"
+                                   OnClick="Vm.HandlePullImageAsync"
+                                   Disabled="Vm.IsPulling || string.IsNullOrWhiteSpace(Vm.PullImageName)">
+                            @(Vm.IsPulling ? "拉取中..." : "拉取镜像")
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudTabPanel>
+            
+            <MudTabPanel Text="从 Tarball 导入" Icon="@Icons.Material.Filled.Upload">
+                <MudStack Spacing="3">
+                    <MudFileUpload T="IBrowserFile" 
+                                   Accept=".tar,.tar.gz,.tgz"
+                                   FilesChanged="Vm.OnTarballSelected"
+                                   MaximumFileCount="1"
+                                   Disabled="Vm.IsLoading">
+                        <ActivatorContent>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       Disabled="Vm.IsLoading">
+                                选择 Tarball 文件
+                            </MudButton>
+                        </ActivatorContent>
+                    </MudFileUpload>
+                    
+                    @if (Vm.SelectedTarball != null)
+                    {
+                        <MudChip T="string" 
+                                 Color="Color.Info" 
+                                 Icon="@Icons.Material.Filled.InsertDriveFile"
+                                 OnClose="Vm.ClearTarballSelection">
+                            @Vm.SelectedTarball.Name (@Vm.FormatFileSize(Vm.SelectedTarball.Size))
+                        </MudChip>
+                    }
+                    
+                    <MudPaper Class="pa-3" Elevation="0" Style="min-height: 200px;">
+                        @if (Vm.IsLoading)
+                        {
+                            <MudText Typo="Typo.subtitle2" Class="mb-2">导入进度：</MudText>
+                            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+                            <MudPaper Class="pa-2" Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
+                                @foreach (var log in Vm.LoadLogs)
+                                {
+                                    <div>@log</div>
+                                }
+                            </MudPaper>
+                        }
+                    </MudPaper>
+                    
+                    <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Text" 
+                                   OnClick="Vm.CloseDialog"
+                                   Disabled="Vm.IsLoading">
+                            取消
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" 
+                                   Color="Color.Primary"
+                                   OnClick="Vm.HandleLoadFromTarballAsync"
+                                   Disabled="Vm.IsLoading || Vm.SelectedTarball == null">
+                            @(Vm.IsLoading ? "导入中..." : "导入镜像")
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudTabPanel>
+        </MudTabs>
+    </DialogContent>
+</MudDialog>
+
 @code {
-    
-    private async Task HandleDeleteImage(string imageId)
+    protected override void OnInitialized()
     {
-        await Vm.DeleteImageAsync(imageId);
+        base.OnInitialized();
+        Vm.OnStateChanged += StateHasChanged;
     }
-    
-    private void HandleViewDetails(string imageId)
+
+    public void Dispose()
     {
-        // 暂不实现
+        Vm.OnStateChanged -= StateHasChanged;
     }
 }
