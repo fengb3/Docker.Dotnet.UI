@@ -1,0 +1,114 @@
+﻿@page "/volumes"
+@using Docker.DotNet
+@using Docker.DotNet.Models
+@using Docker.Dotnet.UI.ViewModels
+
+@inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.VolumesPageViewModel>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
+    <MudText Typo="Typo.h4" Class="mb-4">Docker Volumes</MudText>
+    
+    @if (Vm.Volumes == null || Vm.Volumes.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info">暂无卷</MudAlert>
+    }
+    else
+    {
+        <MudPaper Class="pa-3 mb-3" Elevation="0" >
+            <MudGrid Spacing="2">
+                <MudItem xs="3" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">卷名称</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>  
+                <MudItem xs="2" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">驱动</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="3" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">挂载点</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="1" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">大小</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="1" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">创建时间</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="2" Class="d-flex align-center justify-end pr-8">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">操作</MudText>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+        
+        <MudStack Spacing="2">
+            @foreach (var volume in Vm.Volumes)
+            {
+                <MudCard Class="pa-3">
+                    <MudGrid Spacing="2">
+                        <MudItem xs="3" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" Title="@volume.Name">
+                                @volume.Name
+                            </MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="2" Class="d-flex align-center">
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">
+                                @volume.Driver
+                            </MudChip>
+                        </MudItem>
+                        
+                        <MudItem xs="3" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" Title="@volume.Mountpoint">
+                                @volume.ShortMountpoint
+                            </MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="1" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2">@volume.SizeFormatted</MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="1" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2">@volume.CreatedAtFormatted</MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="2" Class="d-flex align-center justify-end">
+                            <MudStack Row="true" Spacing="1">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                               Color="Color.Error"
+                                               Size="Size.Small"
+                                               OnClick="@(() => HandleDeleteVolume(volume.Name))"
+                                               Title="删除" />
+                                
+                                <MudIconButton Icon="@Icons.Material.Filled.Info" 
+                                               Color="Color.Primary"
+                                               Size="Size.Small"
+                                               OnClick="@(() => HandleViewDetails(volume.Name))"
+                                               Title="详情" />
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </MudCard>
+            }
+        </MudStack>
+    }
+</MudContainer>
+
+@code {
+    
+    private async Task HandleDeleteVolume(string volumeName)
+    {
+        await Vm.DeleteVolumeAsync(volumeName);
+    }
+    
+    private void HandleViewDetails(string volumeName)
+    {
+        // 暂不实现
+    }
+}
