@@ -1,0 +1,157 @@
+name: 构建和推送 Docker 镜像
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'Docker.Dotnet.UI/Docker.Dotnet.UI.csproj'
+  workflow_dispatch:  # 允许手动触发
+
+env:
+  IMAGE_NAME: docker-dotnet-ui
+
+jobs:
+  check-version-changed:
+    runs-on: ubuntu-latest
+    outputs:
+      version_changed: ${{ steps.check.outputs.changed }}
+      version: ${{ steps.extract.outputs.version }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # 获取最近两次提交以便比较
+
+      - name: 检查 Version 是否变动
+        id: check
+        run: |
+          # 获取当前提交和上一次提交的 Version 值
+          CURRENT_VERSION=$(grep -oP '<Version>\K[^<]+' Docker.Dotnet.UI/Docker.Dotnet.UI.csproj)
+          
+          # 如果是第一次提交或者是手动触发，则认为版本已变更
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            PREVIOUS_VERSION=$(git show HEAD~1:Docker.Dotnet.UI/Docker.Dotnet.UI.csproj | grep -oP '<Version>\K[^<]+' || echo "")
+            if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+              echo "✅ Version 已变更: $PREVIOUS_VERSION -> $CURRENT_VERSION"
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+              echo "ℹ️ Version 未变更: $CURRENT_VERSION"
+            fi
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✅ 首次提交或无法比较，继续构建"
+          fi
+
+      - name: 提取版本号
+        id: extract
+        run: |
+          VERSION=$(grep -oP '<Version>\K[^<]+' Docker.Dotnet.UI/Docker.Dotnet.UI.csproj)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 提取到的版本号: $VERSION"
+
+  build-and-push:
+    needs: check-version-changed
+    if: needs.check-version-changed.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 登录 Docker Hub
+        if: vars.DOCKERHUB_REGISTRY != ''
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.DOCKERHUB_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 登录 GitHub Container Registry
+        if: vars.GHCR_REGISTRY != ''
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.GHCR_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 登录自定义镜像仓库 1
+        if: vars.CUSTOM_REGISTRY_1 != ''
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.CUSTOM_REGISTRY_1 }}
+          username: ${{ secrets.CUSTOM_REGISTRY_1_USERNAME }}
+          password: ${{ secrets.CUSTOM_REGISTRY_1_PASSWORD }}
+
+      - name: 登录自定义镜像仓库 2
+        if: vars.CUSTOM_REGISTRY_2 != ''
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.CUSTOM_REGISTRY_2 }}
+          username: ${{ secrets.CUSTOM_REGISTRY_2_USERNAME }}
+          password: ${{ secrets.CUSTOM_REGISTRY_2_PASSWORD }}
+
+      - name: 构建 Docker 镜像标签
+        id: meta
+        run: |
+          VERSION="${{ needs.check-version-changed.outputs.version }}"
+          TAGS=""
+          
+          # Docker Hub
+          if [ -n "${{ vars.DOCKERHUB_REGISTRY }}" ]; then
+            TAGS="$TAGS ${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+            TAGS="$TAGS ${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+          
+          # GitHub Container Registry
+          if [ -n "${{ vars.GHCR_REGISTRY }}" ]; then
+            TAGS="$TAGS ${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"
+            TAGS="$TAGS ${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+          
+          # 自定义镜像仓库 1
+          if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
+            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:latest"
+            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+          
+          # 自定义镜像仓库 2
+          if [ -n "${{ vars.CUSTOM_REGISTRY_2 }}" ]; then
+            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:latest"
+            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+          
+          # 如果没有配置任何仓库，使用默认标签
+          if [ -z "$TAGS" ]; then
+            TAGS="${{ env.IMAGE_NAME }}:latest ${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+          
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+          echo "📝 生成的标签: $TAGS"
+
+      - name: 构建并推送 Docker 镜像
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Docker.Dotnet.UI/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 构建总结
+        run: |
+          echo "### 🎉 Docker 镜像构建成功" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**版本号:** \`${{ needs.check-version-changed.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**镜像标签:**" >> $GITHUB_STEP_SUMMARY
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            echo "- \`$tag\`" >> $GITHUB_STEP_SUMMARY
+          done
+
