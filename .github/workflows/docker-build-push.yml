@@ -146,7 +146,7 @@ jobs:
         name: Build & push Docker image
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${VERSION}, latest
+          tags: ${{ VERSION }}, latest
           registry: ${{ vars.DOCKERHUB_REGISTRY }}
           dockerfile: ./Docker.Dotnet.UI/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
