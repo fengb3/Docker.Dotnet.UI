@@ -103,35 +103,44 @@ jobs:
           
           # Docker Hub
           if [ -n "${{ vars.DOCKERHUB_REGISTRY }}" ]; then
-            TAGS="$TAGS ${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-            TAGS="$TAGS ${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
+            TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+            TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
           fi
           
           # GitHub Container Registry
           if [ -n "${{ vars.GHCR_REGISTRY }}" ]; then
-            TAGS="$TAGS ${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"
-            TAGS="$TAGS ${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"
+            TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+            TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
           fi
           
           # 自定义镜像仓库 1
           if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
-            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:latest"
-            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:${VERSION}"
+            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
           fi
           
           # 自定义镜像仓库 2
           if [ -n "${{ vars.CUSTOM_REGISTRY_2 }}" ]; then
-            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:latest"
-            TAGS="$TAGS ${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:${VERSION}"
+            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
           fi
           
           # 如果没有配置任何仓库，使用默认标签
           if [ -z "$TAGS" ]; then
-            TAGS="${{ env.IMAGE_NAME }}:latest ${{ env.IMAGE_NAME }}:${VERSION}"
+            TAGS="${{ env.IMAGE_NAME }}:latest"$'\n'
+            TAGS="${TAGS}${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
           fi
           
-          echo "tags=$TAGS" >> $GITHUB_OUTPUT
-          echo "📝 生成的标签: $TAGS"
+          # 移除末尾的换行符
+          TAGS=$(echo "$TAGS" | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}')
+          
+          # 使用多行输出格式
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "📝 生成的标签:"
+          echo "$TAGS"
 
       - name: 构建并推送 Docker 镜像
         uses: docker/build-push-action@v5
