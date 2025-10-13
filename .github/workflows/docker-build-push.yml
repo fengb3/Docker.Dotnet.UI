@@ -64,10 +64,11 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: 登录 Docker Hub
-        if: vars.DOCKERHUB_USERNAME != ''
+        if: vars.DOCKERHUB_REGISTRY != ''
         uses: docker/login-action@v3
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
+          registry: ${{ vars.DOCKERHUB_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: 登录 GitHub Container Registry
@@ -100,10 +101,10 @@ jobs:
           VERSION="${{ needs.check-version-changed.outputs.version }}"
           TAGS=""
           
-          # Docker Hub (使用 username/image:tag 格式)
-          if [ -n "${{ vars.DOCKERHUB_USERNAME }}" ]; then
-            TAGS="${TAGS}${{ vars.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-            TAGS="${TAGS}${{ vars.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
+          # Docker Hub
+          if [ -n "${{ vars.DOCKERHUB_REGISTRY }}" ]; then
+            TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+            TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
           fi
           
           # GitHub Container Registry
