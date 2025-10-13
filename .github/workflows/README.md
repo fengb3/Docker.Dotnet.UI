@@ -10,6 +10,15 @@
 4. 为镜像打上两个标签：`latest` 和 `{version}`
 5. 推送到配置的多个镜像仓库
 
+## 快速配置检查清单
+
+使用 Docker Hub 前，请确保以下配置正确：
+
+- [ ] Docker Hub 令牌权限正确（`Read & Write` 或 `Read, Write, Delete`）
+- [ ] GitHub Variables 中配置了 `DOCKERHUB_USERNAME`（你的 Docker Hub 用户名）
+- [ ] GitHub Secrets 中配置了 `DOCKERHUB_TOKEN`（Docker Hub Personal Access Token）
+- [ ] 重新运行时使用 "Re-run all jobs" 而不是 "Re-run failed jobs"
+
 ## 配置步骤
 
 ### 1. 配置 GitHub Secrets
@@ -17,12 +26,11 @@
 在你的 GitHub 仓库中，进入 `Settings` -> `Secrets and variables` -> `Actions`，添加以下 Secrets：
 
 #### Docker Hub（可选）
-- `DOCKERHUB_USERNAME`: Docker Hub 用户名
 - `DOCKERHUB_TOKEN`: Docker Hub 访问令牌（Personal Access Token）
   
   **如何创建 Docker Hub 访问令牌**：
   1. 登录 [Docker Hub](https://hub.docker.com/)
-  2. 点击右上角头像 -> `Account Settings`
+  2. 点击右上角头像 → `Account Settings`
   3. 选择 `Security` 标签页
   4. 点击 `New Access Token`
   5. 输入令牌描述（例如：`GitHub Actions`）
@@ -46,7 +54,8 @@
 在你的 GitHub 仓库中，进入 `Settings` -> `Secrets and variables` -> `Actions` -> `Variables` 标签页，添加以下 Variables：
 
 #### Docker Hub（可选）
-- `DOCKERHUB_REGISTRY`: 例如 `docker.io/your-username` 或留空不使用
+- `DOCKERHUB_USERNAME`: Docker Hub 用户名（例如 `fengb3`）
+  - **注意**：这个需要在 Variables 中配置，不是 Secrets
 
 #### GitHub Container Registry（可选）
 - `GHCR_REGISTRY`: 例如 `ghcr.io` 或留空不使用
@@ -60,16 +69,15 @@
 #### 仅使用 Docker Hub
 ```
 Variables:
-- DOCKERHUB_REGISTRY = docker.io/fengb3
+- DOCKERHUB_USERNAME = fengb3
 
 Secrets:
-- DOCKERHUB_USERNAME = fengb3
 - DOCKERHUB_TOKEN = dckr_pat_xxxxx
 ```
 
 生成的镜像标签：
-- `docker.io/fengb3/docker-dotnet-ui:latest`
-- `docker.io/fengb3/docker-dotnet-ui:0.0.1`
+- `fengb3/docker-dotnet-ui:latest`
+- `fengb3/docker-dotnet-ui:0.0.1`
 
 #### 使用 GitHub Container Registry
 ```
@@ -87,20 +95,19 @@ Secrets:
 #### 使用多个镜像仓库
 ```
 Variables:
-- DOCKERHUB_REGISTRY = docker.io/fengb3
+- DOCKERHUB_USERNAME = fengb3
 - GHCR_REGISTRY = ghcr.io
 - CUSTOM_REGISTRY_1 = harbor.example.com
 
 Secrets:
-- DOCKERHUB_USERNAME = fengb3
 - DOCKERHUB_TOKEN = dckr_pat_xxxxx
 - CUSTOM_REGISTRY_1_USERNAME = admin
 - CUSTOM_REGISTRY_1_PASSWORD = Harbor12345
 ```
 
 生成的镜像标签：
-- `docker.io/fengb3/docker-dotnet-ui:latest`
-- `docker.io/fengb3/docker-dotnet-ui:0.0.1`
+- `fengb3/docker-dotnet-ui:latest`
+- `fengb3/docker-dotnet-ui:0.0.1`
 - `ghcr.io/{your-username}/docker-dotnet-ui:latest`
 - `ghcr.io/{your-username}/docker-dotnet-ui:0.0.1`
 - `harbor.example.com/docker-dotnet-ui:latest`
@@ -151,10 +158,21 @@ Secrets:
 **原因**：Docker Hub 访问令牌权限不足
 
 **解决方案**：
-1. 删除现有的 Docker Hub 访问令牌
-2. 创建新的访问令牌，确保权限选择 `Read, Write, Delete` 或至少 `Read & Write`
-3. 更新 GitHub Secrets 中的 `DOCKERHUB_TOKEN` 为新令牌
-4. 重新运行工作流
+1. **在 Docker Hub 创建新令牌**：
+   - 登录 Docker Hub → Account Settings → Security
+   - 删除旧令牌（如果有）
+   - 创建新令牌，权限选择 `Read, Write, Delete` 或至少 `Read & Write`
+   - 复制生成的令牌
+
+2. **更新 GitHub 配置**：
+   - 进入 GitHub 仓库 → Settings → Secrets and variables → Actions
+   - **Variables 标签页**：确保有 `DOCKERHUB_USERNAME`（你的 Docker Hub 用户名）
+   - **Secrets 标签页**：更新 `DOCKERHUB_TOKEN` 为新令牌
+
+3. **重新运行工作流**：
+   - ⚠️ **重要**：不要使用 "Re-run failed jobs"
+   - 请使用 "Re-run all jobs" 或者提交新的 commit 触发新的运行
+   - 这样可以确保使用最新的 Secrets 值
 
 **注意**：
 - ⚠️ **不要使用 Docker Hub 密码**，必须使用 Personal Access Token
