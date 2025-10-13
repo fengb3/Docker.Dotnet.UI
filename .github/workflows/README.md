@@ -18,7 +18,18 @@
 
 #### Docker Hub（可选）
 - `DOCKERHUB_USERNAME`: Docker Hub 用户名
-- `DOCKERHUB_TOKEN`: Docker Hub 访问令牌（在 Docker Hub 的 Account Settings -> Security 中创建）
+- `DOCKERHUB_TOKEN`: Docker Hub 访问令牌（Personal Access Token）
+  
+  **如何创建 Docker Hub 访问令牌**：
+  1. 登录 [Docker Hub](https://hub.docker.com/)
+  2. 点击右上角头像 -> `Account Settings`
+  3. 选择 `Security` 标签页
+  4. 点击 `New Access Token`
+  5. 输入令牌描述（例如：`GitHub Actions`）
+  6. **权限选择**：选择 `Read, Write, Delete` 或 `Read & Write`（必须包含 Write 权限）
+  7. 点击 `Generate` 生成令牌
+  8. **重要**：立即复制令牌并保存，关闭后将无法再次查看
+  9. 将令牌粘贴到 GitHub Secrets 的 `DOCKERHUB_TOKEN` 中
 
 #### 自定义镜像仓库 1（可选）
 - `CUSTOM_REGISTRY_1_USERNAME`: 自定义仓库 1 的用户名
@@ -135,10 +146,26 @@ Secrets:
 
 ## 故障排查
 
-### 推送失败
+### Docker Hub 推送失败：`401 Unauthorized: access token has insufficient scopes`
+
+**原因**：Docker Hub 访问令牌权限不足
+
+**解决方案**：
+1. 删除现有的 Docker Hub 访问令牌
+2. 创建新的访问令牌，确保权限选择 `Read, Write, Delete` 或至少 `Read & Write`
+3. 更新 GitHub Secrets 中的 `DOCKERHUB_TOKEN` 为新令牌
+4. 重新运行工作流
+
+**注意**：
+- ⚠️ **不要使用 Docker Hub 密码**，必须使用 Personal Access Token
+- ⚠️ 令牌权限必须包含 **Write** 权限才能推送镜像
+- ⚠️ 令牌只在创建时显示一次，请立即保存
+
+### 推送失败：其他原因
 - 检查 Secrets 中的凭据是否正确
 - 检查 Variables 中的仓库地址格式是否正确
 - 检查镜像仓库的访问权限
+- 确保镜像仓库已存在或允许自动创建
 
 ### 版本检测失败
 - 确保 `.csproj` 文件中有 `<Version>` 标签
@@ -146,4 +173,6 @@ Secrets:
 
 ### GHCR 推送失败
 - 在仓库 Settings -> Actions -> General 中，确保 Workflow permissions 设置为 "Read and write permissions"
+- 确保 GHCR_REGISTRY 变量设置为 `ghcr.io`
+- 第一次推送后，可能需要在 GitHub Package 设置中将镜像设为公开
 
