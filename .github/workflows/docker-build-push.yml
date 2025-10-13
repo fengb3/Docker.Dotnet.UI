@@ -150,7 +150,7 @@ jobs:
           registry: ${{ vars.DOCKERHUB_REGISTRY }}
           dockerfile: ./Docker.Dotnet.UI/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # - name: 构建并推送 Docker 镜像
       #   uses: docker/build-push-action@v5
