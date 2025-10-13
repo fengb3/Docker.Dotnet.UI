@@ -256,15 +256,15 @@ public class ImageListItemViewModel
 
     public DateTime Created { get; set; }
 
-    public string ID { get; set; }
+    public string ID { get; set; } = string.Empty;
 
-    public IDictionary<string, string> Labels { get; set; }
+    public IDictionary<string, string> Labels { get; set; } = new Dictionary<string, string>();
 
-    public string ParentID { get; set; }
+    public string ParentID { get; set; } = string.Empty;
 
-    public IList<string> RepoDigests { get; set; }
+    public IList<string> RepoDigests { get; set; } = new List<string>();
 
-    public IList<string> RepoTags { get; set; }
+    public IList<string> RepoTags { get; set; } = new List<string>();
 
     public long SharedSize { get; set; }
 

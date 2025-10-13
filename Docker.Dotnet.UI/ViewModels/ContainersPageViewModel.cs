@@ -56,33 +56,33 @@ public class ContainersPageViewModel(DockerClient dockerClient) : IViewModel
 
 public class ContainerListItemViewModel
 {
-    public string ID { get; set; }
+    public string ID { get; set; } = string.Empty;
 
-    public IList<string> Names { get; set; }
+    public IList<string> Names { get; set; } = new List<string>();
 
-    public string Image { get; set; }
+    public string Image { get; set; } = string.Empty;
 
-    public string ImageID { get; set; }
+    public string ImageID { get; set; } = string.Empty;
 
-    public string Command { get; set; }
+    public string Command { get; set; } = string.Empty;
 
     public DateTime Created { get; set; }
 
-    public IList<Port> Ports { get; set; }
+    public IList<Port> Ports { get; set; } = new List<Port>();
 
     public long SizeRw { get; set; }
 
     public long SizeRootFs { get; set; }
 
-    public IDictionary<string, string> Labels { get; set; }
+    public IDictionary<string, string> Labels { get; set; } = new Dictionary<string, string>();
 
-    public string State { get; set; }
+    public string State { get; set; } = string.Empty;
 
-    public string Status { get; set; }
+    public string Status { get; set; } = string.Empty;
 
-    public SummaryNetworkSettings NetworkSettings { get; set; }
+    public SummaryNetworkSettings NetworkSettings { get; set; } = new SummaryNetworkSettings();
 
-    public IList<MountPoint> Mounts { get; set; }
+    public IList<MountPoint> Mounts { get; set; } = new List<MountPoint>();
 
     public string ShortId => ID?.Length > 12 ? ID.Substring(0, 12) : ID ?? string.Empty;
 

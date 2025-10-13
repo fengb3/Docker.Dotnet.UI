@@ -17,7 +17,7 @@
         <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" 
                        Color="Color.Inherit" 
                        OnClick="@ToggleTheme" 
-                       Title="@(_isDarkMode ? "切换到浅色模式" : "切换到深色模式")" />
+                       title="@(_isDarkMode ? "切换到浅色模式" : "切换到深色模式")" />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Never" Elevation="2">
@@ -42,7 +42,7 @@
 @code {
     bool _drawerOpen = false;
     private bool _isDarkMode = false;
-    private MudThemeProvider _mudThemeProvider;
+    private MudThemeProvider _mudThemeProvider = null!;
 
     void DrawerToggle()
     {

@@ -53,7 +53,7 @@
                 <MudCard Class="pa-3">
                     <MudGrid Spacing="2">
                         <MudItem xs="3" Class="d-flex align-center">
-                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" Title="@volume.Name">
+                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="@volume.Name">
                                 @volume.Name
                             </MudText>
                         </MudItem>
@@ -65,7 +65,7 @@
                         </MudItem>
                         
                         <MudItem xs="3" Class="d-flex align-center">
-                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" Title="@volume.Mountpoint">
+                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="@volume.Mountpoint">
                                 @volume.ShortMountpoint
                             </MudText>
                         </MudItem>
@@ -84,13 +84,13 @@
                                                Color="Color.Error"
                                                Size="Size.Small"
                                                OnClick="@(() => HandleDeleteVolume(volume.Name))"
-                                               Title="删除" />
+                                               title="删除" />
                                 
                                 <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                Color="Color.Primary"
                                                Size="Size.Small"
                                                OnClick="@(() => HandleViewDetails(volume.Name))"
-                                               Title="详情" />
+                                               title="详情" />
                             </MudStack>
                         </MudItem>
                     </MudGrid>

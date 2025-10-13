@@ -3,7 +3,7 @@
 @code{
 
     [Inject]
-    NavigationManager Navigation { get; set; }
+    NavigationManager Navigation { get; set; } = null!;
 
     protected override void OnAfterRender(bool firstRender)
     {

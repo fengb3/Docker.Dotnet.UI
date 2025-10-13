@@ -28,23 +28,23 @@ public class VolumesPageViewModel(DockerClient client) : IViewModel
 
 public class VolumeListItemViewModel
 {
-    public string CreatedAt { get; set; }
+    public string CreatedAt { get; set; } = string.Empty;
 
-    public string Driver { get; set; }
+    public string Driver { get; set; } = string.Empty;
 
-    public IDictionary<string, string> Labels { get; set; }
+    public IDictionary<string, string> Labels { get; set; } = new Dictionary<string, string>();
 
-    public string Mountpoint { get; set; }
+    public string Mountpoint { get; set; } = string.Empty;
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public IDictionary<string, string> Options { get; set; }
+    public IDictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
 
-    public string Scope { get; set; }
+    public string Scope { get; set; } = string.Empty;
 
-    public IDictionary<string, object> Status { get; set; }
+    public IDictionary<string, object> Status { get; set; } = new Dictionary<string, object>();
 
-    public VolumeUsageData UsageData { get; set; }
+    public VolumeUsageData UsageData { get; set; } = new VolumeUsageData();
 
     public string ShortMountpoint
     {
