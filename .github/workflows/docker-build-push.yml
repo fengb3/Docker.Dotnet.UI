@@ -10,7 +10,7 @@ on:
   workflow_dispatch:  # 允许手动触发
 
 env:
-  IMAGE_NAME: docker-dotnet-ui
+  IMAGE_NAME: fengb3/docker-dotnet-ui
 
 jobs:
   check-version-changed:
@@ -95,63 +95,73 @@ jobs:
           username: ${{ secrets.CUSTOM_REGISTRY_2_USERNAME }}
           password: ${{ secrets.CUSTOM_REGISTRY_2_PASSWORD }}
 
-      - name: 构建 Docker 镜像标签
-        id: meta
-        run: |
-          VERSION="${{ needs.check-version-changed.outputs.version }}"
-          TAGS=""
+      # - name: 构建 Docker 镜像标签
+      #   id: meta
+      #   run: |
+      #     VERSION="${{ needs.check-version-changed.outputs.version }}"
+      #     TAGS=""
           
-          # Docker Hub
-          if [ -n "${{ vars.DOCKERHUB_REGISTRY }}" ]; then
-            TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-            TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-          fi
+      #     # Docker Hub
+      #     if [ -n "${{ vars.DOCKERHUB_REGISTRY }}" ]; then
+      #       TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+      #       TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
+      #     fi
           
-          # GitHub Container Registry
-          if [ -n "${{ vars.GHCR_REGISTRY }}" ]; then
-            TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-            TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-          fi
+      #     # GitHub Container Registry
+      #     if [ -n "${{ vars.GHCR_REGISTRY }}" ]; then
+      #       TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+      #       TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
+      #     fi
           
-          # 自定义镜像仓库 1
-          if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
-            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-          fi
+      #     # 自定义镜像仓库 1
+      #     if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
+      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
+      #     fi
           
-          # 自定义镜像仓库 2
-          if [ -n "${{ vars.CUSTOM_REGISTRY_2 }}" ]; then
-            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-            TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-          fi
+      #     # 自定义镜像仓库 2
+      #     if [ -n "${{ vars.CUSTOM_REGISTRY_2 }}" ]; then
+      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
+      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
+      #     fi
           
-          # 如果没有配置任何仓库，使用默认标签
-          if [ -z "$TAGS" ]; then
-            TAGS="${{ env.IMAGE_NAME }}:latest"$'\n'
-            TAGS="${TAGS}${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-          fi
+      #     # 如果没有配置任何仓库，使用默认标签
+      #     if [ -z "$TAGS" ]; then
+      #       TAGS="${{ env.IMAGE_NAME }}:latest"$'\n'
+      #       TAGS="${TAGS}${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
+      #     fi
           
-          # 移除末尾的换行符
-          TAGS=$(echo "$TAGS" | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}')
+      #     # 移除末尾的换行符
+      #     TAGS=$(echo "$TAGS" | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}')
           
-          # 使用多行输出格式
-          echo "tags<<EOF" >> $GITHUB_OUTPUT
-          echo "$TAGS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      #     # 使用多行输出格式
+      #     echo "tags<<EOF" >> $GITHUB_OUTPUT
+      #     echo "$TAGS" >> $GITHUB_OUTPUT
+      #     echo "EOF" >> $GITHUB_OUTPUT
           
-          echo "📝 生成的标签:"
-          echo "$TAGS"
+      #     echo "📝 生成的标签:"
+      #     echo "$TAGS"
 
-      - name: 构建并推送 Docker 镜像
-        uses: docker/build-push-action@v5
+      - uses: mr-smithers-excellent/docker-build-push@v6
+        name: Build & push Docker image
         with:
-          context: .
-          file: ./Docker.Dotnet.UI/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          platforms: linux/amd64,linux/arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${VERSION}, latest
+          registry: ${{ vars.DOCKERHUB_REGISTRY }}
+          dockerfile: ./Docker.Dotnet.UI/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # - name: 构建并推送 Docker 镜像
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     file: ./Docker.Dotnet.UI/Dockerfile
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     platforms: linux/amd64,linux/arm64
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
 
       - name: 构建总结
         run: |
