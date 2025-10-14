@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Docker.Dotnet.UI/Dockerfile
-    image: docker-dotnet-ui:latest
+    # image: docker-dotnet-ui:latest
     container_name: docker-dotnet-ui
     ports:
       - "8080:8080"
@@ -11,10 +11,23 @@ services:
     volumes:
       # 挂载 Docker socket 以便容器内可以控制宿主机 Docker
       - /var/run/docker.sock:/var/run/docker.sock
-    # environment:
-    #   - ASPNETCORE_ENVIRONMENT=Production
-    #   - ASPNETCORE_URLS=http://+:8080
+      # 使用命名卷挂载 SQLite 数据库文件以实现数据持久化
+      - sqlite_data:/app
+      # 使用命名卷挂载 ASP.NET Core Data Protection 密钥以保持会话一致性
+      - data_protection_keys:/root/.aspnet/DataProtection-Keys
+    environment:
+      # 设置环境变量
+      # - ASPNETCORE_ENVIRONMENT=Development
+      # - ASPNETCORE_URLS=http://+:8080
+      # SQLite 连接字符串优化，避免文件锁定问题
+      - ConnectionStrings__DefaultConnection=Data Source=app.db;Cache=Shared;Mode=ReadWriteCreate
     restart: unless-stopped
     # 如果在 Windows 上运行，可能需要不同的 socket 路径
     # 对于 Windows + WSL2，上面的配置应该可以正常工作
+
+volumes:
+  sqlite_data:
+    driver: local
+  data_protection_keys:
+    driver: local
 

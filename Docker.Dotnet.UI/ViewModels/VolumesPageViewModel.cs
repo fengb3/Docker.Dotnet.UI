@@ -4,9 +4,9 @@ using Docker.DotNet.Models;
 namespace Docker.Dotnet.UI.ViewModels;
 
 [RegisterTransient(typeof(VolumesPageViewModel))]
-public class VolumesPageViewModel(DockerClient client) : IViewModel
+public class VolumesPageViewModel(DockerClient client) : ViewModel
 {
-    public async Task InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await RefreshVolumesAsync();
     }

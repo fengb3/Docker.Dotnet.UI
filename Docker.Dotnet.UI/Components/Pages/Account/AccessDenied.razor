@@ -1,0 +1,24 @@
+@page "/Account/AccessDenied"
+@inject NavigationManager NavigationManager
+
+<PageTitle>访问被拒绝</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center justify-center" Style="min-height: 100vh;">
+    <MudPaper Elevation="3" Class="pa-8" Style="width: 100%; max-width: 500px;">
+        <MudStack Spacing="4" AlignItems="AlignItems.Center">
+            <MudIcon Icon="@Icons.Material.Filled.Lock" Size="Size.Large" Color="Color.Error" Style="font-size: 4rem;" />
+            <MudText Typo="Typo.h4" Align="Align.Center">访问被拒绝</MudText>
+            <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">
+                您没有权限访问此页面。请联系管理员获取访问权限。
+            </MudText>
+            <MudButton 
+                Variant="Variant.Filled"
+                Color="Color.Primary"
+                OnClick="@(() => NavigationManager.NavigateTo("/Account/Login"))"
+                Size="Size.Large">
+                返回登录
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+

@@ -1,0 +1,27 @@
+@page "/Account/Logout"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // 使用 JavaScript 提交表单到 Controller
+            await JSRuntime.InvokeVoidAsync("submitLogoutForm");
+        }
+    }
+}
+
+<script>
+    window.submitLogoutForm = function() {
+        // 创建隐藏表单
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/api/Account/Logout';
+        
+        // 添加到页面并提交
+        document.body.appendChild(form);
+        form.submit();
+    };
+</script>

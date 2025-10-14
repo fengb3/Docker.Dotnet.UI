@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+除非有特殊要求,所有UI界面需要使用 MudBlazor 相关组件实现

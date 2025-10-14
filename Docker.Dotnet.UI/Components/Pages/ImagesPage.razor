@@ -3,6 +3,7 @@
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
 @using Microsoft.AspNetCore.Components.Forms
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @implements IDisposable
 
 @inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.ImagesPageViewModel>

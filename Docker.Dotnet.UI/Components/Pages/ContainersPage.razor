@@ -2,6 +2,7 @@
 @using Docker.DotNet
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
 @inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.ContainersPageViewModel>
 

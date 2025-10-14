@@ -1,16 +1,18 @@
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 
 namespace Docker.Dotnet.UI.ViewModels;
 
 [RegisterScoped(typeof(ImagesPageViewModel))]
-public class ImagesPageViewModel(DockerClient client) : IViewModel
+public class ImagesPageViewModel(DockerClient client, NavigationManager navigationManager)
+    : ViewModel
 {
     public event Action? OnStateChanged;
 
-    public async Task InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await RefreshImagesAsync();
     }

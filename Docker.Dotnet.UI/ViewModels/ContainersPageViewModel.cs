@@ -4,10 +4,10 @@ using MudBlazor;
 
 namespace Docker.Dotnet.UI.ViewModels;
 
-[RegisterTransient(typeof(ContainersPageViewModel))]
-public class ContainersPageViewModel(DockerClient dockerClient) : IViewModel
+[RegisterScoped(typeof(ContainersPageViewModel))]
+public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
 {
-    public async Task InitializeAsync()
+    public override async Task InitializeAsync()
     {
         await RefreshContainersAsync();
     }

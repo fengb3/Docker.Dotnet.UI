@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 # 需要 root 权限来访问 Docker socket
 # USER $APP_UID
 WORKDIR /app
