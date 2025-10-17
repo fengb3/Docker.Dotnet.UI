@@ -1,0 +1,60 @@
+#,[Key]resource-key:string,en-us:string,zh-cn:string,fr-fr:string,ja:string,ko-kr:string,es:string,Descriptions:string
+#,# 资源键值,# 英语,# 汉语,# 法语,# 日语,# 韩语,# 西语,# 描述
+" ",Language,English - US,中文 - 中国,Français - France,日本語,한국어,Español - LatAm,this is the language text
+" ",DOCKER,Docker,Docker,Docker,Docker,Docker,Docker,docker
+" ",DOCKER_CONTAINER,Docker Container,Docker 容器,Conteneur Docker,Docker コンテナ,Docker 컨테이너,Contenedor Docker,docker container
+" ",DOCKER_IMAGE,Docker Image,Docker 镜像,Image Docker,Docker イメージ,Docker 이미지,Imagen Docker,docker image
+" ",CONTAINER,Container,容器,Conteneur,コンテナ,컨테이너,Contenedor,container
+" ",IMAGE,Image,镜像,Image,イメージ,이미지,Imagen,image
+" ",VOLUME,Volume,卷,Volume,ボリューム,볼륨,Volumen,docker volume
+" ",NETWORK,Network,网络,Réseau,ネットワーク,네트워크,Red,docker network
+" ",PORT,Port,端口,Port,ポート,포트,Puerto,network port
+" ",DOCKERFILE,Dockerfile,Dockerfile,Dockerfile,Dockerfile,Dockerfile,Dockerfile,docker build file
+" ",COMPOSE,Docker Compose,Docker Compose,Docker Compose,Docker Compose,Docker Compose,Docker Compose,docker compose
+" ",REGISTRY,Registry,注册表,Registre,レジストリ,레지스트리,Registro,container registry
+" ",REPOSITORY,Repository,仓库,Dépôt,リポジトリ,저장소,Repositorio,image repository
+" ",TAG,Tag,标签,Tag,タグ,태그,Etiqueta,image tag
+" ",BUILD,Build,构建,Construire,ビルド,빌드,Construir,build image
+" ",RUN,Run,运行,Exécuter,実行,실행,Ejecutar,run container
+" ",STOP,Stop,停止,Arrêter,停止,중지,Detener,stop container
+" ",START,Start,启动,Démarrer,開始,시작,Iniciar,start container
+" ",RESTART,Restart,重启,Redémarrer,再起動,재시작,Reiniciar,restart container
+" ",REMOVE,Remove,删除,Supprimer,削除,제거,Eliminar,remove container/image
+" ",PULL,Pull,拉取,Tirer,プル,풀,Pull,拉取 imagen/pull image
+" ",PUSH,Push,推送,Pousser,プッシュ,푸시,Push,推送 imagen/push image
+" ",LOGS,Logs,日志,Journaux,ログ,로그,Registros,container logs
+" ",STATUS,Status,状态,Statut,ステータス,상태,Estado,container status
+" ",RUNNING,Running,운행중,En cours d'exécution,実行中,실행 중,En ejecución,container running state
+" ",STOPPED,Stopped,已停止,Arrêté,停止,중지됨,Detenido,container stopped state
+" ",PAUSED,Paused,已暂停,En pause,一時停止,일시정지,Pausado,container paused state
+" ",EXITED,Exited,已退出,Quitté,終了,종료됨,Finalizado,container exited state
+" ",CREATED,Created,已创建,Créé,作成済み,생성됨,Creado,container created state
+" ",RESTARTING,Restarting,重启中,Redémarrage,再起動中,재시작 중,Reiniciando,container restarting state
+" ",HEALTHY,Healthy,健康,Sain,正常,정상,Sano,container healthy state
+" ",UNHEALTHY,Unhealthy,不健康,Malsain,異常,비정상,No saludable,container unhealthy state
+" ",INSPECT,Inspect,检查,Inspecter,検査,검사,Inspeccionar,inspect container/image
+" ",EXEC,Execute,执行,Exécuter,実行,실행,Ejecutar comando,execute command in container
+" ",ATTACH,Attach,附加,Attacher,アタッチ,연결,Adjuntar,attach to container
+" ",COPY,Copy,复制,Copier,コピー,복사,Copiar,copy files
+" ",COMMIT,Commit,提交,Valider,コミット,커밋,Commit,commit container changes
+" ",EXPORT,Export,导出,Exporter,エクスポート,내보내기,Exportar,export container
+" ",IMPORT,Import,导入,Importer,インポート,가져오기,Importar,import container
+" ",SAVE,Save,保存,Sauvegarder,保存,저장,Guardar,save image
+" ",LOAD,Load,加载,Charger,ロード,로드,Cargar,load image
+" ",PRUNE,Prune,清理,Nettoyer,プルーン,정리,Podar,prune unused resources
+" ",STATS,Statistics,统计,Statistiques,統計,통계,Estadísticas,container statistics
+" ",EVENTS,Events,事件,Événements,イベント,이벤트,Eventos,docker events
+" ",INFO,Information,信息,Information,情報,정보,Información,docker info
+" ",VERSION,Version,版本,Version,バージョン,버전,Versión,docker version
+" ",HELP,Help,帮助,Aide,ヘルプ,도움말,Ayuda,help information
+" ",CONFIG,Configuration,配置,Configuration,設定,설정,Configuración,configuration
+" ",SECRET,Secret,密钥,Secret,シークレット,시크릿,Secreto,docker secret
+" ",SERVICE,Service,服务,Service,サービス,서비스,Servicio,docker service
+" ",STACK,Stack,堆栈,Pile,スタック,스택,Pila,docker stack
+" ",SWARM,Swarm,集群,Essaim,スウォーム,스웜,Enjambre,docker swarm
+" ",NODE,Node,节点,Nœud,ノード,노드,Nodo,swarm node
+" ",TASK,Task,任务,Tâche,タスク,작업,Tarea,service task
+" ",DEPLOY,Deploy,部署,Déployer,デプロイ,배포,Desplegar,deploy service
+" ",SCALE,Scale,扩缩容,Mettre à l'échelle,スケール,스케일,Escalar,scale service
+" ",UPDATE,Update,更新,Mettre à jour,更新,업데이트,Actualizar,update service
+" ",ROLLBACK,Rollback,回滚,Retour arrière,ロールバック,롤백,Revertir,rollback service
