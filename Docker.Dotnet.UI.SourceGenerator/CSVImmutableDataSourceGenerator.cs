@@ -73,6 +73,7 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 
             cuts = trimmedHeader.Split(':');
             propertyInfo.TypeName = cuts[1];
+            propertyInfo.csvName = cuts[1];
             propertyInfo.Name = ToUpperCamelCase(cuts[0]);
             propertyInfo.Sequence = i;
 
@@ -204,6 +205,7 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 
 public class PropertyInfo
 {
+    public string csvName { get; set; }= string.Empty;
     public string Name { get; set; } = string.Empty;
     public string TypeName { get; set; }= string.Empty;
     public bool IsPrimaryKey { get; set; }
