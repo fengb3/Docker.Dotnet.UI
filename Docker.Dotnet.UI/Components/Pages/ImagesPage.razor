@@ -14,12 +14,12 @@
         <MudButton Variant="Variant.Filled" 
                    Color="Color.Primary" 
                    StartIcon="@Icons.Material.Filled.Add"
-                   OnClick="Vm.OpenAddImageDialog">
+                   OnClick="Vm!.OpenAddImageDialog">
             添加镜像
         </MudButton>
     </MudStack>
     
-    @if (Vm.Images == null || Vm.Images.Count == 0)
+    @if (Vm?.Images == null || Vm.Images.Count == 0)
     {
         <MudAlert Severity="Severity.Info">暂无镜像</MudAlert>
     }
@@ -109,7 +109,7 @@
     }
 </MudContainer>
 
-<MudDialog @bind-Visible="Vm.ShowAddImageDialog" Options="Vm.DialogOptions">
+<MudDialog @bind-Visible="Vm!.ShowAddImageDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> 添加镜像
@@ -119,7 +119,7 @@
         <MudTabs ApplyEffectsToContainer="true" PanelClass="pa-4" Style="min-height: 500px;">
             <MudTabPanel Text="从注册表拉取" Icon="@Icons.Material.Filled.CloudDownload">
                 <MudStack Spacing="3">
-                    <MudTextField @bind-Value="Vm.PullImageName"
+                    <MudTextField @bind-Value="Vm!.PullImageName"
                                   Label="镜像名称"
                                   Placeholder="例如: nginx, mysql, ubuntu"
                                   Variant="Variant.Outlined"
@@ -227,11 +227,11 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Vm.OnStateChanged += StateHasChanged;
+        Vm!.OnStateChanged += StateHasChanged;
     }
 
     public void Dispose()
     {
-        Vm.OnStateChanged -= StateHasChanged;
+        Vm!.OnStateChanged -= StateHasChanged;
     }
 }

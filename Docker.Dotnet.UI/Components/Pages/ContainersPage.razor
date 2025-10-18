@@ -9,7 +9,7 @@
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudText Typo="Typo.h4" Class="mb-4">Docker Containers</MudText>
     
-    @if (Vm.Containers == null || Vm.Containers.Count == 0)
+    @if (Vm?.Containers == null || Vm.Containers.Count == 0)
     {
         <MudAlert Severity="Severity.Info">暂无容器</MudAlert>
     }
@@ -156,17 +156,17 @@
     
     private async Task HandleStartContainer(string containerId)
     {
-        await Vm.StartContainerAsync(containerId);
+        await Vm!.StartContainerAsync(containerId);
     }
     
     private async Task HandleStopContainer(string containerId)
     {
-        await Vm.StopContainerAsync(containerId);
+        await Vm!.StopContainerAsync(containerId);
     }
     
     private async Task HandleDeleteContainer(string containerId)
     {
-        await Vm.DeleteContainerAsync(containerId);
+        await Vm!.DeleteContainerAsync(containerId);
     }
     
     private void HandleMoreOptions(string containerId)

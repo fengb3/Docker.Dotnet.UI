@@ -9,7 +9,7 @@
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudText Typo="Typo.h4" Class="mb-4">Docker Volumes</MudText>
     
-    @if (Vm.Volumes == null || Vm.Volumes.Count == 0)
+    @if (Vm?.Volumes == null || Vm.Volumes.Count == 0)
     {
         <MudAlert Severity="Severity.Info">暂无卷</MudAlert>
     }
@@ -105,7 +105,7 @@
     
     private async Task HandleDeleteVolume(string volumeName)
     {
-        await Vm.DeleteVolumeAsync(volumeName);
+        await Vm!.DeleteVolumeAsync(volumeName);
     }
     
     private void HandleViewDetails(string volumeName)

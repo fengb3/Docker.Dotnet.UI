@@ -7,7 +7,7 @@ using MudBlazor;
 namespace Docker.Dotnet.UI.ViewModels;
 
 [RegisterScoped(typeof(ImagesPageViewModel))]
-public class ImagesPageViewModel(DockerClient client, NavigationManager navigationManager)
+public class ImagesPageViewModel(DockerClient client)
     : ViewModel
 {
     public event Action? OnStateChanged;
