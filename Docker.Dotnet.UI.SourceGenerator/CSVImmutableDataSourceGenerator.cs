@@ -12,11 +12,12 @@ namespace Docker.Dotnet.UI.SourceGenerator;
 public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 {
     public const string FileSuffix = ".table.csv";
+    public const string ExportedNamespace = "ImmutableTables";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var provider = context.AdditionalTextsProvider
-            .Where(f => Path.GetFileName(f.Path).EndsWith(FileSuffix))
+        var provider = context
+            .AdditionalTextsProvider.Where(f => Path.GetFileName(f.Path).EndsWith(FileSuffix))
             .Collect();
 
         context.RegisterSourceOutput(provider, GenerateCode);
@@ -41,10 +42,9 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 
         var lineSeparators = new string[] { "\n", "\r\n", "\r" };
 
-        var lines = file.GetText(context.CancellationToken)?.ToString().Split(
-            lineSeparators,
-            StringSplitOptions.None
-        );
+        var lines = file.GetText(context.CancellationToken)
+            ?.ToString()
+            .Split(lineSeparators, StringSplitOptions.None);
 
         // first line is header
         var headers = lines?[0].Split(',');
@@ -55,13 +55,14 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
         for (var i = 0; i < headers.Length; i++)
         {
             var header = headers[i];
-            if (string.IsNullOrEmpty(header)) continue;
+            if (string.IsNullOrEmpty(header))
+                continue;
 
-            if (header.Contains("#")) continue; // skip
+            if (header.Contains("#"))
+                continue; // skip
 
             var propertyInfo = new PropertyInfo();
 
-            var cuts = new string[2];
             var trimmedHeader = header;
 
             // starting with [PK] is Primary Key
@@ -71,9 +72,9 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
                 trimmedHeader = header.Substring(5); // remove [PK]
             }
 
-            cuts = trimmedHeader.Split(':');
+            string[] cuts = trimmedHeader.Split(':');
             propertyInfo.TypeName = cuts[1];
-            propertyInfo.csvName = cuts[1];
+            propertyInfo.csvName = cuts[0];
             propertyInfo.Name = ToUpperCamelCase(cuts[0]);
             propertyInfo.Sequence = i;
 
@@ -82,99 +83,161 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 
         // data begins from second line
         var dataValues = new List<Dictionary<string, string>>();
-        for (int i = 1; i < lines.Length; i++)
-        {
-            var line = lines[i];
-            if (string.IsNullOrEmpty(line)) continue;
-            
-            if(line.StartsWith("#")) continue; // skip comment line
-
-            var values = line.Split(',');
-            var dataItem = new Dictionary<string, string>();
-            foreach (var propertyInfo in properties)
+        if (lines != null)
+            for (var i = 1; i < lines.Length; i++)
             {
-                var value = values.Length > propertyInfo.Sequence ? values[propertyInfo.Sequence] : "";
-                dataItem[propertyInfo.Name] = value;
-            }
+                var line = lines[i];
+                if (string.IsNullOrEmpty(line))
+                    continue;
 
-            dataValues.Add(dataItem);
-        }
+                if (line.StartsWith("#"))
+                    continue; // skip comment line
+
+                var values = line.Split(',');
+                var dataItem = new Dictionary<string, string>();
+                foreach (var propertyInfo in properties)
+                {
+                    var value =
+                        values.Length > propertyInfo.Sequence ? values[propertyInfo.Sequence] : "";
+                    dataItem[propertyInfo.Name] = value;
+                }
+
+                dataValues.Add(dataItem);
+            }
 
         var cb = new CSharpCodeBuilder();
 
-        cb.Using(
-            "System",
-            "System.Collections.Generic"
-        );
+        cb.Using("System", "System.Collections.Generic");
 
-        cb.Class(
-            className, cls =>
+        cb.Namespace(ExportedNamespace,
+            ns =>
             {
-                cls.Class("Data", innerCls =>
-                {
-                    foreach (var propertyInfo in properties)
+                ns.Class(
+                    className,
+                    cls =>
                     {
-                        innerCls.Property(propertyInfo.TypeName, propertyInfo.Name);
-                    }
-
-                    innerCls.Constructor("Data", ctor =>
-                    {
-                        foreach (var propertyInfo in properties)
-                        {
-                            ctor.AppendLine($"this.{propertyInfo.Name} = {ToLowerCamelCase(propertyInfo.Name)};");
-                        }
-                    }, string.Join(", ", properties.Select(p => $"{p.TypeName} {ToLowerCamelCase(p.Name)}").ToArray()));
-                });
-                
-                cls.Property($"Dictionary<{properties.FirstOrDefault(p => p.IsPrimaryKey)?.TypeName ?? "object"}, Data>", "Items", "public static");
-
-                cls.Constructor(className, ctor =>
-                    {
-                        ctor <<= $"Items = new({dataValues.Count});";
-                        var pkIsString = properties.FirstOrDefault(p => p.IsPrimaryKey)?.TypeName == "string";
-                        foreach (var dataValue in dataValues)
-                        {
-                            var keyValue = dataValue[properties.FirstOrDefault(p => p.IsPrimaryKey)?.Name ?? "null"];
-                            if (pkIsString)
+                        cls.Class(
+                            "Data",
+                            innerCls =>
                             {
-                                keyValue = $"@\"{keyValue.Replace("\"", "\"\"")}\"";
-                            }
-                            ctor <<= $"Items.Add({keyValue}, new Data(" +
-                                string.Join(", ", properties.Select(p => 
+                                foreach (var propertyInfo in properties)
+                                {
+                                    innerCls.Property(propertyInfo.TypeName, propertyInfo.Name,
+                                        accessors: "{get; private set;}");
+                                }
+
+                                innerCls.Constructor(
+                                    "Data",
+                                    ctor =>
                                     {
-                                        var val = dataValue[p.Name];
-                                        if (p.TypeName == "string")
+                                        foreach (var propertyInfo in properties)
                                         {
-                                            return $"@\"{val.Replace("\"", "\"\"")}\"";
+                                            ctor.AppendLine(
+                                                $"this.{propertyInfo.Name} = {ToLowerCamelCase(propertyInfo.Name)};"
+                                            );
                                         }
-                                        else if (p.TypeName == "char")
+                                    },
+                                    string.Join(
+                                        ", ",
+                                        properties
+                                            .Select(p => $"{p.TypeName} {ToLowerCamelCase(p.Name)}")
+                                            .ToArray()
+                                    ),
+                                    modifiers: "public"
+                                );
+
+                                // add indexer for accessing properties by name
+                                innerCls += "public object this[string index] ";
+                                innerCls.CodeBlock(codeblock =>
+                                    {
+                                        codeblock += "get";
+                                        codeblock.CodeBlock(getBlock =>
                                         {
-                                            return $"'{val}'";
-                                        }
-                                        else if (p.TypeName == "bool")
-                                        {
-                                            return (val.ToLower() == "true" || val == "1") ? "true" : "false";
-                                        }
-                                        else if (string.IsNullOrEmpty(val))
-                                        {
-                                            return "default";
-                                        }
-                                        else
-                                        {
-                                            return val;
-                                        }
-                                    })
-                                )
-                            + "));";
-                        }
-                    }, "",
-                    "static"
+                                            getBlock += "return index switch ";
+                                            getBlock.CodeBlock(switchBlock =>
+                                                switchBlock.AppendBatch(properties,
+                                                    (@switch, prop) =>
+                                                        @switch + $"\"{prop.csvName}\" => {prop.Name},"
+                                                ) +
+                                                "_ => throw new IndexOutOfRangeException($\"Index {index} is out of range.\")"
+                                            );
+                                            getBlock += ";";
+                                        });
+                                    }
+                                );
+                            }
+                        );
+
+                        cls.Property(
+                            $"Dictionary<{properties.FirstOrDefault(p => p.IsPrimaryKey)?.TypeName ?? "object"}, Data>",
+                            "Items",
+                            "public static"
+                        );
+
+                        cls.Constructor(
+                            className,
+                            ctor =>
+                            {
+                                ctor <<= $"Items = new({dataValues.Count});";
+                                var pkIsString =
+                                    properties.FirstOrDefault(p => p.IsPrimaryKey)?.TypeName
+                                    == "string";
+                                foreach (var dataValue in dataValues)
+                                {
+                                    var keyValue = dataValue[
+                                        properties.FirstOrDefault(p => p.IsPrimaryKey)?.Name
+                                        ?? "null"
+                                    ];
+                                    if (pkIsString)
+                                    {
+                                        keyValue = $"@\"{keyValue.Replace("\"", "\"\"")}\"";
+                                    }
+
+                                    ctor <<=
+                                        $"Items.Add({keyValue}, new Data("
+                                        + string.Join(
+                                            ", ",
+                                            properties.Select(p =>
+                                            {
+                                                var val = dataValue[p.Name];
+                                                if (p.TypeName == "string")
+                                                {
+                                                    return $"@\"{val.Replace("\"", "\"\"")}\"";
+                                                }
+                                                else if (p.TypeName == "char")
+                                                {
+                                                    return $"'{val}'";
+                                                }
+                                                else if (p.TypeName == "bool")
+                                                {
+                                                    return (val.ToLower() == "true" || val == "1")
+                                                        ? "true"
+                                                        : "false";
+                                                }
+                                                else if (string.IsNullOrEmpty(val))
+                                                {
+                                                    return "default";
+                                                }
+                                                else
+                                                {
+                                                    return val;
+                                                }
+                                            })
+                                        )
+                                        + "));";
+                                }
+                            },
+                            "",
+                            "static"
+                        );
+                    },
+                    "public static"
                 );
-            },
-            "public static"
+            }
         );
 
-        context.AddSource($"{fileName}.g.cs", cb.ToString());
+        var exportedFileName = fileName.Replace(FileSuffix, "");
+        context.AddSource($"{exportedFileName}.g.cs", cb.ToString());
     }
 
     public string ToUpperCamelCase(string input)
@@ -182,7 +245,10 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
         if (string.IsNullOrEmpty(input))
             return input;
 
-        var words = input.Split(new char[] { '_', ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        var words = input.Split(
+            new char[] { '_', ' ', '-' },
+            StringSplitOptions.RemoveEmptyEntries
+        );
         for (int i = 0; i < words.Length; i++)
         {
             words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1).ToLower();
@@ -193,7 +259,10 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 
     public string ToLowerCamelCase(string input)
     {
-        var words = input.Split(new char[] { '_', ' ', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        var words = input.Split(
+            new char[] { '_', ' ', '-' },
+            StringSplitOptions.RemoveEmptyEntries
+        );
         for (int i = 0; i < words.Length; i++)
         {
             words[i] = char.ToLower(words[i][0]) + words[i].Substring(1).ToLower();
@@ -205,9 +274,9 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 
 public class PropertyInfo
 {
-    public string csvName { get; set; }= string.Empty;
+    public string csvName { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
-    public string TypeName { get; set; }= string.Empty;
+    public string TypeName { get; set; } = string.Empty;
     public bool IsPrimaryKey { get; set; }
     public int Sequence { get; set; }
 }
