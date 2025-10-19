@@ -2,8 +2,10 @@ using Docker.Dotnet.UI;
 using Docker.Dotnet.UI.Components;
 using Docker.Dotnet.UI.Database;
 using Docker.Dotnet.UI.Database.Models;
+using Docker.Dotnet.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,9 +52,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Services.AddScoped<IStringLocalizer, MyLocalizer>();
+
 // add authorization service
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
+
 
 var app = builder.Build();
 
