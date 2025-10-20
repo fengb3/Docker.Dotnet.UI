@@ -3,11 +3,34 @@
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@implements IDisposable
 
 @inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.VolumesPageViewModel>
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
-    <MudText Typo="Typo.h4" Class="mb-4">@Localizer["DOCKER_VOLUMES"]</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudText Typo="Typo.h4">@Localizer["DOCKER_VOLUMES"]</MudText>
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="Vm!.OpenCreateDialog">
+                @Localizer["CREATE_VOLUME"]
+            </MudButton>
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Warning" 
+                       StartIcon="@Icons.Material.Filled.CleaningServices"
+                       OnClick="HandlePruneVolumes">
+                @Localizer["PRUNE_VOLUMES"]
+            </MudButton>
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Secondary" 
+                       StartIcon="@Icons.Material.Filled.Refresh"
+                       OnClick="@(() => Vm!.RefreshVolumesAsync())">
+                @Localizer["REFRESH"]
+            </MudButton>
+        </MudStack>
+    </MudStack>
     
     @if (Vm?.Volumes == null || Vm.Volumes.Count == 0)
     {
@@ -81,17 +104,17 @@
                         
                         <MudItem xs="2" Class="d-flex align-center justify-end">
                             <MudStack Row="true" Spacing="1">
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                                               Color="Color.Error"
-                                               Size="Size.Small"
-                                               OnClick="@(() => HandleDeleteVolume(volume.Name))"
-                                               title='@Localizer["REMOVE"]' />
-                                
                                 <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                Color="Color.Primary"
                                                Size="Size.Small"
                                                OnClick="@(() => HandleViewDetails(volume.Name))"
                                                title='@Localizer["INFO"]' />
+                                
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                               Color="Color.Error"
+                                               Size="Size.Small"
+                                               OnClick="@(() => HandleDeleteVolume(volume.Name))"
+                                               title='@Localizer["REMOVE"]' />
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -101,15 +124,86 @@
     }
 </MudContainer>
 
+<MudDialog @bind-Visible="Vm!.ShowCreateDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> @Localizer["CREATE_VOLUME"]
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="Vm!.NewVolumeName"
+                          Label="@Localizer["VOLUME_NAME"]"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          Disabled="Vm.IsCreating" />
+            
+            <MudSelect @bind-Value="Vm.NewVolumeDriver"
+                       Label="@Localizer["DRIVER"]"
+                       Variant="Variant.Outlined"
+                       Disabled="Vm.IsCreating">
+                <MudSelectItem Value="@("local")">local</MudSelectItem>
+            </MudSelect>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseCreateDialog" Disabled="Vm.IsCreating">
+            @Localizer["CANCEL"]
+        </MudButton>
+        <MudButton Variant="Variant.Filled" 
+                   Color="Color.Primary" 
+                   OnClick="Vm.CreateVolumeAsync"
+                   Disabled="Vm.IsCreating || string.IsNullOrWhiteSpace(Vm.NewVolumeName)">
+            @Localizer["CREATE_VOLUME"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-1" /> @Localizer["VOLUME_DETAILS"] - @Vm.SelectedVolumeName
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (string.IsNullOrEmpty(Vm.InspectJson))
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+        }
+        else
+        {
+            <MudPaper Class="pa-2" Style="height: 500px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px; white-space: pre;">@Vm.InspectJson</MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
 @code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Vm!.OnStateChanged += StateHasChanged;
+    }
     
     private async Task HandleDeleteVolume(string volumeName)
     {
         await Vm!.DeleteVolumeAsync(volumeName);
     }
     
-    private void HandleViewDetails(string volumeName)
+    private async Task HandleViewDetails(string volumeName)
     {
-        // 暂不实现
+        await Vm!.ShowInspectAsync(volumeName);
+    }
+
+    private async Task HandlePruneVolumes()
+    {
+        await Vm!.PruneVolumesAsync();
+    }
+
+    public void Dispose()
+    {
+        Vm!.OnStateChanged -= StateHasChanged;
     }
 }
