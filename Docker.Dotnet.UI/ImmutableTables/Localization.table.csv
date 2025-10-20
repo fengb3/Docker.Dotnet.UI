@@ -5,7 +5,8 @@
 " ",DOCKER_CONTAINERS,Docker Containers,Docker 容器,Docker Containers,Docker コンテナ,Docker 컨테이너,Contenedores Docker,page title: Docker Containers
 " ",NO_CONTAINERS,No containers,暂无容器,No containers,コンテナがありません,컨테이너 없음,No hay contenedores,empty state message
 " ",CONTAINER_NAME,Container Name,容器名称,Container Name,コンテナ名,컨테이너 이름,Nombre del contenedor,table header
-" ",CONTAINER_ID,Container ID,容器 ID,Container ID,コンテナ ID,컨テ이너 ID,ID del contenedor,table header
+" ",STATUS,Status,状态,Statut,ステータス,상태,Estado,table header
+" ",CONTAINER_ID,Container ID,容器 ID,Container ID,コンテナ ID,컨테이너 ID,ID del contenedor,table header
 " ",IMAGE_NAME,Image Name,镜像名称,Image Name,イメージ名,이미지 이름,Nombre de la imagen,table header
 " ",PORT_MAPPINGS,Port mappings,端口映射,Port mappings,ポートマッピング,포트 매핑,Mapeos de puertos,table header
 " ",CREATED_AT,Created At,创建时间,Created At,作成日時,생성일시,Creado el,table header
@@ -54,3 +55,11 @@
 " ",LOGOUT,Logout,退出登录,Logout,ログアウト,로그아웃,Cerrar sesión,logout menu item
 " ",SWITCH_TO_LIGHT_MODE,Switch to light mode,切换到浅色模式,Switch to light mode,ライトモードに切り替え,라이트 모드로 전환,Cambiar a modo claro,theme toggle tooltip
 " ",SWITCH_TO_DARK_MODE,Switch to dark mode,切换到深色模式,Switch to dark mode,ダークモードに切り替え,다크 모드로 전환,Cambiar a modo oscuro,theme toggle tooltip
+
+# Language names for switcher,,,,,,,,
+" ",LANG_EN_US,English,English,English,English,English,English,language name
+" ",LANG_ZH_CN,中文,中文,中文,中文,中文,中文,language name
+" ",LANG_FR_FR,Français,Français,Français,Français,Français,Français,language name
+" ",LANG_JA,日本語,日本語,日本語,日本語,日本語,日本語,language name
+" ",LANG_KO_KR,한국어,한국어,한국어,한국어,한국어,한국어,language name
+" ",LANG_ES,Español,Español,Español,Español,Español,Español,language name

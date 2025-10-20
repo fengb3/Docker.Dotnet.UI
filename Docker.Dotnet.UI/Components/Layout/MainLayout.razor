@@ -1,6 +1,10 @@
 ﻿@inherits LayoutComponentBase
+@implements IDisposable
 @using Microsoft.AspNetCore.Components.Authorization
-@inject Microsoft.Extensions.Localization.IStringLocalizer Localizer
+@using Docker.Dotnet.UI.Services
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer Localizer
+@inject UserPreferencesService PreferencesService
 
 @* Required *@
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
@@ -18,9 +22,47 @@
             <MudAppBar Elevation="1" Color="Color.Transparent" Style="backdrop-filter: blur(6px);-webkit-backdrop-filter: blur(6px);">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
                 <MudSpacer />
+                <MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+                    <MudMenuItem OnClick="@(() => ChangeLanguageAsync("en-us"))">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@(_currentLanguage == "en-us" ? Icons.Material.Filled.Check : "")" Size="Size.Small" />
+                            <MudText>@Localizer["LANG_EN_US"]</MudText>
+                        </MudStack>
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ChangeLanguageAsync("zh-cn"))">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@(_currentLanguage == "zh-cn" ? Icons.Material.Filled.Check : "")" Size="Size.Small" />
+                            <MudText>@Localizer["LANG_ZH_CN"]</MudText>
+                        </MudStack>
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ChangeLanguageAsync("fr-fr"))">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@(_currentLanguage == "fr-fr" ? Icons.Material.Filled.Check : "")" Size="Size.Small" />
+                            <MudText>@Localizer["LANG_FR_FR"]</MudText>
+                        </MudStack>
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ChangeLanguageAsync("ja"))">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@(_currentLanguage == "ja" ? Icons.Material.Filled.Check : "")" Size="Size.Small" />
+                            <MudText>@Localizer["LANG_JA"]</MudText>
+                        </MudStack>
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ChangeLanguageAsync("ko-kr"))">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@(_currentLanguage == "ko-kr" ? Icons.Material.Filled.Check : "")" Size="Size.Small" />
+                            <MudText>@Localizer["LANG_KO_KR"]</MudText>
+                        </MudStack>
+                    </MudMenuItem>
+                    <MudMenuItem OnClick="@(() => ChangeLanguageAsync("es"))">
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudIcon Icon="@(_currentLanguage == "es" ? Icons.Material.Filled.Check : "")" Size="Size.Small" />
+                            <MudText>@Localizer["LANG_ES"]</MudText>
+                        </MudStack>
+                    </MudMenuItem>
+                </MudMenu>
                 <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" 
                                Color="Color.Inherit" 
-                               OnClick="@ToggleTheme" 
+                               OnClick="@ToggleThemeAsync" 
                                title='@(_isDarkMode ? Localizer["SWITCH_TO_LIGHT_MODE"].Value : Localizer["SWITCH_TO_DARK_MODE"].Value)' />
                 <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                     <MudMenuItem>
@@ -66,14 +108,71 @@
     bool _drawerOpen = false;
     private bool _isDarkMode = false;
     private MudThemeProvider _mudThemeProvider = null!;
+    private string _currentLanguage = "en-us";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            // Subscribe to language change events
+            if (Localizer is MyLocalizer myLocalizer)
+            {
+                myLocalizer.LanguageChanged += OnLanguageChanged;
+            }
+            
+            // Load user preferences from browser storage
+            await PreferencesService.EnsureLoadedAsync();
+            
+            // Now get the loaded values
+            _isDarkMode = PreferencesService.IsDarkMode;
+            _currentLanguage = PreferencesService.Language;
+
+            if(Localizer is MyLocalizer myLocalizer2)
+            {
+                await myLocalizer2.SetLanguageAsync(_currentLanguage);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private void OnLanguageChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
 
-    void ToggleTheme()
+    async Task ToggleThemeAsync()
     {
         _isDarkMode = !_isDarkMode;
+        await PreferencesService.Set(s => s.IsDarkMode).To(_isDarkMode);
+    }
+
+    async Task ChangeLanguageAsync(string language)
+    {
+        _currentLanguage = language;
+        
+        if (Localizer is MyLocalizer myLocalizer)
+        {
+            await myLocalizer.SetLanguageAsync(language);
+        }
+        
+        // No need to call StateHasChanged() here anymore
+        // The LanguageChanged event will trigger it automatically
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe from language change events
+        if (Localizer is MyLocalizer myLocalizer)
+        {
+            myLocalizer.LanguageChanged -= OnLanguageChanged;
+        }
     }
 }
