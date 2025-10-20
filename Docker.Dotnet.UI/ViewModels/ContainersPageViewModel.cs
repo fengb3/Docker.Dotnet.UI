@@ -108,7 +108,7 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
 
         try
         {
-            var logs = await dockerClient.Containers.GetContainerLogsAsync(
+            var multiplexedStream = await dockerClient.Containers.GetContainerLogsAsync(
                 containerId,
                 tty: false,
                 new ContainerLogsParameters
@@ -119,13 +119,20 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
                 }
             );
 
-            using var reader = new StreamReader(logs);
-            while (!reader.EndOfStream)
+            var buffer = new byte[4096];
+            while (true)
             {
-                var line = await reader.ReadLineAsync();
-                if (!string.IsNullOrEmpty(line))
+                var result = await multiplexedStream.ReadOutputAsync(buffer, 0, buffer.Length, default);
+                if (result.EOF)
+                    break;
+
+                if (result.Count > 0)
                 {
-                    ContainerLogs.Add(line);
+                    var line = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        ContainerLogs.Add(line.Trim());
+                    }
                 }
             }
         }

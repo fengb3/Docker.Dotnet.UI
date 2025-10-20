@@ -1,0 +1,200 @@
+@page "/networks"
+@using Docker.DotNet
+@using Docker.DotNet.Models
+@using Docker.Dotnet.UI.ViewModels
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@implements IDisposable
+
+@inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.NetworksPageViewModel>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudText Typo="Typo.h4">@Localizer["DOCKER_NETWORKS"]</MudText>
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="Vm!.OpenCreateDialog">
+                @Localizer["CREATE_NETWORK"]
+            </MudButton>
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Secondary" 
+                       StartIcon="@Icons.Material.Filled.Refresh"
+                       OnClick="@(() => Vm!.RefreshNetworksAsync())">
+                @Localizer["REFRESH"]
+            </MudButton>
+        </MudStack>
+    </MudStack>
+    
+    @if (Vm?.Networks == null || Vm.Networks.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info">@Localizer["NO_NETWORKS"]</MudAlert>
+    }
+    else
+    {
+        <MudPaper Class="pa-3 mb-3" Elevation="0" >
+            <MudGrid Spacing="2">
+                <MudItem xs="3" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["NETWORK_NAME"]</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>  
+                <MudItem xs="2" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["NETWORK_ID"]</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="2" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["DRIVER"]</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="1" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["SCOPE"]</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="3" Class="d-flex align-center justify-end pr-8">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["ACTIONS"]</MudText>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+        
+        <MudStack Spacing="2">
+            @foreach (var network in Vm.Networks)
+            {
+                <MudCard Class="pa-3">
+                    <MudGrid Spacing="2">
+                        <MudItem xs="3" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                @network.Name
+                            </MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="2" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2">@network.ShortId</MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="2" Class="d-flex align-center">
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">
+                                @network.Driver
+                            </MudChip>
+                        </MudItem>
+                        
+                        <MudItem xs="1" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2">@network.Scope</MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="3" Class="d-flex align-center justify-end">
+                            <MudStack Row="true" Spacing="1">
+                                <MudIconButton Icon="@Icons.Material.Filled.Info" 
+                                               Color="Color.Primary"
+                                               Size="Size.Small"
+                                               OnClick="@(() => HandleShowInspect(network.ID, network.Name))"
+                                               title='@Localizer["INSPECT"]' />
+                                
+                                @if (!IsSystemNetwork(network.Name))
+                                {
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                                   Color="Color.Error"
+                                                   Size="Size.Small"
+                                                   OnClick="@(() => HandleDeleteNetwork(network.ID))"
+                                                   title='@Localizer["REMOVE"]' />
+                                }
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
+                </MudCard>
+            }
+        </MudStack>
+    }
+</MudContainer>
+
+<MudDialog @bind-Visible="Vm!.ShowCreateDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> @Localizer["CREATE_NETWORK"]
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="Vm!.NewNetworkName"
+                          Label="@Localizer["NETWORK_NAME"]"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          Disabled="Vm.IsCreating" />
+            
+            <MudSelect @bind-Value="Vm.NewNetworkDriver"
+                       Label="@Localizer["DRIVER"]"
+                       Variant="Variant.Outlined"
+                       Disabled="Vm.IsCreating">
+                <MudSelectItem Value="@("bridge")">bridge</MudSelectItem>
+                <MudSelectItem Value="@("host")">host</MudSelectItem>
+                <MudSelectItem Value="@("overlay")">overlay</MudSelectItem>
+                <MudSelectItem Value="@("macvlan")">macvlan</MudSelectItem>
+                <MudSelectItem Value="@("none")">none</MudSelectItem>
+            </MudSelect>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseCreateDialog" Disabled="Vm.IsCreating">
+            @Localizer["CANCEL"]
+        </MudButton>
+        <MudButton Variant="Variant.Filled" 
+                   Color="Color.Primary" 
+                   OnClick="Vm.CreateNetworkAsync"
+                   Disabled="Vm.IsCreating || string.IsNullOrWhiteSpace(Vm.NewNetworkName)">
+            @Localizer["CREATE_NETWORK"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-1" /> @Localizer["NETWORK_DETAILS"] - @Vm.SelectedNetworkName
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (string.IsNullOrEmpty(Vm.InspectJson))
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+        }
+        else
+        {
+            <MudPaper Class="pa-2" Style="height: 500px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px; white-space: pre;">@Vm.InspectJson</MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Vm!.OnStateChanged += StateHasChanged;
+    }
+
+    private async Task HandleDeleteNetwork(string networkId)
+    {
+        await Vm!.DeleteNetworkAsync(networkId);
+    }
+
+    private async Task HandleShowInspect(string networkId, string networkName)
+    {
+        await Vm!.ShowInspectAsync(networkId, networkName);
+    }
+
+    private bool IsSystemNetwork(string networkName)
+    {
+        // Prevent deletion of system networks
+        return networkName == "bridge" || networkName == "host" || networkName == "none";
+    }
+
+    public void Dispose()
+    {
+        Vm!.OnStateChanged -= StateHasChanged;
+    }
+}
