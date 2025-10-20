@@ -7,12 +7,33 @@ namespace Docker.Dotnet.UI.ViewModels;
 [RegisterScoped(typeof(ContainersPageViewModel))]
 public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
 {
+    public event Action? OnStateChanged;
+
     public override async Task InitializeAsync()
     {
         await RefreshContainersAsync();
     }
 
     public IList<ContainerListItemViewModel>? Containers { get; set; }
+
+    // Dialog states
+    public bool ShowLogsDialog { get; set; }
+    public bool ShowInspectDialog { get; set; }
+    public bool ShowStatsDialog { get; set; }
+    public string? SelectedContainerId { get; set; }
+    public string? SelectedContainerName { get; set; }
+    public List<string> ContainerLogs { get; } = new();
+    public bool IsLoadingLogs { get; set; }
+    public string? InspectJson { get; set; }
+    public ContainerStatsResponse? CurrentStats { get; set; }
+
+    public DialogOptions DialogOptions { get; } =
+        new()
+        {
+            MaxWidth = MaxWidth.Large,
+            FullWidth = true,
+            CloseButton = true,
+        };
 
     public async Task RefreshContainersAsync()
     {
@@ -21,6 +42,7 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         );
 
         Containers = containers.ToViewModel();
+        NotifyStateChanged();
     }
 
     public async Task StartContainerAsync(string containerId)
@@ -43,6 +65,28 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         await RefreshContainersAsync();
     }
 
+    public async Task RestartContainerAsync(string containerId)
+    {
+        await dockerClient.Containers.RestartContainerAsync(
+            containerId,
+            new ContainerRestartParameters()
+        );
+
+        await RefreshContainersAsync();
+    }
+
+    public async Task PauseContainerAsync(string containerId)
+    {
+        await dockerClient.Containers.PauseContainerAsync(containerId);
+        await RefreshContainersAsync();
+    }
+
+    public async Task UnpauseContainerAsync(string containerId)
+    {
+        await dockerClient.Containers.UnpauseContainerAsync(containerId);
+        await RefreshContainersAsync();
+    }
+
     public async Task DeleteContainerAsync(string containerId)
     {
         await dockerClient.Containers.RemoveContainerAsync(
@@ -51,6 +95,93 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         );
 
         await RefreshContainersAsync();
+    }
+
+    public async Task ShowLogsAsync(string containerId, string containerName)
+    {
+        SelectedContainerId = containerId;
+        SelectedContainerName = containerName;
+        ShowLogsDialog = true;
+        IsLoadingLogs = true;
+        ContainerLogs.Clear();
+        NotifyStateChanged();
+
+        try
+        {
+            var logs = await dockerClient.Containers.GetContainerLogsAsync(
+                containerId,
+                tty: false,
+                new ContainerLogsParameters
+                {
+                    ShowStdout = true,
+                    ShowStderr = true,
+                    Tail = "500",
+                }
+            );
+
+            using var reader = new StreamReader(logs);
+            while (!reader.EndOfStream)
+            {
+                var line = await reader.ReadLineAsync();
+                if (!string.IsNullOrEmpty(line))
+                {
+                    ContainerLogs.Add(line);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ContainerLogs.Add($"Error loading logs: {ex.Message}");
+        }
+        finally
+        {
+            IsLoadingLogs = false;
+            NotifyStateChanged();
+        }
+    }
+
+    public async Task ShowInspectAsync(string containerId, string containerName)
+    {
+        SelectedContainerId = containerId;
+        SelectedContainerName = containerName;
+        ShowInspectDialog = true;
+        NotifyStateChanged();
+
+        try
+        {
+            var inspect = await dockerClient.Containers.InspectContainerAsync(containerId);
+            InspectJson = System.Text.Json.JsonSerializer.Serialize(
+                inspect,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            );
+        }
+        catch (Exception ex)
+        {
+            InspectJson = $"Error inspecting container: {ex.Message}";
+        }
+        finally
+        {
+            NotifyStateChanged();
+        }
+    }
+
+    public void CloseLogsDialog()
+    {
+        ShowLogsDialog = false;
+        ContainerLogs.Clear();
+        NotifyStateChanged();
+    }
+
+    public void CloseInspectDialog()
+    {
+        ShowInspectDialog = false;
+        InspectJson = null;
+        NotifyStateChanged();
+    }
+
+    private void NotifyStateChanged()
+    {
+        OnStateChanged?.Invoke();
     }
 }
 
