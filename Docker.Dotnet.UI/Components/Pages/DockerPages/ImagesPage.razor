@@ -10,50 +10,50 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-        <MudText Typo="Typo.h4">Docker Images</MudText>
+        <MudText Typo="Typo.h4">@Localizer["DOCKER_IMAGES"]</MudText>
         <MudButton Variant="Variant.Filled" 
                    Color="Color.Primary" 
                    StartIcon="@Icons.Material.Filled.Add"
                    OnClick="Vm!.OpenAddImageDialog">
-            添加镜像
+            @Localizer["ADD_IMAGE"]
         </MudButton>
     </MudStack>
     
     @if (Vm?.Images == null || Vm.Images.Count == 0)
     {
-        <MudAlert Severity="Severity.Info">暂无镜像</MudAlert>
+        <MudAlert Severity="Severity.Info">@Localizer["NO_IMAGES"]</MudAlert>
     }
     else
     {
         <MudPaper Class="pa-3 mb-3" Elevation="0" >
             <MudGrid Spacing="2">
                 <MudItem xs="3" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">镜像名称</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["IMAGE_NAME"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>  
                 <MudItem xs="2" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">镜像 ID</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["IMAGE_ID"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">大小</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["SIZE"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">创建时间</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CREATED_AT"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="1" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">容器数</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CONTAINERS_COUNT"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center justify-end pr-8">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">操作</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["ACTIONS"]</MudText>
                 </MudItem>
             </MudGrid>
         </MudPaper>
@@ -93,13 +93,13 @@
                                                Color="Color.Error"
                                                Size="Size.Small"
                                                OnClick="@(() => Vm.DeleteImageAsync(image.ID))"
-                                               title="删除" />
+                                               title='@Localizer["REMOVE"]' />
                                 
                                 <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                Color="Color.Primary"
                                                Size="Size.Small"
                                                OnClick="@(() => Vm.GoToImageDetailsAsync(image.ID))"
-                                               title="详情" />
+                                               title='@Localizer["INFO"]' />
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -110,25 +110,25 @@
 </MudContainer>
 
 <MudDialog @bind-Visible="Vm!.ShowAddImageDialog" Options="Vm!.DialogOptions">
-    <TitleContent>
+            <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> 添加镜像
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> @Localizer["ADD_IMAGE"]
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudTabs ApplyEffectsToContainer="true" PanelClass="pa-4" Style="min-height: 500px;">
-            <MudTabPanel Text="从注册表拉取" Icon="@Icons.Material.Filled.CloudDownload">
+            <MudTabPanel Text="@Localizer["PULL_FROM_REGISTRY"]" Icon="@Icons.Material.Filled.CloudDownload">
                 <MudStack Spacing="3">
                     <MudTextField @bind-Value="Vm!.PullImageName"
-                                  Label="镜像名称"
-                                  Placeholder="例如: nginx, mysql, ubuntu"
+                                  Label="@Localizer["PULL_IMAGE_NAME_LABEL"]"
+                                  Placeholder="@Localizer["PULL_IMAGE_NAME_PLACEHOLDER"]"
                                   Variant="Variant.Outlined"
                                   Required="true"
                                   Disabled="Vm.IsPulling" />
                     
                     <MudTextField @bind-Value="Vm.PullImageTag"
-                                  Label="标签"
-                                  Placeholder="例如: latest, 8.0"
+                                  Label="@Localizer["TAG"]"
+                                  Placeholder="@Localizer["TAG_PLACEHOLDER"]"
                                   Variant="Variant.Outlined"
                                   Required="true"
                                   Disabled="Vm.IsPulling" />
@@ -136,7 +136,7 @@
                     <MudPaper Class="pa-3" Elevation="0" Style="min-height: 200px;">
                         @if (Vm.IsPulling)
                         {
-                            <MudText Typo="Typo.subtitle2" Class="mb-2">拉取进度：</MudText>
+                            <MudText Typo="Typo.subtitle2" Class="mb-2">@Localizer["PULL_PROGRESS"]</MudText>
                             <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
                             <MudPaper Class="pa-2" Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
                                 @foreach (var log in Vm.PullLogs)
@@ -151,19 +151,19 @@
                         <MudButton Variant="Variant.Text" 
                                    OnClick="Vm.CloseDialog"
                                    Disabled="Vm.IsPulling">
-                            取消
+                            @Localizer["CANCEL"]
                         </MudButton>
                         <MudButton Variant="Variant.Filled" 
                                    Color="Color.Primary"
                                    OnClick="Vm.HandlePullImageAsync"
                                    Disabled="Vm.IsPulling || string.IsNullOrWhiteSpace(Vm.PullImageName)">
-                            @(Vm.IsPulling ? "拉取中..." : "拉取镜像")
+                            @(Vm.IsPulling ? Localizer["PULLING"].Value : Localizer["PULL_IMAGE"].Value)
                         </MudButton>
                     </MudStack>
                 </MudStack>
             </MudTabPanel>
             
-            <MudTabPanel Text="从 Tarball 导入" Icon="@Icons.Material.Filled.Upload">
+            <MudTabPanel Text="@Localizer["IMPORT_FROM_TARBALL"]" Icon="@Icons.Material.Filled.Upload">
                 <MudStack Spacing="3">
                     <MudFileUpload T="IBrowserFile" 
                                    Accept=".tar,.tar.gz,.tgz"
@@ -175,7 +175,7 @@
                                        Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.CloudUpload"
                                        Disabled="Vm.IsLoading">
-                                选择 Tarball 文件
+                                @Localizer["SELECT_TARBALL"]
                             </MudButton>
                         </ActivatorContent>
                     </MudFileUpload>
@@ -193,7 +193,7 @@
                     <MudPaper Class="pa-3" Elevation="0" Style="min-height: 200px;">
                         @if (Vm.IsLoading)
                         {
-                            <MudText Typo="Typo.subtitle2" Class="mb-2">导入进度：</MudText>
+                                <MudText Typo="Typo.subtitle2" Class="mb-2">@Localizer["IMPORT_PROGRESS"]</MudText>
                             <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
                             <MudPaper Class="pa-2" Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
                                 @foreach (var log in Vm.LoadLogs)
@@ -208,13 +208,13 @@
                         <MudButton Variant="Variant.Text" 
                                    OnClick="Vm.CloseDialog"
                                    Disabled="Vm.IsLoading">
-                            取消
+                            @Localizer["CANCEL"]
                         </MudButton>
                         <MudButton Variant="Variant.Filled" 
                                    Color="Color.Primary"
                                    OnClick="Vm.HandleLoadFromTarballAsync"
                                    Disabled="Vm.IsLoading || Vm.SelectedTarball == null">
-                            @(Vm.IsLoading ? "导入中..." : "导入镜像")
+                            @(Vm.IsLoading ? Localizer["IMPORTING"].Value : Localizer["IMPORT_IMAGE"].Value)
                         </MudButton>
                     </MudStack>
                 </MudStack>

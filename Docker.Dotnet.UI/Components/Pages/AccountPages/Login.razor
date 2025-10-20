@@ -1,52 +1,52 @@
-@page "/Account/LoginMud"
-@using Microsoft.AspNetCore.Identity
-@using Docker.Dotnet.UI.Database.Models
-@using System.ComponentModel.DataAnnotations
+@page "/Account/Login"
+@using Docker.Dotnet.UI.ViewModels
 
+@inject LoginViewModel ViewModel
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject Microsoft.Extensions.Localization.IStringLocalizer Localizer
 
-<PageTitle>登录</PageTitle>
+<PageTitle>@Localizer["LOGIN_PAGE_TITLE"]</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center justify-center" Style="min-height: 100vh;">
-    <MudPaper Elevation="3" Class="pa-8" Style="width: 100%; max-width: 400px;">
+    <MudPaper Elevation="3" Class="pa-8 rounded-4" Style="width: 100%; max-width: 400px;">
         <MudStack Spacing="4">
             <MudText Typo="Typo.h4" Align="Align.Center">Docker.Dotnet.UI</MudText>
-            <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Secondary">用户登录</MudText>
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Secondary">@Localizer["LOGIN"]</MudText>
 
-            @if (!string.IsNullOrEmpty(errorMessage))
+            @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
             {
-                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => errorMessage = null)">
-                    @errorMessage
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => ViewModel.ErrorMessage = null)">
+                    @ViewModel.ErrorMessage
                 </MudAlert>
             }
 
-            <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <EditForm Model="@ViewModel" OnValidSubmit="HandleLogin">
                 <DataAnnotationsValidator />
                 
                 <MudStack Spacing="3">
                     <MudTextField 
-                        @bind-Value="loginModel.Username"
-                        Label="用户名" 
+                        @bind-Value="ViewModel.Username"
+                        Label="@Localizer["USERNAME"]" 
                         Variant="Variant.Outlined"
-                        For="@(() => loginModel.Username)"
-                        Disabled="isLoading"
+                        For="@(() => ViewModel.Username)"
+                        Disabled="ViewModel.IsLoading"
                         T="string" />
 
                     <MudTextField 
-                        @bind-Value="loginModel.Password"
-                        Label="密码" 
+                        @bind-Value="ViewModel.Password"
+                        Label="@Localizer["PASSWORD"]" 
                         Variant="Variant.Outlined"
                         InputType="InputType.Password"
-                        For="@(() => loginModel.Password)"
-                        Disabled="isLoading"
+                        For="@(() => ViewModel.Password)"
+                        Disabled="ViewModel.IsLoading"
                         T="string" />
 
                     <MudCheckBox 
-                        @bind-Value="loginModel.RememberMe"
-                        Label="记住我"
+                        @bind-Value="ViewModel.RememberMe"
+                        Label="@Localizer["REMEMBER_ME"]"
                         Color="Color.Primary"
-                        Disabled="isLoading"
+                        Disabled="ViewModel.IsLoading"
                         T="bool" />
 
                     <MudButton 
@@ -55,15 +55,15 @@
                         Color="Color.Primary"
                         FullWidth="true"
                         Size="Size.Large"
-                        Disabled="isLoading">
-                        @if (isLoading)
+                        Disabled="ViewModel.IsLoading">
+                        @if (ViewModel.IsLoading)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" />
-                            <MudText Class="ms-2">登录中...</MudText>
+                            <MudText Class="ms-2">@Localizer["LOGIN_IN_PROGRESS"]</MudText>
                         }
                         else
                         {
-                            <MudText>登录</MudText>
+                                <MudText>@Localizer["LOGIN"]</MudText>
                         }
                     </MudButton>
                 </MudStack>
@@ -73,34 +73,34 @@
 </MudContainer>
 
 @code {
-    private LoginModel loginModel = new();
-    private bool isLoading = false;
-    private string? errorMessage;
-
-    [SupplyParameterFromQuery]
+    [SupplyParameterFromQuery(Name = "returnUrl")]
     public string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? ErrorFromQuery { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // 如果 URL 中有错误参数，显示错误消息
+        if (!string.IsNullOrEmpty(ErrorFromQuery))
+        {
+            ViewModel.SetError(ErrorFromQuery);
+        }
+    }
 
     // 通过 JavaScript 提交表单到 /api/login 端点
     private async Task HandleLogin()
     {
+        // 设置加载状态
+        ViewModel.SetLoading(true);
+        
         // 表单验证通过后，使用 JavaScript 提交表单
         // 这会触发完整的 HTTP POST，避免 Blazor Server 的 Cookie 限制
         await JSRuntime.InvokeVoidAsync("submitLoginForm", 
-            loginModel.Username, 
-            loginModel.Password, 
-            loginModel.RememberMe,
+            ViewModel.Username, 
+            ViewModel.Password, 
+            ViewModel.RememberMe,
             string.IsNullOrEmpty(ReturnUrl) ? "/" : ReturnUrl);
-    }
-
-    public class LoginModel
-    {
-        [Required(ErrorMessage = "用户名不能为空")]
-        public string Username { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "密码不能为空")]
-        public string Password { get; set; } = string.Empty;
-
-        public bool RememberMe { get; set; }
     }
 }
 
@@ -109,7 +109,7 @@
         // 创建隐藏表单
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/api/login';
+        form.action = '/api/Account/Login';
         
         // 添加表单字段
         const fields = {

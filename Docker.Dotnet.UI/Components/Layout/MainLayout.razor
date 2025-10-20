@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@inject Microsoft.Extensions.Localization.IStringLocalizer Localizer
 
 @* Required *@
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
@@ -20,7 +21,7 @@
                 <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" 
                                Color="Color.Inherit" 
                                OnClick="@ToggleTheme" 
-                               title="@(_isDarkMode ? "切换到浅色模式" : "切换到深色模式")" />
+                               title='@(_isDarkMode ? Localizer["SWITCH_TO_LIGHT_MODE"].Value : Localizer["SWITCH_TO_DARK_MODE"].Value)' />
                 <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
                     <MudMenuItem>
                         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
@@ -32,7 +33,7 @@
                     <MudMenuItem Href="/Account/Logout">
                         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
                             <MudIcon Icon="@Icons.Material.Filled.Logout" Size="Size.Small" />
-                            <MudText>退出登录</MudText>
+                            <MudText>@Localizer["LOGOUT"]</MudText>
                         </MudStack>
                     </MudMenuItem>
                 </MudMenu>

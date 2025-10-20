@@ -7,48 +7,48 @@
 @inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.ContainersPageViewModel>
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
-    <MudText Typo="Typo.h4" Class="mb-4">Docker Containers</MudText>
+    <MudText Typo="Typo.h4" Class="mb-4">@Localizer["DOCKER_CONTAINERS"]</MudText>
     
     @if (Vm?.Containers == null || Vm.Containers.Count == 0)
     {
-        <MudAlert Severity="Severity.Info">暂无容器</MudAlert>
+           <MudAlert Severity="Severity.Info">@Localizer["NO_CONTAINERS"]</MudAlert>
     }
     else
     {
         <MudPaper Class="pa-3 mb-3" Elevation="0" >
             <MudGrid Spacing="2">
                 <MudItem xs="1" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">状态</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["STATUS"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>  
                 <MudItem xs="2" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">容器名称</MudText>
+                        <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CONTAINER_NAME"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">镜像</MudText>
+                        <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["IMAGE"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="1" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">容器 ID</MudText>
+                        <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CONTAINER_ID"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">端口映射</MudText>
+                        <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["PORT_MAPPINGS"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="1" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">创建时间</MudText>
+                        <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CREATED_AT"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
                 <MudItem xs="3" Class="d-flex align-center justify-end pr-8">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">操作</MudText>
+                        <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["ACTIONS"]</MudText>
                 </MudItem>
             </MudGrid>
         </MudPaper>
@@ -117,32 +117,32 @@
                             <MudStack Row="true" Spacing="1">
                                 @if (container.State == "running")
                                 {
-                                    <MudIconButton Icon="@Icons.Material.Filled.Stop" 
-                                                   Color="Color.Warning"
-                                                   Size="Size.Small"
-                                                   OnClick="@(() => HandleStopContainer(container.ID))"
-                                                   title="停止" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Stop" 
+                                                       Color="Color.Warning"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => HandleStopContainer(container.ID))"
+                                                       title='@Localizer["STOP"]' />
                                 }
                                 else
                                 {
-                                    <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" 
-                                                   Color="Color.Success"
-                                                   Size="Size.Small"
-                                                   OnClick="@(() => HandleStartContainer(container.ID))"
-                                                   title="启动" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" 
+                                                       Color="Color.Success"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => HandleStartContainer(container.ID))"
+                                                       title='@Localizer["START"]' />
                                 }
                                 
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                                               Color="Color.Error"
-                                               Size="Size.Small"
-                                               OnClick="@(() => HandleDeleteContainer(container.ID))"
-                                               title="删除" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                                   Color="Color.Error"
+                                                   Size="Size.Small"
+                                                   OnClick="@(() => HandleDeleteContainer(container.ID))"
+                                                   title='@Localizer["REMOVE"]' />
                                 
-                                <MudIconButton Icon="@Icons.Material.Filled.MoreHoriz" 
-                                               Color="Color.Primary"
-                                               Size="Size.Small"
-                                               OnClick="@(() => HandleMoreOptions(container.ID))"
-                                               title="更多" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.MoreHoriz" 
+                                                   Color="Color.Primary"
+                                                   Size="Size.Small"
+                                                   OnClick="@(() => HandleMoreOptions(container.ID))"
+                                                   title='@Localizer["MORE"]' />
                             </MudStack>
                         </MudItem>
                     </MudGrid>

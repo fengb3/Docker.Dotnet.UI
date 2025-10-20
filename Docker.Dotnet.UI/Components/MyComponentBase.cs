@@ -1,5 +1,6 @@
 ﻿using Docker.Dotnet.UI.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 
 namespace Docker.Dotnet.UI.Components;
 
@@ -8,6 +9,9 @@ public class MyComponentBase<T> : ComponentBase
 {
     [Inject]
     protected T? Vm { get; set; }
+
+    [Inject]
+    protected IStringLocalizer Localizer { get; set; } = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
