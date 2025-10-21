@@ -14,6 +14,10 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
     }
 
     public IList<ContainerListItemViewModel>? Containers { get; set; }
+    
+    // Error state
+    public string? ErrorMessage { get; set; }
+    public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
 
     // Dialog states
     public bool ShowLogsDialog { get; set; }
@@ -36,64 +40,162 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
 
     public async Task RefreshContainersAsync()
     {
-        var containers = await dockerClient.Containers.ListContainersAsync(
-            new ContainersListParameters() { All = true }
-        );
+        try
+        {
+            ErrorMessage = null;
+            
+            var containers = await dockerClient.Containers.ListContainersAsync(
+                new ContainersListParameters() { All = true }
+            );
 
-        Containers = containers.ToViewModel();
-        NotifyStateChanged();
+            Containers = containers.ToViewModel();
+        }
+        catch (TimeoutException)
+        {
+            ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running and accessible.";
+            Containers = null;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to connect to Docker: {ex.Message}";
+            Containers = null;
+        }
+        finally
+        {
+            NotifyStateChanged();
+        }
     }
 
     public async Task StartContainerAsync(string containerId)
     {
-        await dockerClient.Containers.StartContainerAsync(
-            containerId,
-            new ContainerStartParameters()
-        );
-
-        await RefreshContainersAsync();
+        try
+        {
+            ErrorMessage = null;
+            await dockerClient.Containers.StartContainerAsync(
+                containerId,
+                new ContainerStartParameters()
+            );
+            await RefreshContainersAsync();
+        }
+        catch (TimeoutException)
+        {
+            ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running.";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to start container: {ex.Message}";
+            NotifyStateChanged();
+        }
     }
 
     public async Task StopContainerAsync(string containerId)
     {
-        await dockerClient.Containers.StopContainerAsync(
-            containerId,
-            new ContainerStopParameters()
-        );
-
-        await RefreshContainersAsync();
+        try
+        {
+            ErrorMessage = null;
+            await dockerClient.Containers.StopContainerAsync(
+                containerId,
+                new ContainerStopParameters()
+            );
+            await RefreshContainersAsync();
+        }
+        catch (TimeoutException)
+        {
+            ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running.";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to stop container: {ex.Message}";
+            NotifyStateChanged();
+        }
     }
 
     public async Task RestartContainerAsync(string containerId)
     {
-        await dockerClient.Containers.RestartContainerAsync(
-            containerId,
-            new ContainerRestartParameters()
-        );
-
-        await RefreshContainersAsync();
+        try
+        {
+            ErrorMessage = null;
+            await dockerClient.Containers.RestartContainerAsync(
+                containerId,
+                new ContainerRestartParameters()
+            );
+            await RefreshContainersAsync();
+        }
+        catch (TimeoutException)
+        {
+            ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running.";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to restart container: {ex.Message}";
+            NotifyStateChanged();
+        }
     }
 
     public async Task PauseContainerAsync(string containerId)
     {
-        await dockerClient.Containers.PauseContainerAsync(containerId);
-        await RefreshContainersAsync();
+        try
+        {
+            ErrorMessage = null;
+            await dockerClient.Containers.PauseContainerAsync(containerId);
+            await RefreshContainersAsync();
+        }
+        catch (TimeoutException)
+        {
+            ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running.";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to pause container: {ex.Message}";
+            NotifyStateChanged();
+        }
     }
 
     public async Task UnpauseContainerAsync(string containerId)
     {
-        await dockerClient.Containers.UnpauseContainerAsync(containerId);
-        await RefreshContainersAsync();
+        try
+        {
+            ErrorMessage = null;
+            await dockerClient.Containers.UnpauseContainerAsync(containerId);
+            await RefreshContainersAsync();
+        }
+        catch (TimeoutException)
+        {
+            ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running.";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to unpause container: {ex.Message}";
+            NotifyStateChanged();
+        }
     }
 
     public async Task DeleteContainerAsync(string containerId)
     {
-        await dockerClient.Containers.RemoveContainerAsync(
-            containerId,
-            new ContainerRemoveParameters() { Force = true }
-        );
-
-        await RefreshContainersAsync();
+        try
+        {
+            ErrorMessage = null;
+            await dockerClient.Containers.RemoveContainerAsync(
+                containerId,
+                new ContainerRemoveParameters() { Force = true }
+            );
+            await RefreshContainersAsync();
+        }
+        catch (TimeoutException)
+        {
+            ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running.";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to delete container: {ex.Message}";
+            NotifyStateChanged();
+        }
     }
 
     public async Task ShowLogsAsync(string containerId, string containerName)

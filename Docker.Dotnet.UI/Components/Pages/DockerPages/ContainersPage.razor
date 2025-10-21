@@ -18,6 +18,13 @@
         </MudButton>
     </MudStack>
     
+    @if (Vm?.HasError == true)
+    {
+        <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="@(() => Vm.ErrorMessage = null)">
+            @Vm.ErrorMessage
+        </MudAlert>
+    }
+    
     @if (Vm?.Containers == null || Vm.Containers.Count == 0)
     {
            <MudAlert Severity="Severity.Info">@Localizer["NO_CONTAINERS"]</MudAlert>

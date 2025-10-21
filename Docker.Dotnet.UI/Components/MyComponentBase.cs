@@ -5,12 +5,12 @@ using Microsoft.Extensions.Localization;
 
 namespace Docker.Dotnet.UI.Components;
 
-public class MyComponentBase<T> : ComponentBase, IDisposable
-    where T : notnull, IViewModel
+/// <summary>
+/// Base component class for components that don't require a ViewModel.
+/// Provides localization support and language change handling.
+/// </summary>
+public class MyComponentBase : ComponentBase, IDisposable
 {
-    [Inject]
-    protected T? Vm { get; set; }
-
     [Inject]
     protected IStringLocalizer Localizer { get; set; } = null!;
 
@@ -29,6 +29,57 @@ public class MyComponentBase<T> : ComponentBase, IDisposable
             myLocalizer.LanguageChanged += OnLanguageChanged;
         }
 
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Called when the language is changed. Override to add custom behavior.
+    /// </summary>
+    protected virtual void OnLanguageChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_isDisposed) return;
+
+        if (disposing)
+        {
+            // Unsubscribe from language change events
+            if (Localizer is MyLocalizer myLocalizer)
+            {
+                myLocalizer.LanguageChanged -= OnLanguageChanged;
+            }
+        }
+
+        _isDisposed = true;
+    }
+}
+
+/// <summary>
+/// Base component class with ViewModel support.
+/// Provides ViewModel lifecycle management, localization, and state change handling.
+/// </summary>
+public class MyComponentBase<T> : MyComponentBase
+    where T : notnull, IViewModel
+{
+    [Inject]
+    protected T? Vm { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender)
+            return;
+
         if (Vm == null)
         {
             throw new NullReferenceException($"ViewModel is null when loading {typeof(T).Name}");
@@ -42,14 +93,6 @@ public class MyComponentBase<T> : ComponentBase, IDisposable
     }
 
     /// <summary>
-    /// Called when the language is changed. Override to add custom behavior.
-    /// </summary>
-    protected virtual void OnLanguageChanged()
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
-    /// <summary>
     /// Called when the ViewModel state changes. Override to add custom behavior.
     /// </summary>
     protected virtual void OnViewModelStateChanged()
@@ -57,23 +100,17 @@ public class MyComponentBase<T> : ComponentBase, IDisposable
         InvokeAsync(StateHasChanged);
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        if (_isDisposed) return;
-
-        // Unsubscribe from language change events
-        if (Localizer is MyLocalizer myLocalizer)
+        if (disposing)
         {
-            myLocalizer.LanguageChanged -= OnLanguageChanged;
+            // Unsubscribe from ViewModel state change events
+            if (Vm != null)
+            {
+                Vm.OnStateChanged -= OnViewModelStateChanged;
+            }
         }
 
-        // Unsubscribe from ViewModel state change events
-        if (Vm != null)
-        {
-            Vm.OnStateChanged -= OnViewModelStateChanged;
-        }
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
+        base.Dispose(disposing);
     }
 }
