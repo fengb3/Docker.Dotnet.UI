@@ -122,3 +122,30 @@
 " ",LANG_JA,日本語,日本語,日本語,日本語,日本語,日本語,language name
 " ",LANG_KO_KR,한국어,한국어,한국어,한국어,한국어,한국어,language name
 " ",LANG_ES,Español,Español,Español,Español,Español,Español,language name
+
+# User profile page strings,,,,,,,,
+" ",USER_PROFILE,User Profile,用户配置,User Profile,ユーザープロファイル,사용자 프로필,Perfil de usuario,page title
+" ",PROFILE,Profile,配置,Profile,プロファイル,프로필,Perfil,nav menu item
+" ",CHANGE_PASSWORD,Change Password,修改密码,Change Password,パスワードを変更,비밀번호 변경,Cambiar contraseña,section title
+" ",CURRENT_PASSWORD,Current Password,当前密码,Current Password,現在のパスワード,현재 비밀번호,Contraseña actual,label
+" ",NEW_PASSWORD,New Password,新密码,New Password,新しいパスワード,새 비밀번호,Nueva contraseña,label
+" ",CONFIRM_PASSWORD,Confirm Password,确认密码,Confirm Password,パスワードを確認,비밀번호 확인,Confirmar contraseña,label
+" ",UPDATE_PASSWORD,Update Password,更新密码,Update Password,パスワードを更新,비밀번호 업데이트,Actualizar contraseña,button text
+" ",PASSWORD_UPDATED,Password updated successfully,密码更新成功,Password updated successfully,パスワードが正常に更新されました,비밀번호가 성공적으로 업데이트되었습니다,Contraseña actualizada correctamente,success message
+" ",PASSWORD_UPDATE_FAILED,Failed to update password,密码更新失败,Failed to update password,パスワードの更新に失敗しました,비밀번호 업데이트 실패,Error al actualizar la contraseña,error message
+" ",CURRENT_PASSWORD_INCORRECT,Current password is incorrect,当前密码不正确,Current password is incorrect,現在のパスワードが正しくありません,현재 비밀번호가 올바르지 않습니다,La contraseña actual es incorrecta,error message
+" ",PASSWORDS_DO_NOT_MATCH,Passwords do not match,密码不匹配,Passwords do not match,パスワードが一致しません,비밀번호가 일치하지 않습니다,Las contraseñas no coinciden,error message
+" ",EMAIL,Email,邮箱,Email,メール,이메일,Correo electrónico,label
+" ",ACCOUNT_INFORMATION,Account Information,账户信息,Account Information,アカウント情報,계정 정보,Información de la cuenta,section title
+
+# User management page strings (admin only),,,,,,,,
+" ",USER_MANAGEMENT,User Management,用户管理,User Management,ユーザー管理,사용자 관리,Gestión de usuarios,page title
+" ",CREATE_USER,Create User,创建用户,Create User,ユーザーを作成,사용자 생성,Crear usuario,button text
+" ",USER_CREATED,User created successfully,用户创建成功,User created successfully,ユーザーが正常に作成されました,사용자가 성공적으로 생성되었습니다,Usuario creado correctamente,success message
+" ",USER_DELETED,User deleted successfully,用户删除成功,User deleted successfully,ユーザーが正常に削除されました,사용자가 성공적으로 삭제되었습니다,Usuario eliminado correctamente,success message
+" ",CONFIRM_DELETE_USER,Are you sure you want to delete this user?,确定要删除此用户吗？,Are you sure you want to delete this user?,このユーザーを削除してもよろしいですか？,이 사용자를 삭제하시겠습니까?,¿Está seguro de que desea eliminar este usuario?,confirmation message
+" ",NO_USERS,No users found,未找到用户,No users found,ユーザーが見つかりません,사용자를 찾을 수 없습니다,No se encontraron usuarios,empty state message
+" ",USERS,Users,用户,Users,ユーザー,사용자,Usuarios,label
+" ",USER_COUNT,User Count,用户数,User Count,ユーザー数,사용자 수,Número de usuarios,label
+" ",CREATE_USER_DIALOG,Create New User,创建新用户,Create New User,新しいユーザーを作成,새 사용자 생성,Crear nuevo usuario,dialog title
+" ",ADMIN_ONLY,Admin Only,仅管理员,Admin Only,管理者のみ,관리자 전용,Solo administrador,label
