@@ -11,12 +11,20 @@
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
         <MudText Typo="Typo.h4">@Localizer["DOCKER_IMAGES"]</MudText>
-        <MudButton Variant="Variant.Filled" 
-                   Color="Color.Primary" 
-                   StartIcon="@Icons.Material.Filled.Add"
-                   OnClick="Vm!.OpenAddImageDialog">
-            @Localizer["ADD_IMAGE"]
-        </MudButton>
+        <MudStack Row="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="Vm!.OpenAddImageDialog">
+                @Localizer["ADD_IMAGE"]
+            </MudButton>
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Secondary" 
+                       StartIcon="@Icons.Material.Filled.Refresh"
+                       OnClick="@(() => Vm!.RefreshImagesAsync())">
+                @Localizer["REFRESH"]
+            </MudButton>
+        </MudStack>
     </MudStack>
     
     @if (Vm?.Images == null || Vm.Images.Count == 0)
@@ -89,17 +97,24 @@
                         
                         <MudItem xs="2" Class="d-flex align-center justify-end">
                             <MudStack Row="true" Spacing="1">
+                                <MudIconButton Icon="@Icons.Material.Filled.Info" 
+                                               Color="Color.Primary"
+                                               Size="Size.Small"
+                                               OnClick="@(() => Vm.ShowInspectAsync(image.ID, image.ImageName))"
+                                               title='@Localizer["INSPECT"]' />
+                                
+                                <MudIconButton Icon="@Icons.Material.Filled.Download" 
+                                               Color="Color.Info"
+                                               Size="Size.Small"
+                                               OnClick="@(() => Vm.ExportImageAsync(image.ID, image.ImageName))"
+                                               Disabled="Vm.IsExporting"
+                                               title='@Localizer["EXPORT_IMAGE"]' />
+                                
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                                Color="Color.Error"
                                                Size="Size.Small"
                                                OnClick="@(() => Vm.DeleteImageAsync(image.ID))"
                                                title='@Localizer["REMOVE"]' />
-                                
-                                <MudIconButton Icon="@Icons.Material.Filled.Info" 
-                                               Color="Color.Primary"
-                                               Size="Size.Small"
-                                               OnClick="@(() => Vm.GoToImageDetailsAsync(image.ID))"
-                                               title='@Localizer["INFO"]' />
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -221,6 +236,27 @@
             </MudTabPanel>
         </MudTabs>
     </DialogContent>
+</MudDialog>
+
+<MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.LargeDialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-1" /> @Localizer["IMAGE_DETAILS"] - @Vm.SelectedImageName
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (string.IsNullOrEmpty(Vm.InspectJson))
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+        }
+        else
+        {
+            <MudPaper Class="pa-2" Style="height: 500px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px; white-space: pre;">@Vm.InspectJson</MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
+    </DialogActions>
 </MudDialog>
 
 @code {

@@ -25,4 +25,10 @@ public static partial class ViewModelMapper
     );
 
     public static partial VolumeListItemViewModel ToViewModel(this VolumeResponse response);
+
+    public static partial IList<NetworkListItemViewModel> ToViewModel(
+        this IList<NetworkResponse> responses
+    );
+
+    public static partial NetworkListItemViewModel ToViewModel(this NetworkResponse response);
 }

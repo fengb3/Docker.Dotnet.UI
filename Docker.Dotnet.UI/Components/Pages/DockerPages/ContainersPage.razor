@@ -3,11 +3,20 @@
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@implements IDisposable
 
 @inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.ContainersPageViewModel>
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
-    <MudText Typo="Typo.h4" Class="mb-4">@Localizer["DOCKER_CONTAINERS"]</MudText>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudText Typo="Typo.h4">@Localizer["DOCKER_CONTAINERS"]</MudText>
+        <MudButton Variant="Variant.Filled" 
+                   Color="Color.Primary" 
+                   StartIcon="@Icons.Material.Filled.Refresh"
+                   OnClick="@(() => Vm!.RefreshContainersAsync())">
+            @Localizer["REFRESH"]
+        </MudButton>
+    </MudStack>
     
     @if (Vm?.Containers == null || Vm.Containers.Count == 0)
     {
@@ -122,6 +131,24 @@
                                                        Size="Size.Small"
                                                        OnClick="@(() => HandleStopContainer(container.ID))"
                                                        title='@Localizer["STOP"]' />
+                                        <MudIconButton Icon="@Icons.Material.Filled.RestartAlt" 
+                                                       Color="Color.Info"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => HandleRestartContainer(container.ID))"
+                                                       title='@Localizer["RESTART"]' />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Pause" 
+                                                       Color="Color.Secondary"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => HandlePauseContainer(container.ID))"
+                                                       title='@Localizer["PAUSE"]' />
+                                }
+                                else if (container.State == "paused")
+                                {
+                                        <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" 
+                                                       Color="Color.Success"
+                                                       Size="Size.Small"
+                                                       OnClick="@(() => HandleUnpauseContainer(container.ID))"
+                                                       title='@Localizer["UNPAUSE"]' />
                                 }
                                 else
                                 {
@@ -132,17 +159,23 @@
                                                        title='@Localizer["START"]' />
                                 }
                                 
+                                    <MudIconButton Icon="@Icons.Material.Filled.Article" 
+                                                   Color="Color.Primary"
+                                                   Size="Size.Small"
+                                                   OnClick="@(() => HandleShowLogs(container.ID, container.ContainerName))"
+                                                   title='@Localizer["LOGS"]' />
+                                
+                                    <MudIconButton Icon="@Icons.Material.Filled.Info" 
+                                                   Color="Color.Primary"
+                                                   Size="Size.Small"
+                                                   OnClick="@(() => HandleShowInspect(container.ID, container.ContainerName))"
+                                                   title='@Localizer["INSPECT"]' />
+                                
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                                    Color="Color.Error"
                                                    Size="Size.Small"
                                                    OnClick="@(() => HandleDeleteContainer(container.ID))"
                                                    title='@Localizer["REMOVE"]' />
-                                
-                                    <MudIconButton Icon="@Icons.Material.Filled.MoreHoriz" 
-                                                   Color="Color.Primary"
-                                                   Size="Size.Small"
-                                                   OnClick="@(() => HandleMoreOptions(container.ID))"
-                                                   title='@Localizer["MORE"]' />
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -152,7 +185,64 @@
     }
 </MudContainer>
 
+<MudDialog @bind-Visible="Vm!.ShowLogsDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Article" Class="mr-1" /> @Localizer["CONTAINER_LOGS"] - @Vm.SelectedContainerName
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (Vm.IsLoadingLogs)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+            <MudText>@Localizer["LOADING_LOGS"]</MudText>
+        }
+        else if (Vm.ContainerLogs.Count == 0)
+        {
+            <MudAlert Severity="Severity.Info">@Localizer["NO_LOGS_AVAILABLE"]</MudAlert>
+        }
+        else
+        {
+            <MudPaper Class="pa-2" Style="height: 500px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
+                @foreach (var log in Vm.ContainerLogs)
+                {
+                    <div>@log</div>
+                }
+            </MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseLogsDialog">@Localizer["CANCEL"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-1" /> @Localizer["CONTAINER_DETAILS"] - @Vm.SelectedContainerName
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (string.IsNullOrEmpty(Vm.InspectJson))
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+        }
+        else
+        {
+            <MudPaper Class="pa-2" Style="height: 500px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px; white-space: pre;">@Vm.InspectJson</MudPaper>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
 @code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Vm!.OnStateChanged += StateHasChanged;
+    }
     
     private async Task HandleStartContainer(string containerId)
     {
@@ -163,14 +253,39 @@
     {
         await Vm!.StopContainerAsync(containerId);
     }
+
+    private async Task HandleRestartContainer(string containerId)
+    {
+        await Vm!.RestartContainerAsync(containerId);
+    }
+
+    private async Task HandlePauseContainer(string containerId)
+    {
+        await Vm!.PauseContainerAsync(containerId);
+    }
+
+    private async Task HandleUnpauseContainer(string containerId)
+    {
+        await Vm!.UnpauseContainerAsync(containerId);
+    }
     
     private async Task HandleDeleteContainer(string containerId)
     {
         await Vm!.DeleteContainerAsync(containerId);
     }
-    
-    private void HandleMoreOptions(string containerId)
+
+    private async Task HandleShowLogs(string containerId, string containerName)
     {
-        // 暂不实现
+        await Vm!.ShowLogsAsync(containerId, containerName);
+    }
+
+    private async Task HandleShowInspect(string containerId, string containerName)
+    {
+        await Vm!.ShowInspectAsync(containerId, containerName);
+    }
+
+    public void Dispose()
+    {
+        Vm!.OnStateChanged -= StateHasChanged;
     }
 }

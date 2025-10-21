@@ -1,120 +1,106 @@
-﻿@page "/volumes"
+@page "/networks"
 @using Docker.DotNet
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @implements IDisposable
 
-@inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.VolumesPageViewModel>
+@inherits MyComponentBase<Docker.Dotnet.UI.ViewModels.NetworksPageViewModel>
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
-        <MudText Typo="Typo.h4">@Localizer["DOCKER_VOLUMES"]</MudText>
+        <MudText Typo="Typo.h4">@Localizer["DOCKER_NETWORKS"]</MudText>
         <MudStack Row="true" Spacing="2">
             <MudButton Variant="Variant.Filled" 
                        Color="Color.Primary" 
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="Vm!.OpenCreateDialog">
-                @Localizer["CREATE_VOLUME"]
-            </MudButton>
-            <MudButton Variant="Variant.Filled" 
-                       Color="Color.Warning" 
-                       StartIcon="@Icons.Material.Filled.CleaningServices"
-                       OnClick="HandlePruneVolumes">
-                @Localizer["PRUNE_VOLUMES"]
+                @Localizer["CREATE_NETWORK"]
             </MudButton>
             <MudButton Variant="Variant.Filled" 
                        Color="Color.Secondary" 
                        StartIcon="@Icons.Material.Filled.Refresh"
-                       OnClick="@(() => Vm!.RefreshVolumesAsync())">
+                       OnClick="@(() => Vm!.RefreshNetworksAsync())">
                 @Localizer["REFRESH"]
             </MudButton>
         </MudStack>
     </MudStack>
     
-    @if (Vm?.Volumes == null || Vm.Volumes.Count == 0)
+    @if (Vm?.Networks == null || Vm.Networks.Count == 0)
     {
-        <MudAlert Severity="Severity.Info">@Localizer["NO_VOLUMES"]</MudAlert>
+        <MudAlert Severity="Severity.Info">@Localizer["NO_NETWORKS"]</MudAlert>
     }
     else
     {
         <MudPaper Class="pa-3 mb-3" Elevation="0" >
             <MudGrid Spacing="2">
                 <MudItem xs="3" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["VOLUME_NAME"]</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["NETWORK_NAME"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>  
+                <MudItem xs="2" Class="d-flex align-center">
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["NETWORK_ID"]</MudText>
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["DRIVER"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
-                <MudItem xs="3" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["MOUNTPOINT"]</MudText>
-                    <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
-                </MudItem>
                 <MudItem xs="1" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["SIZE"]</MudText>
+                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["SCOPE"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
                 </MudItem>
-                <MudItem xs="1" Class="d-flex align-center">
-                    <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CREATED_AT"]</MudText>
-                    <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
-                </MudItem>
-                <MudItem xs="2" Class="d-flex align-center justify-end pr-8">
+                <MudItem xs="3" Class="d-flex align-center justify-end pr-8">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["ACTIONS"]</MudText>
                 </MudItem>
             </MudGrid>
         </MudPaper>
         
         <MudStack Spacing="2">
-            @foreach (var volume in Vm.Volumes)
+            @foreach (var network in Vm.Networks)
             {
                 <MudCard Class="pa-3">
                     <MudGrid Spacing="2">
                         <MudItem xs="3" Class="d-flex align-center">
-                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="@volume.Name">
-                                @volume.Name
+                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                @network.Name
                             </MudText>
                         </MudItem>
                         
                         <MudItem xs="2" Class="d-flex align-center">
+                            <MudText Typo="Typo.body2">@network.ShortId</MudText>
+                        </MudItem>
+                        
+                        <MudItem xs="2" Class="d-flex align-center">
                             <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">
-                                @volume.Driver
+                                @network.Driver
                             </MudChip>
                         </MudItem>
                         
-                        <MudItem xs="3" Class="d-flex align-center">
-                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="@volume.Mountpoint">
-                                @volume.ShortMountpoint
-                            </MudText>
-                        </MudItem>
-                        
                         <MudItem xs="1" Class="d-flex align-center">
-                            <MudText Typo="Typo.body2">@volume.SizeFormatted</MudText>
+                            <MudText Typo="Typo.body2">@network.Scope</MudText>
                         </MudItem>
                         
-                        <MudItem xs="1" Class="d-flex align-center">
-                            <MudText Typo="Typo.body2">@volume.CreatedAtFormatted</MudText>
-                        </MudItem>
-                        
-                        <MudItem xs="2" Class="d-flex align-center justify-end">
+                        <MudItem xs="3" Class="d-flex align-center justify-end">
                             <MudStack Row="true" Spacing="1">
                                 <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                Color="Color.Primary"
                                                Size="Size.Small"
-                                               OnClick="@(() => HandleViewDetails(volume.Name))"
-                                               title='@Localizer["INFO"]' />
+                                               OnClick="@(() => HandleShowInspect(network.ID, network.Name))"
+                                               title='@Localizer["INSPECT"]' />
                                 
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                                               Color="Color.Error"
-                                               Size="Size.Small"
-                                               OnClick="@(() => HandleDeleteVolume(volume.Name))"
-                                               title='@Localizer["REMOVE"]' />
+                                @if (!IsSystemNetwork(network.Name))
+                                {
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                                   Color="Color.Error"
+                                                   Size="Size.Small"
+                                                   OnClick="@(() => HandleDeleteNetwork(network.ID))"
+                                                   title='@Localizer["REMOVE"]' />
+                                }
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -127,22 +113,26 @@
 <MudDialog @bind-Visible="Vm!.ShowCreateDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> @Localizer["CREATE_VOLUME"]
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> @Localizer["CREATE_NETWORK"]
         </MudText>
     </TitleContent>
     <DialogContent>
         <MudStack Spacing="3">
-            <MudTextField @bind-Value="Vm!.NewVolumeName"
-                          Label="@Localizer["VOLUME_NAME"]"
+            <MudTextField @bind-Value="Vm!.NewNetworkName"
+                          Label="@Localizer["NETWORK_NAME"]"
                           Variant="Variant.Outlined"
                           Required="true"
                           Disabled="Vm.IsCreating" />
             
-            <MudSelect @bind-Value="Vm.NewVolumeDriver"
+            <MudSelect @bind-Value="Vm.NewNetworkDriver"
                        Label="@Localizer["DRIVER"]"
                        Variant="Variant.Outlined"
                        Disabled="Vm.IsCreating">
-                <MudSelectItem Value="@("local")">local</MudSelectItem>
+                <MudSelectItem Value="@("bridge")">bridge</MudSelectItem>
+                <MudSelectItem Value="@("host")">host</MudSelectItem>
+                <MudSelectItem Value="@("overlay")">overlay</MudSelectItem>
+                <MudSelectItem Value="@("macvlan")">macvlan</MudSelectItem>
+                <MudSelectItem Value="@("none")">none</MudSelectItem>
             </MudSelect>
         </MudStack>
     </DialogContent>
@@ -152,9 +142,9 @@
         </MudButton>
         <MudButton Variant="Variant.Filled" 
                    Color="Color.Primary" 
-                   OnClick="Vm.CreateVolumeAsync"
-                   Disabled="Vm.IsCreating || string.IsNullOrWhiteSpace(Vm.NewVolumeName)">
-            @Localizer["CREATE_VOLUME"]
+                   OnClick="Vm.CreateNetworkAsync"
+                   Disabled="Vm.IsCreating || string.IsNullOrWhiteSpace(Vm.NewNetworkName)">
+            @Localizer["CREATE_NETWORK"]
         </MudButton>
     </DialogActions>
 </MudDialog>
@@ -162,7 +152,7 @@
 <MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-1" /> @Localizer["VOLUME_DETAILS"] - @Vm.SelectedVolumeName
+            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-1" /> @Localizer["NETWORK_DETAILS"] - @Vm.SelectedNetworkName
         </MudText>
     </TitleContent>
     <DialogContent>
@@ -186,20 +176,21 @@
         base.OnInitialized();
         Vm!.OnStateChanged += StateHasChanged;
     }
-    
-    private async Task HandleDeleteVolume(string volumeName)
+
+    private async Task HandleDeleteNetwork(string networkId)
     {
-        await Vm!.DeleteVolumeAsync(volumeName);
-    }
-    
-    private async Task HandleViewDetails(string volumeName)
-    {
-        await Vm!.ShowInspectAsync(volumeName);
+        await Vm!.DeleteNetworkAsync(networkId);
     }
 
-    private async Task HandlePruneVolumes()
+    private async Task HandleShowInspect(string networkId, string networkName)
     {
-        await Vm!.PruneVolumesAsync();
+        await Vm!.ShowInspectAsync(networkId, networkName);
+    }
+
+    private bool IsSystemNetwork(string networkName)
+    {
+        // Prevent deletion of system networks
+        return networkName == "bridge" || networkName == "host" || networkName == "none";
     }
 
     public void Dispose()

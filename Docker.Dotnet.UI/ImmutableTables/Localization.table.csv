@@ -8,10 +8,32 @@
 " ",STATUS,Status,状态,Statut,ステータス,상태,Estado,table header
 " ",CONTAINER_ID,Container ID,容器 ID,Container ID,コンテナ ID,컨테이너 ID,ID del contenedor,table header
 " ",IMAGE_NAME,Image Name,镜像名称,Image Name,イメージ名,이미지 이름,Nombre de la imagen,table header
+" ",IMAGE,Image,镜像,Image,イメージ,이미지,Imagen,table header
 " ",PORT_MAPPINGS,Port mappings,端口映射,Port mappings,ポートマッピング,포트 매핑,Mapeos de puertos,table header
 " ",CREATED_AT,Created At,创建时间,Created At,作成日時,생성일시,Creado el,table header
 " ",ACTIONS,Actions,操作,Actions,操作,동작,Acciones,table header
 " ",MORE,More,更多,Plus,もっと見る,더보기,Más,more options tooltip
+" ",START,Start,启动,Start,起動,시작,Iniciar,action button tooltip
+" ",STOP,Stop,停止,Stop,停止,정지,Detener,action button tooltip
+" ",RESTART,Restart,重启,Restart,再起動,재시작,Reiniciar,action button tooltip
+" ",PAUSE,Pause,暂停,Pause,一時停止,일시정지,Pausar,action button tooltip
+" ",UNPAUSE,Unpause,恢复,Unpause,再開,재개,Reanudar,action button tooltip
+" ",REMOVE,Remove,删除,Remove,削除,삭제,Eliminar,action button tooltip
+" ",INFO,Info,信息,Info,情報,정보,Información,action button tooltip
+" ",LOGS,Logs,日志,Logs,ログ,로그,Registros,action button tooltip
+" ",STATS,Stats,统计,Stats,統計,통계,Estadísticas,action button tooltip
+" ",INSPECT,Inspect,检查,Inspect,検査,검사,Inspeccionar,action button tooltip
+" ",CREATE_CONTAINER,Create Container,创建容器,Create Container,コンテナを作成,컨테이너 생성,Crear contenedor,button text
+" ",CONTAINER_LOGS,Container Logs,容器日志,Container Logs,コンテナログ,컨테이너 로그,Registros del contenedor,dialog title
+" ",CONTAINER_STATS,Container Stats,容器统计,Container Stats,コンテナ統計,컨테이너 통계,Estadísticas del contenedor,dialog title
+" ",CONTAINER_DETAILS,Container Details,容器详情,Container Details,コンテナ詳細,컨테이너 세부정보,Detalles del contenedor,dialog title
+" ",CPU_USAGE,CPU Usage,CPU 使用率,CPU Usage,CPU 使用率,CPU 사용률,Uso de CPU,label
+" ",MEMORY_USAGE,Memory Usage,内存使用,Memory Usage,メモリ使用量,메모리 사용량,Uso de memoria,label
+" ",NETWORK_IO,Network I/O,网络 I/O,Network I/O,ネットワーク I/O,네트워크 I/O,E/S de red,label
+" ",BLOCK_IO,Block I/O,磁盘 I/O,Block I/O,ブロック I/O,블록 I/O,E/S de bloques,label
+" ",LOADING_LOGS,Loading logs...,加载日志中...,Loading logs...,ログを読み込んでいます...,로그를 불러오는 중...,Cargando registros...,loading state
+" ",NO_LOGS_AVAILABLE,No logs available,暂无日志,No logs available,ログがありません,로그가 없습니다,No hay registros disponibles,empty state
+" ",REFRESH,Refresh,刷新,Refresh,更新,새로고침,Actualizar,button text
 
 # Images page strings,,,,,,,,
 " ",DOCKER_IMAGES,Docker Images,Docker 镜像,Docker Images,Docker イメージ,Docker 이미지,Imágenes Docker,page title: Docker Images
@@ -22,6 +44,7 @@
 " ",IMPORT_FROM_TARBALL,Import from Tarball,从 Tarball 导入,Import from Tarball,Tarball からインポート,Tarball에서 가져오기,Importar desde Tarball,tab label
 " ",PULL_IMAGE_NAME_LABEL,Image name,镜像名称,Image name,イメージ名,이미지 이름,Nombre de la imagen,label
 " ",PULL_IMAGE_NAME_PLACEHOLDER,"e.g.: nginx, mysql, ubuntu","例如: nginx, mysql, ubuntu","e.g.: nginx, mysql, ubuntu","例: nginx, mysql, ubuntu","예: nginx, mysql, ubuntu","ej.: nginx, mysql, ubuntu",placeholder example
+" ",TAG,Tag,标签,Tag,タグ,태그,Etiqueta,label
 " ",TAG_PLACEHOLDER,"e.g.: latest, 8.0","例如: latest, 8.0","e.g.: latest, 8.0","例: latest, 8.0","예: latest, 8.0","ej.: latest, 8.0",placeholder example
 " ",PULL_PROGRESS,Pull progress:,拉取进度：,Pull progress:,プル進捗:,풀 진행률:,Progreso de extracción:,progress label
 " ",PULL_IMAGE,Pull image,拉取镜像,Pull image,イメージをプル,이미지 가져오기,Extraer imagen,button text
@@ -31,6 +54,12 @@
 " ",IMPORT_PROGRESS,Import progress:,导入进度：,Import progress:,インポート進捗:,가져오기 진행률:,Progreso de importación:,progress label
 " ",IMPORT_IMAGE,Import image,导入镜像,Import image,イメージをインポート,이미지 가져오기,Importar imagen,button text
 " ",IMPORTING,Importing...,导入中...,Importing...,インポート中...,가져오는 중...,Importando...,in-progress text
+" ",EXPORT_IMAGE,Export image,导出镜像,Export image,イメージをエクスポート,이미지 내보내기,Exportar imagen,action tooltip
+" ",EXPORTING,Exporting...,导出中...,Exporting...,エクスポート中...,내보내는 중...,Exportando...,in-progress text
+" ",IMAGE_DETAILS,Image Details,镜像详情,Image Details,イメージ詳細,이미지 세부정보,Detalles de la imagen,dialog title
+" ",IMAGE_HISTORY,Image History,镜像历史,Image History,イメージ履歴,이미지 히스토리,Historial de la imagen,dialog title
+" ",SEARCH_IMAGES,Search Images,搜索镜像,Search Images,イメージを検索,이미지 검색,Buscar imágenes,button text
+" ",SEARCH,Search,搜索,Search,検索,검색,Buscar,button text
 
 # Volumes page strings,,,,,,,,
 " ",DOCKER_VOLUMES,Docker Volumes,Docker 卷,Docker Volumes,Docker ボリューム,Docker 볼륨,Volúmenes Docker,page title: Docker Volumes
@@ -40,6 +69,36 @@
 " ",MOUNTPOINT,Mountpoint,挂载点,Mountpoint,マウントポイント,마운트 지점,Punto de montaje,table header
 " ",SIZE,Size,大小,Size,サイズ,크기,Tamaño,table header
 " ",CONTAINERS_COUNT,Containers,容器数,Containers,コンテナ数,컨테이너 수,Contenedores,table header
+" ",CREATE_VOLUME,Create Volume,创建卷,Create Volume,ボリュームを作成,볼륨 생성,Crear volumen,button text
+" ",VOLUME_DETAILS,Volume Details,卷详情,Volume Details,ボリューム詳細,볼륨 세부정보,Detalles del volumen,dialog title
+" ",PRUNE_VOLUMES,Prune Volumes,清理卷,Prune Volumes,ボリュームを整理,볼륨 정리,Limpiar volúmenes,button text
+" ",PRUNE_VOLUMES_CONFIRM,Are you sure you want to remove all unused volumes?,确定要删除所有未使用的卷吗？,Are you sure you want to remove all unused volumes?,未使用のボリュームをすべて削除してもよろしいですか？,사용되지 않는 모든 볼륨을 제거하시겠습니까?,¿Está seguro de que desea eliminar todos los volúmenes no utilizados?,confirmation message
+
+# Networks page strings,,,,,,,,
+" ",DOCKER_NETWORKS,Docker Networks,Docker 网络,Docker Networks,Docker ネットワーク,Docker 네트워크,Redes Docker,page title: Docker Networks
+" ",NO_NETWORKS,No networks,暂无网络,No networks,ネットワークがありません,네트워크 없음,No hay redes,empty state message
+" ",NETWORK_NAME,Network Name,网络名称,Network Name,ネットワーク名,네트워크 이름,Nombre de red,table header
+" ",NETWORK_ID,Network ID,网络 ID,Network ID,ネットワーク ID,네트워크 ID,ID de red,table header
+" ",SCOPE,Scope,范围,Scope,スコープ,범위,Ámbito,table header
+" ",CREATE_NETWORK,Create Network,创建网络,Create Network,ネットワークを作成,네트워크 생성,Crear red,button text
+" ",NETWORK_DETAILS,Network Details,网络详情,Network Details,ネットワーク詳細,네트워크 세부정보,Detalles de la red,dialog title
+" ",SUBNET,Subnet,子网,Subnet,サブネット,서브넷,Subred,label
+" ",GATEWAY,Gateway,网关,Gateway,ゲートウェイ,게이트웨이,Puerta de enlace,label
+" ",IP_RANGE,IP Range,IP 范围,IP Range,IP 範囲,IP 범위,Rango de IP,label
+
+# Dashboard page strings,,,,,,,,
+" ",DASHBOARD,Dashboard,仪表板,Dashboard,ダッシュボード,대시보드,Panel de control,page title
+" ",SYSTEM_INFO,System Info,系统信息,System Info,システム情報,시스템 정보,Información del sistema,section title
+" ",DOCKER_VERSION,Docker Version,Docker 版本,Docker Version,Docker バージョン,Docker 버전,Versión de Docker,label
+" ",API_VERSION,API Version,API 版本,API Version,API バージョン,API 버전,Versión de API,label
+" ",OS_TYPE,OS Type,操作系统,OS Type,OS タイプ,OS 유형,Tipo de SO,label
+" ",ARCHITECTURE,Architecture,架构,Architecture,アーキテクチャ,아키텍처,Arquitectura,label
+" ",TOTAL_MEMORY,Total Memory,总内存,Total Memory,総メモリ,총 메모리,Memoria total,label
+" ",CPUS,CPUs,CPU 数,CPUs,CPU 数,CPU 수,CPUs,label
+" ",RESOURCE_USAGE,Resource Usage,资源使用,Resource Usage,リソース使用量,리소스 사용량,Uso de recursos,section title
+" ",RUNNING,Running,运行中,Running,実行中,실행 중,En ejecución,status
+" ",STOPPED,Stopped,已停止,Stopped,停止,중지됨,Detenido,status
+" ",PAUSED,Paused,已暂停,Paused,一時停止,일시중지됨,Pausado,status
 
 # Account page strings,,,,,,,,
 " ",ACCESS_DENIED_TITLE,Access Denied,访问被拒绝,Access Denied,アクセス拒否,접근 거부,Acceso denegado,page title

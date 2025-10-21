@@ -2,12 +2,13 @@ using Docker.DotNet;
 using Docker.DotNet.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace Docker.Dotnet.UI.ViewModels;
 
 [RegisterScoped(typeof(ImagesPageViewModel))]
-public class ImagesPageViewModel(DockerClient client)
+public class ImagesPageViewModel(DockerClient client, IJSRuntime jsRuntime)
     : ViewModel
 {
     public event Action? OnStateChanged;
@@ -21,10 +22,23 @@ public class ImagesPageViewModel(DockerClient client)
 
     // Dialog state
     public bool ShowAddImageDialog { get; set; }
+    public bool ShowInspectDialog { get; set; }
+    public string? SelectedImageId { get; set; }
+    public string? SelectedImageName { get; set; }
+    public string? InspectJson { get; set; }
+
     public DialogOptions DialogOptions { get; } =
         new()
         {
             MaxWidth = MaxWidth.Medium,
+            FullWidth = true,
+            CloseButton = true,
+        };
+
+    public DialogOptions LargeDialogOptions { get; } =
+        new()
+        {
+            MaxWidth = MaxWidth.Large,
             FullWidth = true,
             CloseButton = true,
         };
@@ -42,6 +56,9 @@ public class ImagesPageViewModel(DockerClient client)
     public bool IsLoading { get; private set; }
     public List<string> LoadLogs { get; } = new();
 
+    // Export properties
+    public bool IsExporting { get; set; }
+
     public async Task RefreshImagesAsync()
     {
         var images = await client.Images.ListImagesAsync(new ImagesListParameters());
@@ -55,9 +72,66 @@ public class ImagesPageViewModel(DockerClient client)
         await RefreshImagesAsync();
     }
 
-    public void GoToImageDetailsAsync(string imageId)
+    public async Task ShowInspectAsync(string imageId, string imageName)
     {
-        // 暂不实现
+        SelectedImageId = imageId;
+        SelectedImageName = imageName;
+        ShowInspectDialog = true;
+        NotifyStateChanged();
+
+        try
+        {
+            var inspect = await client.Images.InspectImageAsync(imageId);
+            InspectJson = System.Text.Json.JsonSerializer.Serialize(
+                inspect,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            );
+        }
+        catch (Exception ex)
+        {
+            InspectJson = $"Error inspecting image: {ex.Message}";
+        }
+        finally
+        {
+            NotifyStateChanged();
+        }
+    }
+
+    public void CloseInspectDialog()
+    {
+        ShowInspectDialog = false;
+        InspectJson = null;
+        NotifyStateChanged();
+    }
+
+    public async Task ExportImageAsync(string imageId, string imageName)
+    {
+        IsExporting = true;
+        NotifyStateChanged();
+
+        try
+        {
+            var stream = await client.Images.SaveImageAsync(imageId);
+            
+            // Read the stream into memory
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var bytes = memoryStream.ToArray();
+
+            // Trigger download in browser
+            var fileName = $"{imageName.Replace(':', '_').Replace('/', '_')}.tar";
+            await jsRuntime.InvokeVoidAsync("downloadFile", fileName, Convert.ToBase64String(bytes));
+        }
+        catch (Exception)
+        {
+            // Handle error
+            throw;
+        }
+        finally
+        {
+            IsExporting = false;
+            NotifyStateChanged();
+        }
     }
 
     public void OpenAddImageDialog()
