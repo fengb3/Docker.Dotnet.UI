@@ -1,5 +1,8 @@
 ﻿@page "/"
 @using Docker.Dotnet.UI.ViewModels
+@using Docker.Dotnet.UI.Components.Pages.DockerPages
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
-@inherits MyComponentBase<HomeViewModel>
+@inherits MyComponentBase<DashboardViewModel>
+
+<Dashboard />
