@@ -5,7 +5,37 @@ This document summarizes the comprehensive enhancements made to the Docker.Dotne
 
 ## New Features Implemented
 
-### 1. Container Management Enhancements
+### 1. Dashboard Overview (NEW PAGE)
+**Page**: `/` (Home page) and `/dashboard`
+
+#### Features:
+- **System Overview Cards**: Display total count of containers, images, volumes, and networks
+- **Container Status Breakdown**: Visual representation of running, stopped, and paused containers with progress bars
+- **System Information**: Display Docker version, OS type, architecture, total memory, and CPU count
+- **Quick Navigation**: One-click access to detailed management pages from each card
+- **Real-time Statistics**: Auto-refresh capability to get latest Docker statistics
+- **Resource Usage Visualization**: Progress bars showing distribution of container states
+
+#### Implementation:
+- New `DashboardViewModel.cs` with Docker system info aggregation
+- New `Dashboard.razor` with overview cards using MudBlazor components
+- Updated `Home.razor` to display dashboard instead of redirecting
+- Updated `NavMenu.razor` to add Dashboard link
+- Integrated with existing localization system (DASHBOARD, SYSTEM_INFO, RESOURCE_USAGE keys)
+- Memory formatting utility (`FormatBytes` method)
+
+#### Technical Details:
+- Fetches data from multiple Docker API endpoints:
+  - `System.GetSystemInfoAsync()` for system information
+  - `Containers.ListContainersAsync()` for container statistics
+  - `Images.ListImagesAsync()` for image count
+  - `Volumes.ListAsync()` for volume count
+  - `Networks.ListNetworksAsync()` for network count
+- MVVM pattern with all logic in ViewModel
+- Error handling for Docker connection issues
+- Responsive grid layout with MudBlazor MudGrid
+
+### 2. Container Management Enhancements
 **Page**: `/containers`
 
 #### New Features:
@@ -22,7 +52,7 @@ This document summarizes the comprehensive enhancements made to the Docker.Dotne
 - Proper MultiplexedStream handling for container logs
 - State-based UI rendering (running/stopped/paused containers show different actions)
 
-### 2. Docker Networks Management (NEW PAGE)
+### 3. Docker Networks Management (NEW PAGE)
 **Page**: `/networks`
 
 #### Features:
@@ -38,7 +68,7 @@ This document summarizes the comprehensive enhancements made to the Docker.Dotne
 - Added to navigation menu
 - Proper error handling and validation
 
-### 3. Volume Management Enhancements
+### 4. Volume Management Enhancements
 **Page**: `/volumes`
 
 #### New Features:
@@ -53,7 +83,7 @@ This document summarizes the comprehensive enhancements made to the Docker.Dotne
 - Added dialogs for creation and inspection
 - Improved user experience with proper feedback
 
-### 4. Image Management Enhancements
+### 5. Image Management Enhancements
 **Page**: `/images`
 
 #### New Features:
@@ -79,6 +109,7 @@ This document summarizes the comprehensive enhancements made to the Docker.Dotne
 ### Key Files Modified/Created
 
 #### ViewModels:
+- `DashboardViewModel.cs` - **NEW** System overview and statistics
 - `ContainersPageViewModel.cs` - Enhanced with restart, pause, logs, inspect
 - `ImagesPageViewModel.cs` - Enhanced with inspect and export
 - `VolumesPageViewModel.cs` - Enhanced with create, inspect, prune
@@ -86,6 +117,8 @@ This document summarizes the comprehensive enhancements made to the Docker.Dotne
 - `ViewModelMapper.cs` - Added network mapping
 
 #### Pages:
+- `Dashboard.razor` - **NEW** System overview dashboard
+- `Home.razor` - Updated to display dashboard
 - `ContainersPage.razor` - Enhanced UI with new dialogs
 - `ImagesPage.razor` - Enhanced UI with new actions
 - `VolumesPage.razor` - Enhanced UI with dialogs
@@ -158,7 +191,7 @@ dotnet run
 ## Future Enhancement Opportunities
 
 ### Short-term:
-1. Add Dashboard page with system overview
+1. ~~Add Dashboard page with system overview~~ ✅ COMPLETED
 2. Add container stats (CPU, memory) real-time monitoring
 3. Add search/filter functionality on all pages
 4. Add batch operations (select multiple items)
@@ -211,8 +244,8 @@ docker-compose up -d
 ## Conclusion
 
 This enhancement provides a comprehensive Docker management UI with professional-grade features:
-- ✅ 4 complete management pages (Containers, Images, Volumes, Networks)
-- ✅ 20+ new features across all pages
+- ✅ 5 complete pages (Dashboard, Containers, Images, Volumes, Networks)
+- ✅ 25+ features across all pages
 - ✅ Full MVVM architecture compliance
 - ✅ Complete localization (9 languages)
 - ✅ Modern, responsive UI with MudBlazor
