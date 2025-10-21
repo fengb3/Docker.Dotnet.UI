@@ -18,13 +18,12 @@ public class InstallationCheckMiddleware
     {
         var path = context.Request.Path.Value?.ToLower() ?? string.Empty;
         
-        // Skip middleware for static files, API endpoints, and install page itself
+        // Skip middleware for static files, API endpoints (including Install), and install page itself
         if (path.StartsWith("/api/") || 
             path.StartsWith("/_framework") ||
             path.StartsWith("/_content") ||
             path.StartsWith("/account/install") ||
-            path.Contains(".") ||  // static files with extensions
-            path == "/")
+            path.Contains("."))  // static files with extensions
         {
             await _next(context);
             return;
@@ -33,7 +32,7 @@ public class InstallationCheckMiddleware
         // Check if any users exist
         var hasUsers = userManager.Users.Any();
         
-        if (!hasUsers && !path.StartsWith("/account/install"))
+        if (!hasUsers)
         {
             _logger.LogInformation("No users found, redirecting to install page");
             context.Response.Redirect("/Account/Install");

@@ -5,11 +5,11 @@ namespace Docker.Dotnet.UI.ViewModels;
 [RegisterScoped(typeof(InstallViewModel))]
 public class InstallViewModel : ViewModel
 {
-    [Required(ErrorMessage = "USERNAME_REQUIRED")]
+    [Required]
     public string Username { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "PASSWORD_REQUIRED")]
-    [MinLength(6, ErrorMessage = "PASSWORD_REQUIREMENTS")]
+    [Required]
+    [MinLength(6)]
     public string Password { get; set; } = string.Empty;
 
     public bool IsLoading { get; set; }
