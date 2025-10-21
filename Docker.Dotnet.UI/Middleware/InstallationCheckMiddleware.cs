@@ -18,12 +18,24 @@ public class InstallationCheckMiddleware
     {
         var path = context.Request.Path.Value?.ToLower() ?? string.Empty;
         
-        // Skip middleware for static files, API endpoints (including Install), and install page itself
+        // Skip middleware for:
+        // - API endpoints (including Install)
+        // - Static files and framework resources
+        // - Blazor SignalR hub (important for Blazor Server to work properly)
+        // - Install page itself
         if (path.StartsWith("/api/") || 
             path.StartsWith("/_framework") ||
             path.StartsWith("/_content") ||
+            path.StartsWith("/_blazor") ||  // Critical: Skip Blazor SignalR hub
             path.StartsWith("/account/install") ||
             path.Contains("."))  // static files with extensions
+        {
+            await _next(context);
+            return;
+        }
+
+        // Only check for GET requests to avoid interfering with POST/form submissions
+        if (context.Request.Method != "GET")
         {
             await _next(context);
             return;
@@ -34,7 +46,7 @@ public class InstallationCheckMiddleware
         
         if (!hasUsers)
         {
-            _logger.LogInformation("No users found, redirecting to install page");
+            _logger.LogInformation("No users found, redirecting to install page from {Path}", path);
             context.Response.Redirect("/Account/Install");
             return;
         }
