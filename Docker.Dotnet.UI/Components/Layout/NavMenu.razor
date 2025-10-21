@@ -1,4 +1,6 @@
-﻿<MudNavMenu>
+@inject Microsoft.Extensions.Localization.IStringLocalizer Localizer
+
+<MudNavMenu>
     @* <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink> *@
     @* <MudNavLink Href="/servers" Match="NavLinkMatch.Prefix">Servers</MudNavLink> *@
     @* <MudNavGroup Title="Settings" Expanded="true"> *@
@@ -9,5 +11,8 @@
     <MudNavLink Href="images" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Tab">Images</MudNavLink>
     <MudNavLink Href="volumes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Tab">Volumes</MudNavLink>
     <MudNavLink Href="networks" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Hub">Networks</MudNavLink>
+    <MudDivider Class="my-2" />
+    <MudNavLink Href="Account/Profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">@Localizer["PROFILE"]</MudNavLink>
+    <MudNavLink Href="Account/UserManagement" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">@Localizer["USER_MANAGEMENT"]</MudNavLink>
 </MudNavMenu>
 

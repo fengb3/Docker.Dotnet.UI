@@ -1,0 +1,112 @@
+@page "/Account/Profile"
+@using Docker.Dotnet.UI.ViewModels
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@inherits MyComponentBase<UserProfileViewModel>
+
+<PageTitle>@Localizer["USER_PROFILE"]</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
+    <MudStack Spacing="4">
+        <MudText Typo="Typo.h4">@Localizer["USER_PROFILE"]</MudText>
+
+        @* Account Information Section *@
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h6">@Localizer["ACCOUNT_INFORMATION"]</MudText>
+                
+                <MudTextField 
+                    Label="@Localizer["USERNAME"]" 
+                    Value="@Vm!.Username"
+                    Variant="Variant.Outlined"
+                    ReadOnly="true"
+                    T="string" />
+
+                <MudTextField 
+                    Label="@Localizer["EMAIL"]" 
+                    Value="@Vm!.Email"
+                    Variant="Variant.Outlined"
+                    ReadOnly="true"
+                    T="string" />
+            </MudStack>
+        </MudPaper>
+
+        @* Change Password Section *@
+        <MudPaper Class="pa-4" Elevation="2">
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h6">@Localizer["CHANGE_PASSWORD"]</MudText>
+
+                @if (!string.IsNullOrEmpty(Vm!.SuccessMessage))
+                {
+                    <MudAlert Severity="Severity.Success" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ClearMessages())">
+                        @Localizer["PASSWORD_UPDATED"]
+                    </MudAlert>
+                }
+
+                @if (!string.IsNullOrEmpty(Vm!.ErrorMessage))
+                {
+                    <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ClearMessages())">
+                        @Vm!.ErrorMessage
+                    </MudAlert>
+                }
+
+                <EditForm Model="@Vm" OnValidSubmit="HandlePasswordChange">
+                    <DataAnnotationsValidator />
+                    
+                    <MudStack Spacing="3">
+                        <MudTextField 
+                            @bind-Value="Vm!.CurrentPassword"
+                            Label="@Localizer["CURRENT_PASSWORD"]" 
+                            Variant="Variant.Outlined"
+                            InputType="InputType.Password"
+                            For="@(() => Vm!.CurrentPassword)"
+                            Disabled="Vm!.IsLoading"
+                            T="string" />
+
+                        <MudTextField 
+                            @bind-Value="Vm!.NewPassword"
+                            Label="@Localizer["NEW_PASSWORD"]" 
+                            Variant="Variant.Outlined"
+                            InputType="InputType.Password"
+                            For="@(() => Vm!.NewPassword)"
+                            Disabled="Vm!.IsLoading"
+                            T="string" />
+
+                        <MudTextField 
+                            @bind-Value="Vm!.ConfirmPassword"
+                            Label="@Localizer["CONFIRM_PASSWORD"]" 
+                            Variant="Variant.Outlined"
+                            InputType="InputType.Password"
+                            For="@(() => Vm!.ConfirmPassword)"
+                            Disabled="Vm!.IsLoading"
+                            T="string" />
+
+                        <MudButton 
+                            ButtonType="ButtonType.Submit"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary"
+                            FullWidth="false"
+                            Disabled="Vm!.IsLoading">
+                            @if (Vm!.IsLoading)
+                            {
+                                <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">@Localizer["LOADING_LOGS"]</MudText>
+                            }
+                            else
+                            {
+                                <MudText>@Localizer["UPDATE_PASSWORD"]</MudText>
+                            }
+                        </MudButton>
+                    </MudStack>
+                </EditForm>
+            </MudStack>
+        </MudPaper>
+    </MudStack>
+</MudContainer>
+
+@code {
+    private async Task HandlePasswordChange()
+    {
+        await Vm!.ChangePasswordAsync();
+    }
+}
