@@ -13,7 +13,16 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         await RefreshContainersAsync();
     }
 
+    private IList<ContainerListItemViewModel>? _allContainers;
     public IList<ContainerListItemViewModel>? Containers { get; set; }
+    
+    // Search/Filter state
+    public string SearchText { get; set; } = string.Empty;
+    public string StatusFilter { get; set; } = "all";
+    
+    // Batch operations state
+    public HashSet<string> SelectedContainerIds { get; } = new();
+    public bool SelectAll { get; set; }
     
     // Error state
     public string? ErrorMessage { get; set; }
@@ -48,22 +57,56 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
                 new ContainersListParameters() { All = true }
             );
 
-            Containers = containers.ToViewModel();
+            _allContainers = containers.ToViewModel();
+            ApplyFilters();
         }
         catch (TimeoutException)
         {
             ErrorMessage = "Connection to Docker timed out. Please ensure Docker Desktop is running and accessible.";
+            _allContainers = null;
             Containers = null;
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Failed to connect to Docker: {ex.Message}";
+            _allContainers = null;
             Containers = null;
         }
         finally
         {
             NotifyStateChanged();
         }
+    }
+
+    public void ApplyFilters()
+    {
+        if (_allContainers == null)
+        {
+            Containers = null;
+            return;
+        }
+
+        var filtered = _allContainers.AsEnumerable();
+
+        // Apply search filter
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var searchLower = SearchText.ToLowerInvariant();
+            filtered = filtered.Where(c =>
+                c.ContainerName.ToLowerInvariant().Contains(searchLower) ||
+                c.Image.ToLowerInvariant().Contains(searchLower) ||
+                c.ShortId.ToLowerInvariant().Contains(searchLower)
+            );
+        }
+
+        // Apply status filter
+        if (StatusFilter != "all")
+        {
+            filtered = filtered.Where(c => c.State.Equals(StatusFilter, StringComparison.OrdinalIgnoreCase));
+        }
+
+        Containers = filtered.ToList();
+        NotifyStateChanged();
     }
 
     public async Task StartContainerAsync(string containerId)
@@ -285,6 +328,115 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         ShowInspectDialog = false;
         InspectJson = null;
         NotifyStateChanged();
+    }
+
+    public void ToggleSelectAll()
+    {
+        SelectAll = !SelectAll;
+        SelectedContainerIds.Clear();
+        
+        if (SelectAll && Containers != null)
+        {
+            foreach (var container in Containers)
+            {
+                SelectedContainerIds.Add(container.ID);
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public void ToggleContainerSelection(string containerId)
+    {
+        if (SelectedContainerIds.Contains(containerId))
+        {
+            SelectedContainerIds.Remove(containerId);
+            SelectAll = false;
+        }
+        else
+        {
+            SelectedContainerIds.Add(containerId);
+            
+            // Check if all containers are now selected
+            if (Containers != null && SelectedContainerIds.Count == Containers.Count)
+            {
+                SelectAll = true;
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public async Task StartSelectedContainersAsync()
+    {
+        if (SelectedContainerIds.Count == 0) return;
+
+        var tasks = SelectedContainerIds
+            .Select(id => dockerClient.Containers.StartContainerAsync(id, new ContainerStartParameters()))
+            .ToArray();
+
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to start some containers: {ex.Message}";
+        }
+        finally
+        {
+            SelectedContainerIds.Clear();
+            SelectAll = false;
+            await RefreshContainersAsync();
+        }
+    }
+
+    public async Task StopSelectedContainersAsync()
+    {
+        if (SelectedContainerIds.Count == 0) return;
+
+        var tasks = SelectedContainerIds
+            .Select(id => dockerClient.Containers.StopContainerAsync(id, new ContainerStopParameters()))
+            .ToArray();
+
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to stop some containers: {ex.Message}";
+        }
+        finally
+        {
+            SelectedContainerIds.Clear();
+            SelectAll = false;
+            await RefreshContainersAsync();
+        }
+    }
+
+    public async Task RemoveSelectedContainersAsync()
+    {
+        if (SelectedContainerIds.Count == 0) return;
+
+        var tasks = SelectedContainerIds
+            .Select(id => dockerClient.Containers.RemoveContainerAsync(id, new ContainerRemoveParameters { Force = true }))
+            .ToArray();
+
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to remove some containers: {ex.Message}";
+        }
+        finally
+        {
+            SelectedContainerIds.Clear();
+            SelectAll = false;
+            await RefreshContainersAsync();
+        }
     }
 }
 
