@@ -1,6 +1,9 @@
 @page "/Account/AccessDenied"
+@using Docker.Dotnet.UI.ViewModels
+
+@inherits MyComponentBase<ViewModel>
+
 @inject NavigationManager NavigationManager
-@inject Microsoft.Extensions.Localization.IStringLocalizer Localizer
 
 <PageTitle>@Localizer["ACCESS_DENIED_TITLE"]</PageTitle>
 

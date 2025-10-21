@@ -30,71 +30,6 @@
 
 **注意：** `GITHUB_TOKEN` 是自动提供的，无需手动配置。
 
-### 2. 配置 GitHub Variables
-
-在你的 GitHub 仓库中，进入 `Settings` -> `Secrets and variables` -> `Actions` -> `Variables` 标签页，添加以下 Variables：
-
-#### Docker Hub（可选）
-- `DOCKERHUB_REGISTRY`: 例如 `docker.io/your-username` 或留空不使用
-
-#### GitHub Container Registry（可选）
-- `GHCR_REGISTRY`: 例如 `ghcr.io` 或留空不使用
-
-#### 自定义镜像仓库（可选）
-- `CUSTOM_REGISTRY_1`: 例如 `registry.example.com`
-- `CUSTOM_REGISTRY_2`: 例如 `harbor.yourdomain.com`
-
-### 3. 配置示例
-
-#### 仅使用 Docker Hub
-```
-Variables:
-- DOCKERHUB_REGISTRY = docker.io/fengb3
-
-Secrets:
-- DOCKERHUB_USERNAME = fengb3
-- DOCKERHUB_TOKEN = dckr_pat_xxxxx
-```
-
-生成的镜像标签：
-- `docker.io/fengb3/docker-dotnet-ui:latest`
-- `docker.io/fengb3/docker-dotnet-ui:0.0.1`
-
-#### 使用 GitHub Container Registry
-```
-Variables:
-- GHCR_REGISTRY = ghcr.io
-
-Secrets:
-（无需额外配置，使用自动提供的 GITHUB_TOKEN）
-```
-
-生成的镜像标签：
-- `ghcr.io/{your-username}/docker-dotnet-ui:latest`
-- `ghcr.io/{your-username}/docker-dotnet-ui:0.0.1`
-
-#### 使用多个镜像仓库
-```
-Variables:
-- DOCKERHUB_REGISTRY = docker.io/fengb3
-- GHCR_REGISTRY = ghcr.io
-- CUSTOM_REGISTRY_1 = harbor.example.com
-
-Secrets:
-- DOCKERHUB_USERNAME = fengb3
-- DOCKERHUB_TOKEN = dckr_pat_xxxxx
-- CUSTOM_REGISTRY_1_USERNAME = admin
-- CUSTOM_REGISTRY_1_PASSWORD = Harbor12345
-```
-
-生成的镜像标签：
-- `docker.io/fengb3/docker-dotnet-ui:latest`
-- `docker.io/fengb3/docker-dotnet-ui:0.0.1`
-- `ghcr.io/{your-username}/docker-dotnet-ui:latest`
-- `ghcr.io/{your-username}/docker-dotnet-ui:0.0.1`
-- `harbor.example.com/docker-dotnet-ui:latest`
-- `harbor.example.com/docker-dotnet-ui:0.0.1`
-
 ## 手动触发
 
 如果需要手动触发构建，可以：
@@ -146,4 +81,3 @@ Secrets:
 
 ### GHCR 推送失败
 - 在仓库 Settings -> Actions -> General 中，确保 Workflow permissions 设置为 "Read and write permissions"
-

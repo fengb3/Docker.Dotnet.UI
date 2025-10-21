@@ -1,17 +1,7 @@
 @page "/Account/Logout"
-@inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@using Docker.Dotnet.UI.ViewModels
 
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // 使用 JavaScript 提交表单到 Controller
-            await JSRuntime.InvokeVoidAsync("submitLogoutForm");
-        }
-    }
-}
+@inherits MyComponentBase<LogoutViewModel>
 
 <script>
     window.submitLogoutForm = function() {

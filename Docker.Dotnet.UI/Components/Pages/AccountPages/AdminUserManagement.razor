@@ -25,7 +25,7 @@
                     Variant="Variant.Filled" 
                     Color="Color.Primary" 
                     StartIcon="@Icons.Material.Filled.Add"
-                    OnClick="OpenCreateUserDialog">
+                    OnClick="@Vm!.OpenCreateDialog">
                     @Localizer["CREATE_USER"]
                 </MudButton>
             </MudStack>
@@ -70,7 +70,7 @@
                                     Icon="@Icons.Material.Filled.Delete" 
                                     Color="Color.Error"
                                     Size="Size.Small"
-                                    OnClick="@(() => ConfirmDeleteUser(context))"
+                                    OnClick="@(async () => await ConfirmAndDeleteUser(context))"
                                     title="@Localizer["REMOVE"]" />
                             </MudTd>
                         </RowTemplate>
@@ -82,12 +82,12 @@
 </MudContainer>
 
 @* Create User Dialog *@
-<MudDialog @bind-Visible="showCreateDialog" Options="dialogOptions">
+<MudDialog @bind-Visible="Vm!.ShowCreateDialog" Options="dialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">@Localizer["CREATE_USER_DIALOG"]</MudText>
     </TitleContent>
     <DialogContent>
-        <EditForm Model="@Vm!.NewUser" OnValidSubmit="HandleCreateUser">
+        <EditForm Model="@Vm!.NewUser" OnValidSubmit="@Vm!.CreateUserAndCloseDialogAsync">
             <DataAnnotationsValidator />
             
             <MudStack Spacing="3">
@@ -128,11 +128,11 @@
         </EditForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="CloseCreateDialog" Disabled="Vm!.IsLoading">@Localizer["CANCEL"]</MudButton>
+        <MudButton OnClick="@Vm!.CloseCreateDialog" Disabled="Vm!.IsLoading">@Localizer["CANCEL"]</MudButton>
         <MudButton 
             Variant="Variant.Filled" 
             Color="Color.Primary" 
-            OnClick="HandleCreateUser"
+            OnClick="@Vm!.CreateUserAndCloseDialogAsync"
             Disabled="Vm!.IsLoading">
             @if (Vm!.IsLoading)
             {
@@ -148,7 +148,6 @@
 
 @code {
     private bool IsAdmin { get; set; }
-    private bool showCreateDialog;
     private readonly DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Small, FullWidth = true };
 
     protected override async Task OnInitializedAsync()
@@ -160,28 +159,7 @@
         IsAdmin = user.Identity?.Name == "admin";
     }
 
-    private void OpenCreateUserDialog()
-    {
-        Vm!.NewUser = new CreateUserModel();
-        Vm!.ClearMessages();
-        showCreateDialog = true;
-    }
-
-    private void CloseCreateDialog()
-    {
-        showCreateDialog = false;
-    }
-
-    private async Task HandleCreateUser()
-    {
-        var success = await Vm!.CreateUserAsync();
-        if (success)
-        {
-            CloseCreateDialog();
-        }
-    }
-
-    private async Task ConfirmDeleteUser(UserListItemViewModel user)
+    private async Task ConfirmAndDeleteUser(UserListItemViewModel user)
     {
         var parameters = new DialogParameters
         {

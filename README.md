@@ -89,8 +89,9 @@ docker-compose down
 
 ## 详细文档
 
-- 功能详情和实现说明请参阅 [ENHANCEMENTS.md](ENHANCEMENTS.md)
-- Docker 部署详细信息请参阅 [DOCKER_DEPLOY.md](DOCKER_DEPLOY.md)
+- 功能详情和实现说明请参阅 [ENHANCEMENTS.md](docs/ENHANCEMENTS.md)
+- Docker 部署详细信息请参阅 [DOCKER_DEPLOY.md](docs/DOCKER_DEPLOY.md)
+- 用户登录与授权 [AUTHENTICATION.md](docs/AUTHENTICATION.md)
 
 ## 注意事项
 

@@ -50,7 +50,7 @@
                     </MudAlert>
                 }
 
-                <EditForm Model="@Vm" OnValidSubmit="HandlePasswordChange">
+                <EditForm Model="@Vm" OnValidSubmit="@Vm!.ChangePasswordAsync">
                     <DataAnnotationsValidator />
                     
                     <MudStack Spacing="3">
@@ -103,10 +103,3 @@
         </MudPaper>
     </MudStack>
 </MudContainer>
-
-@code {
-    private async Task HandlePasswordChange()
-    {
-        await Vm!.ChangePasswordAsync();
-    }
-}

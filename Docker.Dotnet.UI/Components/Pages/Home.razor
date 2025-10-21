@@ -1,15 +1,5 @@
 ﻿@page "/"
+@using Docker.Dotnet.UI.ViewModels
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 
-@code{
-
-    [Inject]
-    NavigationManager Navigation { get; set; } = null!;
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender) 
-            Navigation.NavigateTo("/containers");
-    }
-
-}
+@inherits MyComponentBase<HomeViewModel>

@@ -30,6 +30,28 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
 <MudButton OnClick="@(() => Vm!.StartContainerAsync(container.ID))">Start</MudButton>
 ```
 
+### Razor UI requirements (strict)
+1. All UI Razor pages MUST inherit from `MyComponentBase<TViewModel>` (or a concrete subtype) so the `Vm` property, lifecycle hooks and `Localizer` are available and consistent across the app.
+2. Razor pages MUST NOT contain "wrapper" methods that merely call into the ViewModel. In other words, do not add small helper methods in the `.razor` file whose only job is to forward calls to `Vm` methods. This breaks the MVVM separation and makes testing and reasoning harder.
+
+Incorrect (wrapper method in Razor):
+```razor
+@inherits MyComponentBase<ContainersPageViewModel>
+@code {
+    // ❌ Avoid creating forwarder/wrapper methods in Razor
+    private async Task OnStart(string id) => await Vm!.StartContainerAsync(id);
+}
+<MudButton OnClick="@(() => OnStart(container.ID))">Start</MudButton>
+```
+
+Correct (delegate directly to ViewModel):
+```razor
+@inherits MyComponentBase<ContainersPageViewModel>
+<MudButton OnClick="@(() => Vm!.StartContainerAsync(container.ID))">Start</MudButton>
+```
+
+Why: keeping the Razor page as a light UI surface (no passthrough wrappers) preserves a single place for business logic (the ViewModel), avoids duplication, and ensures the source generators and test harnesses can rely on the same lifecycle and wiring.
+
 ### 2. Dependency Injection via Attributes
 Use `[RegisterScoped]`, `[RegisterTransient]`, or `[RegisterSingleton]` attributes on classes. Call `services.AutoRegister()` in `Program.cs` to auto-discover and register.
 
@@ -79,7 +101,7 @@ Auto-detects OS and uses appropriate Docker socket (`DependencyInjection.cs`):
 ### Build & Run
 ```powershell
 cd Docker.Dotnet.UI
-dotnet run   # Listens on http://localhost:5000, https://localhost:5001
+dotnet run   # Listens on https://localhost:7150; http://localhost:5149
 ```
 
 ### Docker Deployment
@@ -152,11 +174,11 @@ Docker.Dotnet.UI/
 
 ## Quick Reference
 
-| Task | Command/Pattern |
-|------|----------------|
-| Add new page | Create `.razor` in `Pages/`, inherit `MyComponentBase<TViewModel>` |
-| Add ViewModel | Create class with `[RegisterScoped]`, inherit `ViewModel` |
-| Add translation | Edit `Localization.table.csv`, use `@Localizer["KEY"]` |
-| Access Docker | Inject `DockerClient dockerClient` in ViewModel constructor |
-| Run migrations | `dotnet ef migrations add Name` then restart app |
-| Check errors | Build project; CSV generator errors show in build output |
+| Task            | Command/Pattern                                                    |
+| --------------- | ------------------------------------------------------------------ |
+| Add new page    | Create `.razor` in `Pages/`, inherit `MyComponentBase<TViewModel>` |
+| Add ViewModel   | Create class with `[RegisterScoped]`, inherit `ViewModel`          |
+| Add translation | Edit `Localization.table.csv`, use `@Localizer["KEY"]`             |
+| Access Docker   | Inject `DockerClient dockerClient` in ViewModel constructor        |
+| Run migrations  | `dotnet ef migrations add Name` then restart app                   |
+| Check errors    | Build project; CSV generator errors show in build output           |

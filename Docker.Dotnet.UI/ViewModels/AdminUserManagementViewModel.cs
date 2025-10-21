@@ -44,10 +44,35 @@ public class AdminUserManagementViewModel : ViewModel
     public bool IsLoading { get; set; }
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
+    public bool ShowCreateDialog { get; set; }
 
     public override async Task InitializeAsync()
     {
         await LoadUsersAsync();
+    }
+
+    public void OpenCreateDialog()
+    {
+        NewUser = new CreateUserModel();
+        ClearMessages();
+        ShowCreateDialog = true;
+        NotifyStateChanged();
+    }
+
+    public void CloseCreateDialog()
+    {
+        ShowCreateDialog = false;
+        NotifyStateChanged();
+    }
+
+    public async Task<bool> CreateUserAndCloseDialogAsync()
+    {
+        var success = await CreateUserAsync();
+        if (success)
+        {
+            CloseCreateDialog();
+        }
+        return success;
     }
 
     public async Task LoadUsersAsync()

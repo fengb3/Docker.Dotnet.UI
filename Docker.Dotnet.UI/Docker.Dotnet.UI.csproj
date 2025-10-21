@@ -34,8 +34,7 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <AdditionalFiles Include="*.table.csv"/>
-        <AdditionalFiles Include="ImmutableTables\Localization.table.csv" />
-        <None Remove="*.table.csv"/>
+        <AdditionalFiles Include="ImmutableTables\*.table.csv"/>
+        <None Remove="ImmutableTables\*.table.csv"/>
     </ItemGroup>
 </Project>
