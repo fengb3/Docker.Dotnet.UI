@@ -114,6 +114,16 @@
 " ",LOGOUT,Logout,退出登录,Logout,ログアウト,로그아웃,Cerrar sesión,logout menu item
 " ",SWITCH_TO_LIGHT_MODE,Switch to light mode,切换到浅色模式,Switch to light mode,ライトモードに切り替え,라이트 모드로 전환,Cambiar a modo claro,theme toggle tooltip
 " ",SWITCH_TO_DARK_MODE,Switch to dark mode,切换到深色模式,Switch to dark mode,ダークモードに切り替え,다크 모드로 전환,Cambiar a modo oscuro,theme toggle tooltip
+" ",INSTALL_PAGE_TITLE,Initial Setup,初始设置,Initial Setup,初期設定,초기 설정,Configuración inicial,page title
+" ",INSTALL_HEADER,Create Administrator Account,创建管理员账户,Create Administrator Account,管理者アカウントを作成,관리자 계정 생성,Crear cuenta de administrador,header text
+" ",INSTALL_DESCRIPTION,Welcome! Please create an administrator account to get started.,欢迎！请创建管理员账户以开始使用。,Welcome! Please create an administrator account to get started.,ようこそ！開始するには管理者アカウントを作成してください。,환영합니다! 시작하려면 관리자 계정을 만드세요.,¡Bienvenido! Cree una cuenta de administrador para comenzar.,description text
+" ",CREATE_ADMIN_ACCOUNT,Create Admin Account,创建管理员账户,Create Admin Account,管理者アカウントを作成,관리자 계정 생성,Crear cuenta de administrador,button text
+" ",INSTALL_IN_PROGRESS,Creating account...,创建账户中...,Creating account...,アカウントを作成中...,계정 생성 중...,Creando cuenta...,in-progress text
+" ",INSTALL_SUCCESS,Account created successfully! Redirecting...,账户创建成功！正在跳转...,Account created successfully! Redirecting...,アカウントが正常に作成されました！リダイレクト中...,계정이 성공적으로 생성되었습니다! 리디렉션 중...,¡Cuenta creada con éxito! Redirigiendo...,success message
+" ",INSTALL_ERROR,Failed to create account. Please try again.,账户创建失败。请重试。,Failed to create account. Please try again.,アカウントの作成に失敗しました。もう一度お試しください。,계정 생성에 실패했습니다. 다시 시도하세요.,Error al crear la cuenta. Inténtalo de nuevo.,error message
+" ",USERNAME_REQUIRED,Username is required,用户名不能为空,Username is required,ユーザー名は必須です,사용자 이름은 필수입니다,El nombre de usuario es obligatorio,validation error
+" ",PASSWORD_REQUIRED,Password is required,密码不能为空,Password is required,パスワードは必須です,비밀번호는 필수입니다,La contraseña es obligatoria,validation error
+" ",PASSWORD_REQUIREMENTS,Password must be at least 6 characters and contain uppercase letter and number,密码至少需要6个字符且包含大写字母和数字,Password must be at least 6 characters and contain uppercase letter and number,パスワードは6文字以上で、大文字と数字を含む必要があります,비밀번호는 최소 6자 이상이어야 하며 대문자와 숫자를 포함해야 합니다,La contraseña debe tener al menos 6 caracteres y contener letra mayúscula y número,validation hint
 
 # Language names for switcher,,,,,,,,
 " ",LANG_EN_US,English,English,English,English,English,English,language name
