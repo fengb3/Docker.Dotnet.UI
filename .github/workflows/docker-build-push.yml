@@ -174,13 +174,11 @@ jobs:
           echo "**版本号:** \`${{ needs.check-version-changed.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**镜像标签:**" >> $GITHUB_STEP_SUMMARY
-          # Iterate newline-separated tags from the meta step
-          IFS=$'\n'
-          for tag in ${{ steps.meta.outputs.tags }}; do
-            # skip empty lines
+          # Iterate newline-separated tags from the meta step safely
+          # Use printf to preserve newlines and avoid word-splitting issues
+          printf '%s\n' "${{ steps.meta.outputs.tags }}" | while IFS= read -r tag; do
             if [ -n "$tag" ]; then
               echo "- \`$tag\`" >> $GITHUB_STEP_SUMMARY
             fi
           done
-          unset IFS
 
