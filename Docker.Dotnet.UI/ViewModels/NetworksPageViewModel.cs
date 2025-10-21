@@ -131,6 +131,8 @@ public class NetworksPageViewModel(DockerClient dockerClient) : ViewModel
 
 public class NetworkListItemViewModel
 {
+    private static readonly HashSet<string> SystemNetworks = new() { "bridge", "host", "none" };
+
     public string Name { get; set; } = string.Empty;
     public string ID { get; set; } = string.Empty;
     public DateTime Created { get; set; }
@@ -145,4 +147,6 @@ public class NetworkListItemViewModel
     public IDictionary<string, string> Labels { get; set; } = new Dictionary<string, string>();
 
     public string ShortId => ID?.Length > 12 ? ID.Substring(0, 12) : ID ?? string.Empty;
+
+    public bool IsSystemNetwork => SystemNetworks.Contains(Name);
 }

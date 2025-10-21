@@ -93,7 +93,7 @@
                                                OnClick="@(() => Vm!.ShowInspectAsync(network.ID, network.Name))"
                                                title='@Localizer["INSPECT"]' />
                                 
-                                @if (!IsSystemNetwork(network.Name))
+                                @if (!network.IsSystemNetwork)
                                 {
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                                    Color="Color.Error"
@@ -169,16 +169,3 @@
         <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
     </DialogActions>
 </MudDialog>
-
-@code {
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
-
-    private bool IsSystemNetwork(string networkName)
-    {
-        // Prevent deletion of system networks
-        return networkName == "bridge" || networkName == "host" || networkName == "none";
-    }
-}
