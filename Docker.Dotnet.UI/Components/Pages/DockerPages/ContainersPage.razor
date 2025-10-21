@@ -242,6 +242,12 @@
                                                    OnClick="@(() => Vm!.ShowLogsAsync(container.ID, container.ContainerName))"
                                                    title='@Localizer["LOGS"]' />
                                 
+                                    <MudIconButton Icon="@Icons.Material.Filled.BarChart" 
+                                                   Color="Color.Info"
+                                                   Size="Size.Small"
+                                                   OnClick="@(() => Vm!.ShowStatsAsync(container.ID, container.ContainerName))"
+                                                   title='@Localizer["STATS"]' />
+                                
                                     <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                    Color="Color.Primary"
                                                    Size="Size.Small"
@@ -311,6 +317,75 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<MudDialog @bind-Visible="Vm!.ShowStatsDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.BarChart" Class="mr-1" /> @Localizer["REAL_TIME_STATS"] - @Vm.SelectedContainerName
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (Vm.CurrentStats == null)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+            <MudText Typo="Typo.body2">@Localizer["LOADING_LOGS"]</MudText>
+        }
+        else
+        {
+            <MudGrid Spacing="3">
+                <MudItem xs="12" md="6">
+                    <MudPaper Class="pa-4" Elevation="2">
+                        <MudStack Spacing="2">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudText Typo="Typo.h6">@Localizer["CPU_USAGE"]</MudText>
+                                <MudText Typo="Typo.h6" Color="Color.Primary">@Vm.CpuPercent.ToString("0.00")%</MudText>
+                            </MudStack>
+                            <MudProgressLinear Color="Color.Primary" Value="@Vm.CpuPercent" Class="mt-2" />
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+                
+                <MudItem xs="12" md="6">
+                    <MudPaper Class="pa-4" Elevation="2">
+                        <MudStack Spacing="2">
+                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                <MudText Typo="Typo.h6">@Localizer["MEMORY_USAGE"]</MudText>
+                                <MudText Typo="Typo.h6" Color="Color.Secondary">@Vm.MemoryPercent.ToString("0.00")%</MudText>
+                            </MudStack>
+                            <MudProgressLinear Color="Color.Secondary" Value="@Vm.MemoryPercent" Class="mt-2" />
+                            <MudText Typo="Typo.body2">@Vm.MemoryUsage / @Vm.MemoryLimit</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+                
+                <MudItem xs="12" md="6">
+                    <MudPaper Class="pa-4" Elevation="2">
+                        <MudStack Spacing="2">
+                            <MudText Typo="Typo.h6">@Localizer["NETWORK_RX"]</MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Info">@Vm.NetworkRx</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+                
+                <MudItem xs="12" md="6">
+                    <MudPaper Class="pa-4" Elevation="2">
+                        <MudStack Spacing="2">
+                            <MudText Typo="Typo.h6">@Localizer["NETWORK_TX"]</MudText>
+                            <MudText Typo="Typo.h5" Color="Color.Success">@Vm.NetworkTx</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+            
+            <MudText Typo="Typo.caption" Class="mt-4" Color="Color.Secondary">
+                <MudIcon Icon="@Icons.Material.Filled.Refresh" Size="Size.Small" /> @Localizer["AUTO_REFRESH"]: 2s
+            </MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm.CloseStatsDialog">@Localizer["CANCEL"]</MudButton>
     </DialogActions>
 </MudDialog>
 

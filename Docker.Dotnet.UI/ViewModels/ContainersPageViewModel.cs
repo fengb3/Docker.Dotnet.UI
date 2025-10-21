@@ -38,6 +38,16 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
     public bool IsLoadingLogs { get; set; }
     public string? InspectJson { get; set; }
     public ContainerStatsResponse? CurrentStats { get; set; }
+    
+    // Real-time stats monitoring
+    public bool IsMonitoringStats { get; set; }
+    private System.Threading.CancellationTokenSource? _statsCancellationTokenSource;
+    public double CpuPercent { get; set; }
+    public double MemoryPercent { get; set; }
+    public string MemoryUsage { get; set; } = "0 B";
+    public string MemoryLimit { get; set; } = "0 B";
+    public string NetworkRx { get; set; } = "0 B";
+    public string NetworkTx { get; set; } = "0 B";
 
     public DialogOptions DialogOptions { get; } =
         new()
@@ -328,6 +338,135 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         ShowInspectDialog = false;
         InspectJson = null;
         NotifyStateChanged();
+    }
+
+    public async Task ShowStatsAsync(string containerId, string containerName)
+    {
+        SelectedContainerId = containerId;
+        SelectedContainerName = containerName;
+        ShowStatsDialog = true;
+        IsMonitoringStats = true;
+        NotifyStateChanged();
+
+        // Cancel any existing monitoring
+        _statsCancellationTokenSource?.Cancel();
+        _statsCancellationTokenSource = new System.Threading.CancellationTokenSource();
+
+        try
+        {
+            await MonitorStatsAsync(containerId, _statsCancellationTokenSource.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            // Normal cancellation
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error monitoring stats: {ex.Message}";
+            NotifyStateChanged();
+        }
+    }
+
+    private async Task MonitorStatsAsync(string containerId, System.Threading.CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested && ShowStatsDialog)
+        {
+            try
+            {
+                var progress = new Progress<ContainerStatsResponse>(stats =>
+                {
+                    CurrentStats = stats;
+                    CalculateStats(stats);
+                    NotifyStateChanged();
+                });
+
+                await dockerClient.Containers.GetContainerStatsAsync(
+                    containerId,
+                    new ContainerStatsParameters { Stream = false },
+                    progress,
+                    cancellationToken
+                );
+
+                // Wait before next update (every 2 seconds)
+                await Task.Delay(2000, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                // Ignore errors and continue monitoring
+                await Task.Delay(2000, cancellationToken);
+            }
+        }
+    }
+
+    private void CalculateStats(ContainerStatsResponse stats)
+    {
+        if (stats == null) return;
+
+        // Calculate CPU percentage
+        var cpuDelta = stats.CPUStats.CPUUsage.TotalUsage - stats.PreCPUStats.CPUUsage.TotalUsage;
+        var systemDelta = stats.CPUStats.SystemUsage - stats.PreCPUStats.SystemUsage;
+        var cpuCount = stats.CPUStats.OnlineCPUs > 0 ? (int)stats.CPUStats.OnlineCPUs : (stats.CPUStats.CPUUsage.PercpuUsage?.Count ?? 1);
+        
+        if (systemDelta > 0 && cpuDelta > 0)
+        {
+            CpuPercent = (double)cpuDelta / systemDelta * cpuCount * 100.0;
+        }
+
+        // Calculate memory percentage and usage
+        if (stats.MemoryStats.Limit > 0)
+        {
+            var usedMemory = stats.MemoryStats.Usage - (stats.MemoryStats.Stats?.TryGetValue("cache", out var cache) == true ? cache : 0);
+            MemoryPercent = (double)usedMemory / stats.MemoryStats.Limit * 100.0;
+            MemoryUsage = FormatBytes((long)usedMemory);
+            MemoryLimit = FormatBytes((long)stats.MemoryStats.Limit);
+        }
+
+        // Calculate network I/O
+        if (stats.Networks != null)
+        {
+            ulong totalRx = 0;
+            ulong totalTx = 0;
+            foreach (var network in stats.Networks.Values)
+            {
+                totalRx += network.RxBytes;
+                totalTx += network.TxBytes;
+            }
+            NetworkRx = FormatBytes((long)totalRx);
+            NetworkTx = FormatBytes((long)totalTx);
+        }
+    }
+
+    public void CloseStatsDialog()
+    {
+        ShowStatsDialog = false;
+        IsMonitoringStats = false;
+        _statsCancellationTokenSource?.Cancel();
+        _statsCancellationTokenSource = null;
+        CurrentStats = null;
+        CpuPercent = 0;
+        MemoryPercent = 0;
+        MemoryUsage = "0 B";
+        MemoryLimit = "0 B";
+        NetworkRx = "0 B";
+        NetworkTx = "0 B";
+        NotifyStateChanged();
+    }
+
+    private string FormatBytes(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
     }
 
     public void ToggleSelectAll()
