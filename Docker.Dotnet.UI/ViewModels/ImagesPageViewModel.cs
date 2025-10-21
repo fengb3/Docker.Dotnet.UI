@@ -17,7 +17,15 @@ public class ImagesPageViewModel(DockerClient client, IJSRuntime jsRuntime)
         await RefreshImagesAsync();
     }
 
+    private IList<ImageListItemViewModel>? _allImages;
     public IList<ImageListItemViewModel>? Images { get; set; }
+    
+    // Search/Filter state
+    public string SearchText { get; set; } = string.Empty;
+    
+    // Batch operations state
+    public HashSet<string> SelectedImageIds { get; } = new();
+    public bool SelectAll { get; set; }
 
     // Dialog state
     public bool ShowAddImageDialog { get; set; }
@@ -61,7 +69,32 @@ public class ImagesPageViewModel(DockerClient client, IJSRuntime jsRuntime)
     public async Task RefreshImagesAsync()
     {
         var images = await client.Images.ListImagesAsync(new ImagesListParameters());
-        Images = images.ToViewModel();
+        _allImages = images.ToViewModel();
+        ApplyFilters();
+    }
+
+    public void ApplyFilters()
+    {
+        if (_allImages == null)
+        {
+            Images = null;
+            return;
+        }
+
+        var filtered = _allImages.AsEnumerable();
+
+        // Apply search filter
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var searchLower = SearchText.ToLowerInvariant();
+            filtered = filtered.Where(i =>
+                i.ImageName.ToLowerInvariant().Contains(searchLower) ||
+                i.ShortId.ToLowerInvariant().Contains(searchLower) ||
+                (i.RepoTags != null && i.RepoTags.Any(t => t.ToLowerInvariant().Contains(searchLower)))
+            );
+        }
+
+        Images = filtered.ToList();
         NotifyStateChanged();
     }
 
@@ -314,6 +347,66 @@ public class ImagesPageViewModel(DockerClient client, IJSRuntime jsRuntime)
         return $"{len:0.##} {sizes[order]}";
     }
 
+    public void ToggleSelectAll()
+    {
+        SelectAll = !SelectAll;
+        SelectedImageIds.Clear();
+        
+        if (SelectAll && Images != null)
+        {
+            foreach (var image in Images)
+            {
+                SelectedImageIds.Add(image.ID);
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public void ToggleImageSelection(string imageId)
+    {
+        if (SelectedImageIds.Contains(imageId))
+        {
+            SelectedImageIds.Remove(imageId);
+            SelectAll = false;
+        }
+        else
+        {
+            SelectedImageIds.Add(imageId);
+            
+            // Check if all images are now selected
+            if (Images != null && SelectedImageIds.Count == Images.Count)
+            {
+                SelectAll = true;
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public async Task RemoveSelectedImagesAsync()
+    {
+        if (SelectedImageIds.Count == 0) return;
+
+        var tasks = SelectedImageIds
+            .Select(id => client.Images.DeleteImageAsync(id, new ImageDeleteParameters { Force = true }))
+            .ToArray();
+
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception)
+        {
+            // Ignore errors - some images may fail to delete
+        }
+        finally
+        {
+            SelectedImageIds.Clear();
+            SelectAll = false;
+            await RefreshImagesAsync();
+        }
+    }
 
 }
 
