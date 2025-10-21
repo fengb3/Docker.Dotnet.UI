@@ -1,4 +1,4 @@
-name: 构建和推送 Docker 镜像
+name: Build and Push Docker Image
 
 on:
   push:
@@ -95,62 +95,66 @@ jobs:
           username: ${{ secrets.CUSTOM_REGISTRY_2_USERNAME }}
           password: ${{ secrets.CUSTOM_REGISTRY_2_PASSWORD }}
 
-      # - name: 构建 Docker 镜像标签
-      #   id: meta
-      #   run: |
-      #     VERSION="${{ needs.check-version-changed.outputs.version }}"
-      #     TAGS=""
-          
-      #     # Docker Hub
-      #     if [ -n "${{ vars.DOCKERHUB_REGISTRY }}" ]; then
-      #       TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-      #       TAGS="${TAGS}${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-      #     fi
-          
-      #     # GitHub Container Registry
-      #     if [ -n "${{ vars.GHCR_REGISTRY }}" ]; then
-      #       TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-      #       TAGS="${TAGS}${{ vars.GHCR_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-      #     fi
-          
-      #     # 自定义镜像仓库 1
-      #     if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
-      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-      #     fi
-          
-      #     # 自定义镜像仓库 2
-      #     if [ -n "${{ vars.CUSTOM_REGISTRY_2 }}" ]; then
-      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:latest"$'\n'
-      #       TAGS="${TAGS}${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-      #     fi
-          
-      #     # 如果没有配置任何仓库，使用默认标签
-      #     if [ -z "$TAGS" ]; then
-      #       TAGS="${{ env.IMAGE_NAME }}:latest"$'\n'
-      #       TAGS="${TAGS}${{ env.IMAGE_NAME }}:${VERSION}"$'\n'
-      #     fi
-          
-      #     # 移除末尾的换行符
-      #     TAGS=$(echo "$TAGS" | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}')
-          
-      #     # 使用多行输出格式
-      #     echo "tags<<EOF" >> $GITHUB_OUTPUT
-      #     echo "$TAGS" >> $GITHUB_OUTPUT
-      #     echo "EOF" >> $GITHUB_OUTPUT
-          
-      #     echo "📝 生成的标签:"
-      #     echo "$TAGS"
+      - name: 构建 Docker 镜像标签
+        id: meta
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.check-version-changed.outputs.version }}"
+          TAGS=""
 
-      - uses: mr-smithers-excellent/docker-build-push@v6
-        name: Build & push Docker image
+          add_tag() {
+            TAGS="${TAGS}$1\n"
+          }
+
+          # Docker Hub
+          if [ -n "${{ vars.DOCKERHUB_REGISTRY }}" ]; then
+            add_tag "${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+            add_tag "${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+
+          # GitHub Container Registry
+          if [ -n "${{ vars.GHCR_REGISTRY }}" ]; then
+            add_tag "${{ vars.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+            add_tag "${{ vars.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+
+          # 自定义镜像仓库 1
+          if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
+            add_tag "${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:latest"
+            add_tag "${{ vars.CUSTOM_REGISTRY_1 }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+
+          # 自定义镜像仓库 2
+          if [ -n "${{ vars.CUSTOM_REGISTRY_2 }}" ]; then
+            add_tag "${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:latest"
+            add_tag "${{ vars.CUSTOM_REGISTRY_2 }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+
+          # 如果没有配置任何仓库，使用默认标签
+          if [ -z "$(echo -n "$TAGS")" ]; then
+            add_tag "${{ env.IMAGE_NAME }}:latest"
+            add_tag "${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+
+          # 输出为多行 action 输出
+          # Trim possible trailing newline by using printf
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          printf "%b" "$TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "📝 生成的标签:"
+          printf "%b" "$TAGS"
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v5
         with:
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ needs.check-version-changed.outputs.version }}, latest
-          registry: ${{ vars.DOCKERHUB_REGISTRY }}
-          dockerfile: ./Docker.Dotnet.UI/Dockerfile
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          context: .
+          file: ./Docker.Dotnet.UI/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           
       # - name: 构建并推送 Docker 镜像
       #   uses: docker/build-push-action@v5
@@ -170,7 +174,13 @@ jobs:
           echo "**版本号:** \`${{ needs.check-version-changed.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**镜像标签:**" >> $GITHUB_STEP_SUMMARY
+          # Iterate newline-separated tags from the meta step
+          IFS=$'\n'
           for tag in ${{ steps.meta.outputs.tags }}; do
-            echo "- \`$tag\`" >> $GITHUB_STEP_SUMMARY
+            # skip empty lines
+            if [ -n "$tag" ]; then
+              echo "- \`$tag\`" >> $GITHUB_STEP_SUMMARY
+            fi
           done
+          unset IFS
 
