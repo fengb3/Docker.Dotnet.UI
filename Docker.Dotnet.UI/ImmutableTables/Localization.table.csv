@@ -159,3 +159,30 @@
 " ",USER_COUNT,User Count,用户数,User Count,ユーザー数,사용자 수,Número de usuarios,label
 " ",CREATE_USER_DIALOG,Create New User,创建新用户,Create New User,新しいユーザーを作成,새 사용자 생성,Crear nuevo usuario,dialog title
 " ",ADMIN_ONLY,Admin Only,仅管理员,Admin Only,管理者のみ,관리자 전용,Solo administrador,label
+
+# Search and filter strings,,,,,,,,
+" ",SEARCH_PLACEHOLDER,Search...,搜索...,Rechercher...,検索...,검색...,Buscar...,search input placeholder
+" ",FILTER,Filter,筛选,Filtre,フィルタ,필터,Filtro,filter label
+" ",CLEAR_FILTER,Clear Filter,清除筛选,Clear Filter,フィルタをクリア,필터 지우기,Limpiar filtro,button text
+" ",FILTER_BY_STATUS,Filter by Status,按状态筛选,Filter by Status,ステータスでフィルタ,상태별 필터,Filtrar por estado,filter label
+" ",FILTER_BY_NAME,Filter by Name,按名称筛选,Filter by Name,名前でフィルタ,이름별 필터,Filtrar por nombre,filter label
+" ",ALL_STATUS,All Status,所有状态,All Status,すべてのステータス,모든 상태,Todos los estados,filter option
+
+# Batch operations strings,,,,,,,,
+" ",SELECT_ALL,Select All,全选,Select All,すべて選択,모두 선택,Seleccionar todo,checkbox label
+" ",SELECTED_ITEMS,Selected Items,已选项,Selected Items,選択されたアイテム,선택된 항목,Elementos seleccionados,label
+" ",BATCH_ACTIONS,Batch Actions,批量操作,Batch Actions,一括操作,일괄 작업,Acciones en lote,label
+" ",START_SELECTED,Start Selected,启动所选,Start Selected,選択を起動,선택 항목 시작,Iniciar seleccionados,button text
+" ",STOP_SELECTED,Stop Selected,停止所选,Stop Selected,選択を停止,선택 항목 정지,Detener seleccionados,button text
+" ",REMOVE_SELECTED,Remove Selected,删除所选,Remove Selected,選択を削除,선택 항목 삭제,Eliminar seleccionados,button text
+" ",CONFIRM_REMOVE_SELECTED,"Are you sure you want to remove {0} selected item(s)?",确定要删除 {0} 个所选项吗？,"Are you sure you want to remove {0} selected item(s)?",{0}個の選択されたアイテムを削除してもよろしいですか？,{0}개의 선택된 항목을 삭제하시겠습니까?,"¿Está seguro de que desea eliminar {0} elemento(s) seleccionado(s)?",confirmation message
+" ",NO_ITEMS_SELECTED,No items selected,未选择任何项,No items selected,アイテムが選択されていません,선택된 항목이 없습니다,No hay elementos seleccionados,message
+
+# Real-time monitoring strings,,,,,,,,
+" ",REAL_TIME_STATS,Real-time Stats,实时统计,Real-time Stats,リアルタイム統計,실시간 통계,Estadísticas en tiempo real,dialog title
+" ",MONITORING,Monitoring,监控,Monitoring,監視,모니터링,Monitoreo,label
+" ",CPU_PERCENT,CPU %,CPU %,CPU %,CPU %,CPU %,CPU %,label
+" ",MEMORY_PERCENT,Memory %,内存 %,Memory %,メモリ %,메모리 %,Memoria %,label
+" ",NETWORK_RX,Network RX,网络接收,Network RX,ネットワーク RX,네트워크 RX,Red RX,label
+" ",NETWORK_TX,Network TX,网络发送,Network TX,ネットワーク TX,네트워크 TX,Red TX,label
+" ",AUTO_REFRESH,Auto Refresh,自动刷新,Auto Refresh,自動更新,자동 새로고침,Actualización automática,label
