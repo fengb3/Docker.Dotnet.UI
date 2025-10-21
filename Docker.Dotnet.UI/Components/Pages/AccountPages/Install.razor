@@ -1,10 +1,10 @@
 @page "/Account/Install"
 @using Docker.Dotnet.UI.ViewModels
 
-@inject InstallViewModel ViewModel
+@inherits MyComponentBase<InstallViewModel>
+
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@inject Microsoft.Extensions.Localization.IStringLocalizer Localizer
 
 <PageTitle>@Localizer["INSTALL_PAGE_TITLE"]</PageTitle>
 
@@ -15,39 +15,39 @@
             <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Secondary">@Localizer["INSTALL_HEADER"]</MudText>
             <MudText Typo="Typo.body2" Align="Align.Center">@Localizer["INSTALL_DESCRIPTION"]</MudText>
 
-            @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+            @if (!string.IsNullOrEmpty(Vm!.ErrorMessage))
             {
-                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => ViewModel.ErrorMessage = null)">
-                    @Localizer[ViewModel.ErrorMessage]
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ErrorMessage = null)">
+                    @Localizer[Vm!.ErrorMessage]
                 </MudAlert>
             }
 
-            @if (!string.IsNullOrEmpty(ViewModel.SuccessMessage))
+            @if (!string.IsNullOrEmpty(Vm!.SuccessMessage))
             {
                 <MudAlert Severity="Severity.Success">
-                    @Localizer[ViewModel.SuccessMessage]
+                    @Localizer[Vm!.SuccessMessage]
                 </MudAlert>
             }
 
-            <EditForm Model="@ViewModel" OnValidSubmit="HandleInstall" FormName="InstallForm">
+            <EditForm Model="@Vm" OnValidSubmit="HandleInstall" FormName="InstallForm">
                 <DataAnnotationsValidator />
                 
                 <MudStack Spacing="3">
                     <MudTextField 
-                        @bind-Value="ViewModel.Username"
+                        @bind-Value="Vm!.Username"
                         Label="@Localizer["USERNAME"]" 
                         Variant="Variant.Outlined"
-                        For="@(() => ViewModel.Username)"
-                        Disabled="ViewModel.IsLoading"
+                        For="@(() => Vm!.Username)"
+                        Disabled="Vm!.IsLoading"
                         T="string" />
 
                     <MudTextField 
-                        @bind-Value="ViewModel.Password"
+                        @bind-Value="Vm!.Password"
                         Label="@Localizer["PASSWORD"]" 
                         Variant="Variant.Outlined"
                         InputType="InputType.Password"
-                        For="@(() => ViewModel.Password)"
-                        Disabled="ViewModel.IsLoading"
+                        For="@(() => Vm!.Password)"
+                        Disabled="Vm!.IsLoading"
                         HelperText="@Localizer["PASSWORD_REQUIREMENTS"]"
                         T="string" />
 
@@ -57,8 +57,8 @@
                         Color="Color.Primary"
                         FullWidth="true"
                         Size="Size.Large"
-                        Disabled="ViewModel.IsLoading">
-                        @if (ViewModel.IsLoading)
+                        Disabled="Vm!.IsLoading">
+                        @if (Vm!.IsLoading)
                         {
                             <MudProgressCircular Size="Size.Small" Indeterminate="true" />
                             <MudText Class="ms-2">@Localizer["INSTALL_IN_PROGRESS"]</MudText>
@@ -83,7 +83,7 @@
         // If there's an error parameter in the URL, display the error message
         if (!string.IsNullOrEmpty(ErrorFromQuery))
         {
-            ViewModel.SetError(ErrorFromQuery);
+            Vm!.SetError(ErrorFromQuery);
         }
     }
 
@@ -91,13 +91,13 @@
     private async Task HandleInstall()
     {
         // Set loading state
-        ViewModel.SetLoading(true);
+        Vm!.SetLoading(true);
         
         // After form validation passes, use JavaScript to submit the form
         // This triggers a full HTTP POST, avoiding Blazor Server Cookie limitations
         await JSRuntime.InvokeVoidAsync("submitInstallForm", 
-            ViewModel.Username, 
-            ViewModel.Password);
+            Vm!.Username, 
+            Vm!.Password);
     }
 }
 
