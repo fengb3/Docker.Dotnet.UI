@@ -2,6 +2,7 @@ using Docker.Dotnet.UI;
 using Docker.Dotnet.UI.Components;
 using Docker.Dotnet.UI.Database;
 using Docker.Dotnet.UI.Database.Models;
+using Docker.Dotnet.UI.Middleware;
 using Docker.Dotnet.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +74,9 @@ app.UseHttpsRedirection();
 
 app.UseAntiforgery();
 
+// Check if installation is required (no users exist)
+app.UseMiddleware<InstallationCheckMiddleware>();
+
 // add authentication and authorization to app
 app.UseAuthentication();
 app.UseAuthorization();
@@ -83,21 +87,19 @@ app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 // map Controllers
 app.MapControllers();
 
-// initialize database and create default user
+// initialize database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var logger = services.GetRequiredService<ILogger<Program>>();
 
         // apply migrations
         context.Database.Migrate();
-
-        // create default user
-        await DbInitializer.SeedDefaultUserAsync(userManager, logger);
+        
+        logger.LogInformation("Database migrations applied successfully");
     }
     catch (Exception ex)
     {

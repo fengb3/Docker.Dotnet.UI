@@ -8,10 +8,12 @@ namespace Docker.Dotnet.UI.Controllers;
 [Route("api/[controller]")]
 public class AccountController(
     SignInManager<ApplicationUser> signInManager,
+    UserManager<ApplicationUser> userManager,
     ILogger<AccountController> logger
 ) : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly ILogger<AccountController> _logger = logger;
 
     /// <summary>
@@ -89,5 +91,58 @@ public class AccountController(
         await _signInManager.SignOutAsync();
         _logger.LogInformation("用户已登出");
         return Redirect("/Account/Login");
+    }
+
+    /// <summary>
+    /// 处理初始安装 - 创建第一个管理员用户
+    /// </summary>
+    [HttpPost("Install")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Install(
+        [FromForm] string username,
+        [FromForm] string password
+    )
+    {
+        try
+        {
+            // 检查是否已经存在用户
+            var users = _userManager.Users.ToList();
+            if (users.Count > 0)
+            {
+                _logger.LogWarning("尝试安装但系统中已存在用户");
+                return Redirect("/Account/Login");
+            }
+
+            // 创建管理员用户
+            var adminUser = new ApplicationUser
+            {
+                UserName = username,
+                Email = $"{username}@localhost.com",
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(adminUser, password);
+
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("成功创建初始管理员用户: {Username}", username);
+                
+                // 自动登录新创建的用户
+                await _signInManager.SignInAsync(adminUser, isPersistent: false);
+                
+                return Redirect("/");
+            }
+            else
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogError("创建初始管理员用户失败: {Errors}", errors);
+                return Redirect($"/Account/Install?error={Uri.EscapeDataString("INSTALL_ERROR")}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "安装过程中发生错误");
+            return Redirect($"/Account/Install?error={Uri.EscapeDataString("INSTALL_ERROR")}");
+        }
     }
 }

@@ -1,0 +1,129 @@
+@page "/Account/Install"
+@using Docker.Dotnet.UI.ViewModels
+
+@inherits MyComponentBase<InstallViewModel>
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@Localizer["INSTALL_PAGE_TITLE"]</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center justify-center" Style="min-height: 100vh;">
+    <MudPaper Elevation="3" Class="pa-8 rounded-4" Style="width: 100%; max-width: 400px;">
+        <MudStack Spacing="4">
+            <MudText Typo="Typo.h4" Align="Align.Center">Docker.Dotnet.UI</MudText>
+            <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Secondary">@Localizer["INSTALL_HEADER"]</MudText>
+            <MudText Typo="Typo.body2" Align="Align.Center">@Localizer["INSTALL_DESCRIPTION"]</MudText>
+
+            @if (!string.IsNullOrEmpty(Vm!.ErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ErrorMessage = null)">
+                    @Localizer[Vm!.ErrorMessage]
+                </MudAlert>
+            }
+
+            @if (!string.IsNullOrEmpty(Vm!.SuccessMessage))
+            {
+                <MudAlert Severity="Severity.Success">
+                    @Localizer[Vm!.SuccessMessage]
+                </MudAlert>
+            }
+
+            <EditForm Model="@Vm" OnValidSubmit="HandleInstall" FormName="InstallForm">
+                <DataAnnotationsValidator />
+                
+                <MudStack Spacing="3">
+                    <MudTextField 
+                        @bind-Value="Vm!.Username"
+                        Label="@Localizer["USERNAME"]" 
+                        Variant="Variant.Outlined"
+                        For="@(() => Vm!.Username)"
+                        Disabled="Vm!.IsLoading"
+                        T="string" />
+
+                    <MudTextField 
+                        @bind-Value="Vm!.Password"
+                        Label="@Localizer["PASSWORD"]" 
+                        Variant="Variant.Outlined"
+                        InputType="InputType.Password"
+                        For="@(() => Vm!.Password)"
+                        Disabled="Vm!.IsLoading"
+                        HelperText="@Localizer["PASSWORD_REQUIREMENTS"]"
+                        T="string" />
+
+                    <MudButton 
+                        ButtonType="ButtonType.Submit"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        FullWidth="true"
+                        Size="Size.Large"
+                        Disabled="Vm!.IsLoading">
+                        @if (Vm!.IsLoading)
+                        {
+                            <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">@Localizer["INSTALL_IN_PROGRESS"]</MudText>
+                        }
+                        else
+                        {
+                            <MudText>@Localizer["CREATE_ADMIN_ACCOUNT"]</MudText>
+                        }
+                    </MudButton>
+                </MudStack>
+            </EditForm>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? ErrorFromQuery { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // If there's an error parameter in the URL, display the error message
+        if (!string.IsNullOrEmpty(ErrorFromQuery))
+        {
+            Vm!.SetError(ErrorFromQuery);
+        }
+    }
+
+    // Submit form via JavaScript to /api/Account/Install endpoint
+    private async Task HandleInstall()
+    {
+        // Set loading state
+        Vm!.SetLoading(true);
+        
+        // After form validation passes, use JavaScript to submit the form
+        // This triggers a full HTTP POST, avoiding Blazor Server Cookie limitations
+        await JSRuntime.InvokeVoidAsync("submitInstallForm", 
+            Vm!.Username, 
+            Vm!.Password);
+    }
+}
+
+<script>
+    window.submitInstallForm = function(username, password) {
+        // Create hidden form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/api/Account/Install';
+        
+        // Add form fields
+        const fields = {
+            'username': username,
+            'password': password
+        };
+        
+        for (const [key, value] of Object.entries(fields)) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+        }
+        
+        // Add to page and submit
+        document.body.appendChild(form);
+        form.submit();
+    };
+</script>
