@@ -1,4 +1,4 @@
-#,[Key]resource-key:string,en-us:string,zh-cn:string,fr-fr:string,ja:string,ko-kr:string,es:string,Descriptions:string
+,[Key]resource-key:string,en-us:string,zh-cn:string,fr-fr:string,ja:string,ko-kr:string,es:string,Descriptions:string
 #,# 资源键值,# 英语,# 汉语,# 法语,# 日语,# 韩语,# 西语,# 描述
 
 # Containers page strings,,,,,,,,
