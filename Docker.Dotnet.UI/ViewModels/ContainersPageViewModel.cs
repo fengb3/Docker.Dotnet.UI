@@ -7,7 +7,6 @@ namespace Docker.Dotnet.UI.ViewModels;
 [RegisterScoped(typeof(ContainersPageViewModel))]
 public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
 {
-    public event Action? OnStateChanged;
 
     public override async Task InitializeAsync()
     {
@@ -184,11 +183,6 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         ShowInspectDialog = false;
         InspectJson = null;
         NotifyStateChanged();
-    }
-
-    private void NotifyStateChanged()
-    {
-        OnStateChanged?.Invoke();
     }
 }
 

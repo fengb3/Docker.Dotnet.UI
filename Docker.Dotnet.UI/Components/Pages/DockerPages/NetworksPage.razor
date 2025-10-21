@@ -90,7 +90,7 @@
                                 <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                Color="Color.Primary"
                                                Size="Size.Small"
-                                               OnClick="@(() => HandleShowInspect(network.ID, network.Name))"
+                                               OnClick="@(() => Vm!.ShowInspectAsync(network.ID, network.Name))"
                                                title='@Localizer["INSPECT"]' />
                                 
                                 @if (!IsSystemNetwork(network.Name))
@@ -98,7 +98,7 @@
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                                    Color="Color.Error"
                                                    Size="Size.Small"
-                                                   OnClick="@(() => HandleDeleteNetwork(network.ID))"
+                                                   OnClick="@(() => Vm!.DeleteNetworkAsync(network.ID))"
                                                    title='@Localizer["REMOVE"]' />
                                 }
                             </MudStack>
@@ -174,27 +174,11 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Vm!.OnStateChanged += StateHasChanged;
-    }
-
-    private async Task HandleDeleteNetwork(string networkId)
-    {
-        await Vm!.DeleteNetworkAsync(networkId);
-    }
-
-    private async Task HandleShowInspect(string networkId, string networkName)
-    {
-        await Vm!.ShowInspectAsync(networkId, networkName);
     }
 
     private bool IsSystemNetwork(string networkName)
     {
         // Prevent deletion of system networks
         return networkName == "bridge" || networkName == "host" || networkName == "none";
-    }
-
-    public void Dispose()
-    {
-        Vm!.OnStateChanged -= StateHasChanged;
     }
 }

@@ -11,7 +11,6 @@ namespace Docker.Dotnet.UI.ViewModels;
 public class ImagesPageViewModel(DockerClient client, IJSRuntime jsRuntime)
     : ViewModel
 {
-    public event Action? OnStateChanged;
 
     public override async Task InitializeAsync()
     {
@@ -185,11 +184,6 @@ public class ImagesPageViewModel(DockerClient client, IJSRuntime jsRuntime)
                     {
                         key = message.ID;
                         output = $"{message.ID}: {message.Status} {message.ProgressMessage}";
-
-                        // if (message.Progress != null)
-                        // {
-                        //     output = $"{output} {message.Progress.Current}/{message.Progress.Total}";
-                        // }
                     }
                     else
                     {
@@ -320,10 +314,7 @@ public class ImagesPageViewModel(DockerClient client, IJSRuntime jsRuntime)
         return $"{len:0.##} {sizes[order]}";
     }
 
-    private void NotifyStateChanged()
-    {
-        OnStateChanged?.Invoke();
-    }
+
 }
 
 public class ImageListItemViewModel

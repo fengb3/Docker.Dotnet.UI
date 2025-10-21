@@ -34,6 +34,9 @@ public class MyComponentBase<T> : ComponentBase, IDisposable
             throw new NullReferenceException($"ViewModel is null when loading {typeof(T).Name}");
         }
 
+        // Subscribe to ViewModel state change events
+        Vm.OnStateChanged += OnViewModelStateChanged;
+
         await Vm.InitializeAsync();
         StateHasChanged();
     }
@@ -46,6 +49,14 @@ public class MyComponentBase<T> : ComponentBase, IDisposable
         InvokeAsync(StateHasChanged);
     }
 
+    /// <summary>
+    /// Called when the ViewModel state changes. Override to add custom behavior.
+    /// </summary>
+    protected virtual void OnViewModelStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
     public void Dispose()
     {
         if (_isDisposed) return;
@@ -54,6 +65,12 @@ public class MyComponentBase<T> : ComponentBase, IDisposable
         if (Localizer is MyLocalizer myLocalizer)
         {
             myLocalizer.LanguageChanged -= OnLanguageChanged;
+        }
+
+        // Unsubscribe from ViewModel state change events
+        if (Vm != null)
+        {
+            Vm.OnStateChanged -= OnViewModelStateChanged;
         }
 
         _isDisposed = true;

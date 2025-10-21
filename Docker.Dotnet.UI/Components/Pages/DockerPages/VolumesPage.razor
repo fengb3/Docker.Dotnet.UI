@@ -20,7 +20,7 @@
             <MudButton Variant="Variant.Filled" 
                        Color="Color.Warning" 
                        StartIcon="@Icons.Material.Filled.CleaningServices"
-                       OnClick="HandlePruneVolumes">
+                       OnClick="Vm!.PruneVolumesAsync">
                 @Localizer["PRUNE_VOLUMES"]
             </MudButton>
             <MudButton Variant="Variant.Filled" 
@@ -107,13 +107,13 @@
                                 <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                Color="Color.Primary"
                                                Size="Size.Small"
-                                               OnClick="@(() => HandleViewDetails(volume.Name))"
+                                               OnClick="@(() => Vm!.ShowInspectAsync(volume.Name))"
                                                title='@Localizer["INFO"]' />
                                 
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                                Color="Color.Error"
                                                Size="Size.Small"
-                                               OnClick="@(() => HandleDeleteVolume(volume.Name))"
+                                               OnClick="@(() => Vm!.DeleteVolumeAsync(volume.Name))"
                                                title='@Localizer["REMOVE"]' />
                             </MudStack>
                         </MudItem>
@@ -184,26 +184,5 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Vm!.OnStateChanged += StateHasChanged;
-    }
-    
-    private async Task HandleDeleteVolume(string volumeName)
-    {
-        await Vm!.DeleteVolumeAsync(volumeName);
-    }
-    
-    private async Task HandleViewDetails(string volumeName)
-    {
-        await Vm!.ShowInspectAsync(volumeName);
-    }
-
-    private async Task HandlePruneVolumes()
-    {
-        await Vm!.PruneVolumesAsync();
-    }
-
-    public void Dispose()
-    {
-        Vm!.OnStateChanged -= StateHasChanged;
     }
 }

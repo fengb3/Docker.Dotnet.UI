@@ -129,17 +129,17 @@
                                         <MudIconButton Icon="@Icons.Material.Filled.Stop" 
                                                        Color="Color.Warning"
                                                        Size="Size.Small"
-                                                       OnClick="@(() => HandleStopContainer(container.ID))"
+                                                       OnClick="@(() => Vm!.StopContainerAsync(container.ID))"
                                                        title='@Localizer["STOP"]' />
                                         <MudIconButton Icon="@Icons.Material.Filled.RestartAlt" 
                                                        Color="Color.Info"
                                                        Size="Size.Small"
-                                                       OnClick="@(() => HandleRestartContainer(container.ID))"
+                                                       OnClick="@(() => Vm!.RestartContainerAsync(container.ID))"
                                                        title='@Localizer["RESTART"]' />
                                         <MudIconButton Icon="@Icons.Material.Filled.Pause" 
                                                        Color="Color.Secondary"
                                                        Size="Size.Small"
-                                                       OnClick="@(() => HandlePauseContainer(container.ID))"
+                                                       OnClick="@(() => Vm!.PauseContainerAsync(container.ID))"
                                                        title='@Localizer["PAUSE"]' />
                                 }
                                 else if (container.State == "paused")
@@ -147,7 +147,7 @@
                                         <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" 
                                                        Color="Color.Success"
                                                        Size="Size.Small"
-                                                       OnClick="@(() => HandleUnpauseContainer(container.ID))"
+                                                       OnClick="@(() => Vm!.UnpauseContainerAsync(container.ID))"
                                                        title='@Localizer["UNPAUSE"]' />
                                 }
                                 else
@@ -155,26 +155,26 @@
                                         <MudIconButton Icon="@Icons.Material.Filled.PlayArrow" 
                                                        Color="Color.Success"
                                                        Size="Size.Small"
-                                                       OnClick="@(() => HandleStartContainer(container.ID))"
+                                                       OnClick="@(() => Vm!.StartContainerAsync(container.ID))"
                                                        title='@Localizer["START"]' />
                                 }
                                 
                                     <MudIconButton Icon="@Icons.Material.Filled.Article" 
                                                    Color="Color.Primary"
                                                    Size="Size.Small"
-                                                   OnClick="@(() => HandleShowLogs(container.ID, container.ContainerName))"
+                                                   OnClick="@(() => Vm!.ShowLogsAsync(container.ID, container.ContainerName))"
                                                    title='@Localizer["LOGS"]' />
                                 
                                     <MudIconButton Icon="@Icons.Material.Filled.Info" 
                                                    Color="Color.Primary"
                                                    Size="Size.Small"
-                                                   OnClick="@(() => HandleShowInspect(container.ID, container.ContainerName))"
+                                                   OnClick="@(() => Vm!.ShowInspectAsync(container.ID, container.ContainerName))"
                                                    title='@Localizer["INSPECT"]' />
                                 
                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                                    Color="Color.Error"
                                                    Size="Size.Small"
-                                                   OnClick="@(() => HandleDeleteContainer(container.ID))"
+                                                   OnClick="@(() => Vm!.DeleteContainerAsync(container.ID))"
                                                    title='@Localizer["REMOVE"]' />
                             </MudStack>
                         </MudItem>
@@ -241,51 +241,5 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Vm!.OnStateChanged += StateHasChanged;
-    }
-    
-    private async Task HandleStartContainer(string containerId)
-    {
-        await Vm!.StartContainerAsync(containerId);
-    }
-    
-    private async Task HandleStopContainer(string containerId)
-    {
-        await Vm!.StopContainerAsync(containerId);
-    }
-
-    private async Task HandleRestartContainer(string containerId)
-    {
-        await Vm!.RestartContainerAsync(containerId);
-    }
-
-    private async Task HandlePauseContainer(string containerId)
-    {
-        await Vm!.PauseContainerAsync(containerId);
-    }
-
-    private async Task HandleUnpauseContainer(string containerId)
-    {
-        await Vm!.UnpauseContainerAsync(containerId);
-    }
-    
-    private async Task HandleDeleteContainer(string containerId)
-    {
-        await Vm!.DeleteContainerAsync(containerId);
-    }
-
-    private async Task HandleShowLogs(string containerId, string containerName)
-    {
-        await Vm!.ShowLogsAsync(containerId, containerName);
-    }
-
-    private async Task HandleShowInspect(string containerId, string containerName)
-    {
-        await Vm!.ShowInspectAsync(containerId, containerName);
-    }
-
-    public void Dispose()
-    {
-        Vm!.OnStateChanged -= StateHasChanged;
     }
 }

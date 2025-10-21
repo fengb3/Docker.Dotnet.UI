@@ -7,7 +7,7 @@ namespace Docker.Dotnet.UI.ViewModels;
 [RegisterTransient(typeof(VolumesPageViewModel))]
 public class VolumesPageViewModel(DockerClient client) : ViewModel
 {
-    public event Action? OnStateChanged;
+    
 
     public override async Task InitializeAsync()
     {
@@ -129,10 +129,7 @@ public class VolumesPageViewModel(DockerClient client) : ViewModel
         await RefreshVolumesAsync();
     }
 
-    private void NotifyStateChanged()
-    {
-        OnStateChanged?.Invoke();
-    }
+
 }
 
 public class VolumeListItemViewModel

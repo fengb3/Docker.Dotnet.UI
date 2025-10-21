@@ -7,7 +7,7 @@ namespace Docker.Dotnet.UI.ViewModels;
 [RegisterScoped(typeof(NetworksPageViewModel))]
 public class NetworksPageViewModel(DockerClient dockerClient) : ViewModel
 {
-    public event Action? OnStateChanged;
+    
 
     public override async Task InitializeAsync()
     {
@@ -126,10 +126,7 @@ public class NetworksPageViewModel(DockerClient dockerClient) : ViewModel
         NotifyStateChanged();
     }
 
-    private void NotifyStateChanged()
-    {
-        OnStateChanged?.Invoke();
-    }
+
 }
 
 public class NetworkListItemViewModel

@@ -263,11 +263,5 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Vm!.OnStateChanged += StateHasChanged;
-    }
-
-    public void Dispose()
-    {
-        Vm!.OnStateChanged -= StateHasChanged;
     }
 }
