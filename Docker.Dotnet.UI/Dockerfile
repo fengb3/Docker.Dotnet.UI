@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Docker.Dotnet.UI/Docker.Dotnet.UI.csproj", "Docker.Dotnet.UI/"]
+COPY ["Docker.Dotnet.UI.SourceGenerator/Docker.Dotnet.UI.SourceGenerator.csproj", "Docker.Dotnet.UI.SourceGenerator/"]
 RUN dotnet restore "Docker.Dotnet.UI/Docker.Dotnet.UI.csproj"
 COPY . .
 WORKDIR "/src/Docker.Dotnet.UI"
