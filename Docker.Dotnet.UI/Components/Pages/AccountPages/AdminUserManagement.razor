@@ -1,0 +1,204 @@
+@page "/Account/UserManagement"
+@using Docker.Dotnet.UI.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@inherits MyComponentBase<AdminUserManagementViewModel>
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IDialogService DialogService
+
+<PageTitle>@Localizer["USER_MANAGEMENT"]</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    @if (!IsAdmin)
+    {
+        <MudAlert Severity="Severity.Error">
+            @Localizer["ACCESS_DENIED_MESSAGE"]
+        </MudAlert>
+    }
+    else
+    {
+        <MudStack Spacing="4">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.h4">@Localizer["USER_MANAGEMENT"]</MudText>
+                <MudButton 
+                    Variant="Variant.Filled" 
+                    Color="Color.Primary" 
+                    StartIcon="@Icons.Material.Filled.Add"
+                    OnClick="OpenCreateUserDialog">
+                    @Localizer["CREATE_USER"]
+                </MudButton>
+            </MudStack>
+
+            @if (!string.IsNullOrEmpty(Vm!.SuccessMessage))
+            {
+                <MudAlert Severity="Severity.Success" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ClearMessages())">
+                    @Vm!.SuccessMessage
+                </MudAlert>
+            }
+
+            @if (!string.IsNullOrEmpty(Vm!.ErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ClearMessages())">
+                    @Vm!.ErrorMessage
+                </MudAlert>
+            }
+
+            @if (Vm!.IsLoading)
+            {
+                <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+            }
+
+            @if (Vm!.Users == null || Vm!.Users.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info">@Localizer["NO_USERS"]</MudAlert>
+            }
+            else
+            {
+                <MudPaper Elevation="2">
+                    <MudTable Items="@Vm!.Users" Hover="true" Breakpoint="Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>@Localizer["USERNAME"]</MudTh>
+                            <MudTh>@Localizer["EMAIL"]</MudTh>
+                            <MudTh Style="text-align: right">@Localizer["ACTIONS"]</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="@Localizer["USERNAME"]">@context.UserName</MudTd>
+                            <MudTd DataLabel="@Localizer["EMAIL"]">@context.Email</MudTd>
+                            <MudTd DataLabel="@Localizer["ACTIONS"]" Style="text-align: right">
+                                <MudIconButton 
+                                    Icon="@Icons.Material.Filled.Delete" 
+                                    Color="Color.Error"
+                                    Size="Size.Small"
+                                    OnClick="@(() => ConfirmDeleteUser(context))"
+                                    title="@Localizer["REMOVE"]" />
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+            }
+        </MudStack>
+    }
+</MudContainer>
+
+@* Create User Dialog *@
+<MudDialog @bind-Visible="showCreateDialog" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Localizer["CREATE_USER_DIALOG"]</MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@Vm!.NewUser" OnValidSubmit="HandleCreateUser">
+            <DataAnnotationsValidator />
+            
+            <MudStack Spacing="3">
+                <MudTextField 
+                    @bind-Value="Vm!.NewUser.UserName"
+                    Label="@Localizer["USERNAME"]" 
+                    Variant="Variant.Outlined"
+                    For="@(() => Vm!.NewUser.UserName)"
+                    Disabled="Vm!.IsLoading"
+                    T="string" />
+
+                <MudTextField 
+                    @bind-Value="Vm!.NewUser.Email"
+                    Label="@Localizer["EMAIL"]" 
+                    Variant="Variant.Outlined"
+                    For="@(() => Vm!.NewUser.Email)"
+                    Disabled="Vm!.IsLoading"
+                    T="string" />
+
+                <MudTextField 
+                    @bind-Value="Vm!.NewUser.Password"
+                    Label="@Localizer["PASSWORD"]" 
+                    Variant="Variant.Outlined"
+                    InputType="InputType.Password"
+                    For="@(() => Vm!.NewUser.Password)"
+                    Disabled="Vm!.IsLoading"
+                    T="string" />
+
+                <MudTextField 
+                    @bind-Value="Vm!.NewUser.ConfirmPassword"
+                    Label="@Localizer["CONFIRM_PASSWORD"]" 
+                    Variant="Variant.Outlined"
+                    InputType="InputType.Password"
+                    For="@(() => Vm!.NewUser.ConfirmPassword)"
+                    Disabled="Vm!.IsLoading"
+                    T="string" />
+            </MudStack>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseCreateDialog" Disabled="Vm!.IsLoading">@Localizer["CANCEL"]</MudButton>
+        <MudButton 
+            Variant="Variant.Filled" 
+            Color="Color.Primary" 
+            OnClick="HandleCreateUser"
+            Disabled="Vm!.IsLoading">
+            @if (Vm!.IsLoading)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+            }
+            else
+            {
+                @Localizer["CREATE_USER"]
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool IsAdmin { get; set; }
+    private bool showCreateDialog;
+    private readonly DialogOptions dialogOptions = new() { MaxWidth = MaxWidth.Small, FullWidth = true };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        // Check if user is the admin user
+        IsAdmin = user.Identity?.Name == "admin";
+    }
+
+    private void OpenCreateUserDialog()
+    {
+        Vm!.NewUser = new CreateUserModel();
+        Vm!.ClearMessages();
+        showCreateDialog = true;
+    }
+
+    private void CloseCreateDialog()
+    {
+        showCreateDialog = false;
+    }
+
+    private async Task HandleCreateUser()
+    {
+        var success = await Vm!.CreateUserAsync();
+        if (success)
+        {
+            CloseCreateDialog();
+        }
+    }
+
+    private async Task ConfirmDeleteUser(UserListItemViewModel user)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ContentText", Localizer["CONFIRM_DELETE_USER"] },
+            { "ButtonText", Localizer["REMOVE"] },
+            { "Color", Color.Error }
+        };
+
+        var dialog = await DialogService.ShowAsync<MudMessageBox>("", parameters);
+        var result = await dialog.Result;
+        
+        if (result == null)
+            return;
+
+        if (!result.Canceled)
+        {
+            await Vm!.DeleteUserAsync(user.Id);
+        }
+    }
+}
