@@ -241,7 +241,6 @@
 " ",VALIDATION_DUP_PORT,Duplicate port mapping,重复的端口映射,Duplicate port mapping,重複するポートマッピング,중복된 포트 매핑,Mapeo de puerto duplicado,validation message
 " ",VALIDATION_INVALID_IP,Invalid IP address,无效的 IP 地址,Invalid IP address,無効な IP アドレス,잘못된 IP 주소,Dirección IP no válida,validation message
 " ",PULLING_IMAGE,Pulling image...,拉取镜像中...,Pulling image...,イメージをプル中...,이미지를 가져오는 중...,Extrayendo imagen...,status message
-" ",PULL_PROGRESS,Pull Progress,拉取进度,Pull Progress,プル進捗,풀 진행률,Progreso de extracción,label
 " ",CREATE_IN_PROGRESS,Creating container...,创建容器中...,Creating container...,コンテナを作成中...,컨테이너 생성 중...,Creando contenedor...,status message
 " ",CREATE_SUCCESS,Container created successfully,容器创建成功,Container created successfully,コンテナが正常に作成されました,컨테이너가 성공적으로 생성되었습니다,Contenedor creado correctamente,success message
 " ",CREATE_FAILED,Failed to create container,容器创建失败,Failed to create container,コンテナの作成に失敗しました,컨테이너 생성 실패,Error al crear el contenedor,error message
