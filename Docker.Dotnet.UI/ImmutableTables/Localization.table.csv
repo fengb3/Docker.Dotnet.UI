@@ -216,6 +216,7 @@
 " ",NETWORK,Network,网络,Network,ネットワーク,네트워크,Red,tab title
 " ",SELECT_NETWORK,Select Network,选择网络,Select Network,ネットワークを選択,네트워크 선택,Seleccionar red,label
 " ",ALIASES,Aliases,别名,Aliases,エイリアス,별칭,Alias,label
+" ",ADD_ALIAS,Add Alias,添加别名,Add Alias,エイリアスを追加,별칭 추가,Agregar alias,button text
 " ",IPV4_ADDRESS,IPv4 Address,IPv4 地址,IPv4 Address,IPv4 アドレス,IPv4 주소,Dirección IPv4,label
 " ",RESOURCES,Resources,资源,Resources,リソース,리소스,Recursos,tab title
 " ",CPU_LIMIT,CPU Limit (cores),CPU 限制（核数）,CPU Limit (cores),CPU 制限（コア）,CPU 제한(코어),Límite de CPU (núcleos),label
