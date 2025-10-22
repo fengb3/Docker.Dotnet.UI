@@ -7,8 +7,8 @@
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4">
     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
         <MudText Typo="Typo.h4">@Localizer["DASHBOARD"]</MudText>
-        <MudButton Variant="Variant.Filled" 
-                   Color="Color.Primary" 
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.Refresh"
                    OnClick="@(() => Vm!.LoadDashboardDataAsync())">
             @Localizer["REFRESH"]
@@ -17,8 +17,9 @@
 
     @if (Vm?.HasError == true)
     {
-        <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="@(() => Vm.ErrorMessage = null)">
-            @Vm.ErrorMessage
+        <MudAlert Severity="Severity.Error" Class="mb-4" ShowCloseIcon="true"
+                  CloseIconClicked="@(() => Vm!.ErrorMessage = null)">
+            @Vm!.ErrorMessage
         </MudAlert>
     }
 
@@ -31,14 +32,16 @@
                     <MudCardContent>
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
-                                <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_CONTAINERS"]</MudText>
-                                <MudText Typo="Typo.h4">@Vm.TotalContainers</MudText>
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary">@Localizer["DOCKER_CONTAINERS"]</MudText>
+                                <MudText Typo="Typo.h4">@Vm!.TotalContainers</MudText>
                                 <MudText Typo="Typo.caption">
-                                    <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small" Color="Color.Success" />
-                                    @Vm.RunningContainers @Localizer["RUNNING"]
+                                    <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Small"
+                                             Color="Color.Success"/>
+                                    @Vm!.RunningContainers @Localizer["RUNNING"]
                                 </MudText>
                             </div>
-                            <MudIcon Icon="@Icons.Material.Filled.Widgets" Size="Size.Large" Color="Color.Primary" />
+                            <MudIcon Icon="@Icons.Material.Filled.Widgets" Size="Size.Large" Color="Color.Primary"/>
                         </MudStack>
                     </MudCardContent>
                     <MudCardActions>
@@ -53,10 +56,10 @@
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_IMAGES"]</MudText>
-                                <MudText Typo="Typo.h4">@Vm.TotalImages</MudText>
+                                <MudText Typo="Typo.h4">@Vm!.TotalImages</MudText>
                                 <MudText Typo="Typo.caption" Style="visibility: hidden;">-</MudText>
                             </div>
-                            <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Color="Color.Info" />
+                            <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Color="Color.Info"/>
                         </MudStack>
                     </MudCardContent>
                     <MudCardActions>
@@ -70,11 +73,12 @@
                     <MudCardContent>
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
-                                <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_VOLUMES"]</MudText>
-                                <MudText Typo="Typo.h4">@Vm.TotalVolumes</MudText>
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary">@Localizer["DOCKER_VOLUMES"]</MudText>
+                                <MudText Typo="Typo.h4">@Vm!.TotalVolumes</MudText>
                                 <MudText Typo="Typo.caption" Style="visibility: hidden;">-</MudText>
                             </div>
-                            <MudIcon Icon="@Icons.Material.Filled.Storage" Size="Size.Large" Color="Color.Warning" />
+                            <MudIcon Icon="@Icons.Material.Filled.Storage" Size="Size.Large" Color="Color.Warning"/>
                         </MudStack>
                     </MudCardContent>
                     <MudCardActions>
@@ -88,11 +92,12 @@
                     <MudCardContent>
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
-                                <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_NETWORKS"]</MudText>
-                                <MudText Typo="Typo.h4">@Vm.TotalNetworks</MudText>
+                                <MudText Typo="Typo.body2"
+                                         Color="Color.Secondary">@Localizer["DOCKER_NETWORKS"]</MudText>
+                                <MudText Typo="Typo.h4">@Vm!.TotalNetworks</MudText>
                                 <MudText Typo="Typo.caption" Style="visibility: hidden;">-</MudText>
                             </div>
-                            <MudIcon Icon="@Icons.Material.Filled.Hub" Size="Size.Large" Color="Color.Success" />
+                            <MudIcon Icon="@Icons.Material.Filled.Hub" Size="Size.Large" Color="Color.Success"/>
                         </MudStack>
                     </MudCardContent>
                     <MudCardActions>
@@ -111,25 +116,31 @@
                         <div>
                             <MudStack Row="true" Justify="Justify.SpaceBetween">
                                 <MudText Typo="Typo.body2">@Localizer["RUNNING"]</MudText>
-                                <MudText Typo="Typo.body2">@Vm.RunningContainers</MudText>
+                                <MudText Typo="Typo.body2">@Vm!.RunningContainers</MudText>
                             </MudStack>
-                            <MudProgressLinear Color="Color.Success" Value="@GetPercentage(Vm.RunningContainers, Vm.TotalContainers)" Class="mt-1" />
+                            <MudProgressLinear Color="Color.Success"
+                                               Value="@GetPercentage(Vm!.RunningContainers, Vm!.TotalContainers)"
+                                               Class="mt-1"/>
                         </div>
                         <div>
                             <MudStack Row="true" Justify="Justify.SpaceBetween">
                                 <MudText Typo="Typo.body2">@Localizer["STOPPED"]</MudText>
-                                <MudText Typo="Typo.body2">@Vm.StoppedContainers</MudText>
+                                <MudText Typo="Typo.body2">@Vm!.StoppedContainers</MudText>
                             </MudStack>
-                            <MudProgressLinear Color="Color.Error" Value="@GetPercentage(Vm.StoppedContainers, Vm.TotalContainers)" Class="mt-1" />
+                            <MudProgressLinear Color="Color.Error"
+                                               Value="@GetPercentage(Vm!.StoppedContainers, Vm!.TotalContainers)"
+                                               Class="mt-1"/>
                         </div>
-                        @if (Vm.PausedContainers > 0)
+                        @if (Vm!.PausedContainers > 0)
                         {
                             <div>
                                 <MudStack Row="true" Justify="Justify.SpaceBetween">
                                     <MudText Typo="Typo.body2">@Localizer["PAUSED"]</MudText>
-                                    <MudText Typo="Typo.body2">@Vm.PausedContainers</MudText>
+                                    <MudText Typo="Typo.body2">@Vm!.PausedContainers</MudText>
                                 </MudStack>
-                                <MudProgressLinear Color="Color.Warning" Value="@GetPercentage(Vm.PausedContainers, Vm.TotalContainers)" Class="mt-1" />
+                                <MudProgressLinear Color="Color.Warning"
+                                                   Value="@GetPercentage(Vm!.PausedContainers, Vm!.TotalContainers)"
+                                                   Class="mt-1"/>
                             </div>
                         }
                     </MudStack>
@@ -142,23 +153,23 @@
                     <MudStack Spacing="2">
                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_VERSION"]</MudText>
-                            <MudText Typo="Typo.body2">@Vm.SystemInfo.ServerVersion</MudText>
+                            <MudText Typo="Typo.body2">@Vm!.SystemInfo.ServerVersion</MudText>
                         </MudStack>
                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["OS_TYPE"]</MudText>
-                            <MudText Typo="Typo.body2">@Vm.SystemInfo.OSType / @Vm.SystemInfo.OperatingSystem</MudText>
+                            <MudText Typo="Typo.body2">@Vm!.SystemInfo.OSType / @Vm!.SystemInfo.OperatingSystem</MudText>
                         </MudStack>
                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["ARCHITECTURE"]</MudText>
-                            <MudText Typo="Typo.body2">@Vm.SystemInfo.Architecture</MudText>
+                            <MudText Typo="Typo.body2">@Vm!.SystemInfo.Architecture</MudText>
                         </MudStack>
                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["TOTAL_MEMORY"]</MudText>
-                            <MudText Typo="Typo.body2">@Vm.FormatBytes(Vm.SystemInfo.MemTotal)</MudText>
+                            <MudText Typo="Typo.body2">@Vm!.FormatBytes(Vm!.SystemInfo.MemTotal)</MudText>
                         </MudStack>
                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["CPUS"]</MudText>
-                            <MudText Typo="Typo.body2">@Vm.SystemInfo.NCPU</MudText>
+                            <MudText Typo="Typo.body2">@Vm!.SystemInfo.NCPU</MudText>
                         </MudStack>
                     </MudStack>
                 </MudPaper>

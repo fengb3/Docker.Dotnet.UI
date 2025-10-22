@@ -12,30 +12,30 @@
     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
         <MudText Typo="Typo.h4">@Localizer["DOCKER_IMAGES"]</MudText>
         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-            @if (Vm.SelectedImageIds.Count > 0)
+            @if (Vm!.SelectedImageIds.Count > 0)
             {
                 <MudText Typo="Typo.body1">
-                    <strong>@Vm.SelectedImageIds.Count</strong> @Localizer["SELECTED_ITEMS"]
+                    <strong>@Vm!.SelectedImageIds.Count</strong> @Localizer["SELECTED_ITEMS"]
                 </MudText>
-                <MudButton Variant="Variant.Filled" 
-                        Color="Color.Error" 
-                        StartIcon="@Icons.Material.Filled.Delete"
-                        OnClick="@(() => ConfirmRemoveSelected())">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Error"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           OnClick="@(() => ConfirmRemoveSelected())">
                     @Localizer["REMOVE_SELECTED"]
                 </MudButton>
                 <MudSpacer/>
-                <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth"/>
                 <MudSpacer/>
 
             }
-            <MudButton Variant="Variant.Filled" 
-                       Color="Color.Primary" 
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="Vm!.OpenAddImageDialog">
                 @Localizer["ADD_IMAGE"]
             </MudButton>
-            <MudButton Variant="Variant.Filled" 
-                       Color="Color.Secondary" 
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Secondary"
                        StartIcon="@Icons.Material.Filled.Refresh"
                        OnClick="@(() => Vm!.RefreshImagesAsync())">
                 @Localizer["REFRESH"]
@@ -45,120 +45,122 @@
     
     <!-- Search Bar -->
     <MudPaper Class="pa-3 mb-3" Elevation="1">
-        <MudTextField @bind-Value="Vm!.SearchText" 
+        <MudTextField @bind-Value="Vm!.SearchText"
+                      Margin="Margin.Dense"
                       Label="@Localizer["SEARCH"]"
                       Placeholder="@Localizer["SEARCH_PLACEHOLDER"]"
-                      Adornment="Adornment.Start" 
+                      Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search"
                       Immediate="true"
-                      OnKeyUp="@(() => Vm.ApplyFilters())"
-                      Variant="Variant.Outlined" />
+                      OnKeyUp="@(() => Vm!.ApplyFilters())"
+                      Variant="Variant.Outlined"/>
     </MudPaper>
 
     <!-- Batch Actions Toolbar removed for maintainability; use version control to view history if needed. -->
-    
-    @if (Vm?.Images == null || Vm.Images.Count == 0)
+
+    @if (Vm?.Images == null || Vm!.Images.Count == 0)
     {
         <MudAlert Severity="Severity.Info">@Localizer["NO_IMAGES"]</MudAlert>
     }
     else
     {
-        <MudPaper Class="pa-3 mb-3" Elevation="0" >
+        <MudPaper Class="pa-3 mb-3" Elevation="0">
             <MudGrid Spacing="2">
                 <MudItem xs="1" Class="d-flex align-center">
-                    <MudCheckBox T="bool" Value="@Vm.SelectAll" 
-                                 ValueChanged="@((bool val) => Vm!.ToggleSelectAll())" 
-                                 Color="Color.Primary" />
+                    <MudCheckBox T="bool" Value="@Vm!.SelectAll"
+                                 ValueChanged="@((bool val) => Vm!.ToggleSelectAll())"
+                                 Color="Color.Primary"/>
                     <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth"/>
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["IMAGE_NAME"]</MudText>
                     <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
-                </MudItem>  
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth"/>
+                </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["IMAGE_ID"]</MudText>
                     <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth"/>
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["SIZE"]</MudText>
                     <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth"/>
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CREATED_AT"]</MudText>
                     <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth"/>
                 </MudItem>
                 <MudItem xs="1" Class="d-flex align-center">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["CONTAINERS_COUNT"]</MudText>
                     <MudSpacer/>
-                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth"/>
                 </MudItem>
                 <MudItem xs="2" Class="d-flex align-center justify-end pr-8">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["ACTIONS"]</MudText>
                 </MudItem>
             </MudGrid>
         </MudPaper>
-        
+
         <MudStack Spacing="2">
-            @foreach (var image in Vm.Images)
+            @foreach (var image in Vm!.Images)
             {
                 <MudCard Class="pa-3">
                     <MudGrid Spacing="2">
                         <MudItem xs="1" Class="d-flex align-center">
-                            <MudCheckBox T="bool" 
-                                         Value="@Vm.SelectedImageIds.Contains(image.ID)" 
-                                         ValueChanged="@((bool val) => Vm!.ToggleImageSelection(image.ID))" 
-                                         Color="Color.Primary" />
+                            <MudCheckBox T="bool"
+                                         Value="@Vm!.SelectedImageIds.Contains(image.ID)"
+                                         ValueChanged="@((bool val) => Vm!.ToggleImageSelection(image.ID))"
+                                         Color="Color.Primary"/>
                         </MudItem>
-                        
+
                         <MudItem xs="2" Class="d-flex align-center">
-                            <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <MudText Typo="Typo.body2"
+                                     Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 @image.ImageName
                             </MudText>
                         </MudItem>
-                        
+
                         <MudItem xs="2" Class="d-flex align-center">
                             <MudText Typo="Typo.body2">@image.ShortId</MudText>
                         </MudItem>
-                        
+
                         <MudItem xs="2" Class="d-flex align-center">
                             <MudText Typo="Typo.body2">@image.SizeFormatted</MudText>
                         </MudItem>
-                        
+
                         <MudItem xs="2" Class="d-flex align-center">
                             <MudText Typo="Typo.body2">@image.Created.ToString("yyyy-MM-dd HH:mm")</MudText>
                         </MudItem>
-                        
+
                         <MudItem xs="1" Class="d-flex align-center">
                             <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">
                                 @image.Containers
                             </MudChip>
                         </MudItem>
-                        
+
                         <MudItem xs="2" Class="d-flex align-center justify-end">
                             <MudStack Row="true" Spacing="1">
-                                <MudIconButton Icon="@Icons.Material.Filled.Info" 
+                                <MudIconButton Icon="@Icons.Material.Filled.Info"
                                                Color="Color.Primary"
                                                Size="Size.Small"
-                                               OnClick="@(() => Vm.ShowInspectAsync(image.ID, image.ImageName))"
-                                               title='@Localizer["INSPECT"]' />
-                                
-                                <MudIconButton Icon="@Icons.Material.Filled.Download" 
+                                               OnClick="@(() => Vm!.ShowInspectAsync(image.ID, image.ImageName))"
+                                               title='@Localizer["INSPECT"]'/>
+
+                                <MudIconButton Icon="@Icons.Material.Filled.Download"
                                                Color="Color.Info"
                                                Size="Size.Small"
-                                               OnClick="@(() => Vm.ExportImageAsync(image.ID, image.ImageName))"
-                                               Disabled="Vm.IsExporting"
-                                               title='@Localizer["EXPORT_IMAGE"]' />
-                                
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                               OnClick="@(() => Vm!.ExportImageAsync(image.ID, image.ImageName))"
+                                               Disabled="Vm!.IsExporting"
+                                               title='@Localizer["EXPORT_IMAGE"]'/>
+
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                Color="Color.Error"
                                                Size="Size.Small"
-                                               OnClick="@(() => Vm.DeleteImageAsync(image.ID))"
-                                               title='@Localizer["REMOVE"]' />
+                                               OnClick="@(() => Vm!.DeleteImageAsync(image.ID))"
+                                               title='@Localizer["REMOVE"]'/>
                             </MudStack>
                         </MudItem>
                     </MudGrid>
@@ -169,9 +171,9 @@
 </MudContainer>
 
 <MudDialog @bind-Visible="Vm!.ShowAddImageDialog" Options="Vm!.DialogOptions">
-            <TitleContent>
+    <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1" /> @Localizer["ADD_IMAGE"]
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1"/> @Localizer["ADD_IMAGE"]
         </MudText>
     </TitleContent>
     <DialogContent>
@@ -183,97 +185,99 @@
                                   Placeholder="@Localizer["PULL_IMAGE_NAME_PLACEHOLDER"]"
                                   Variant="Variant.Outlined"
                                   Required="true"
-                                  Disabled="Vm.IsPulling" />
-                    
-                    <MudTextField @bind-Value="Vm.PullImageTag"
+                                  Disabled="Vm!.IsPulling"/>
+
+                    <MudTextField @bind-Value="Vm!.PullImageTag"
                                   Label="@Localizer["TAG"]"
                                   Placeholder="@Localizer["TAG_PLACEHOLDER"]"
                                   Variant="Variant.Outlined"
                                   Required="true"
-                                  Disabled="Vm.IsPulling" />
-                    
+                                  Disabled="Vm!.IsPulling"/>
+
                     <MudPaper Class="pa-3" Elevation="0" Style="min-height: 200px;">
-                        @if (Vm.IsPulling)
+                        @if (Vm!.IsPulling)
                         {
                             <MudText Typo="Typo.subtitle2" Class="mb-2">@Localizer["PULL_PROGRESS"]</MudText>
-                            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
-                            <MudPaper Class="pa-2" Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
-                                @foreach (var log in Vm.PullLogs)
+                            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2"/>
+                            <MudPaper Class="pa-2"
+                                      Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
+                                @foreach (var log in Vm!.PullLogs)
                                 {
                                     <div>@log</div>
                                 }
                             </MudPaper>
                         }
                     </MudPaper>
-                    
+
                     <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
-                        <MudButton Variant="Variant.Text" 
-                                   OnClick="Vm.CloseDialog"
-                                   Disabled="Vm.IsPulling">
+                        <MudButton Variant="Variant.Text"
+                                   OnClick="Vm!.CloseDialog"
+                                   Disabled="Vm!.IsPulling">
                             @Localizer["CANCEL"]
                         </MudButton>
-                        <MudButton Variant="Variant.Filled" 
+                        <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
-                                   OnClick="Vm.HandlePullImageAsync"
-                                   Disabled="Vm.IsPulling || string.IsNullOrWhiteSpace(Vm.PullImageName)">
-                            @(Vm.IsPulling ? Localizer["PULLING"].Value : Localizer["PULL_IMAGE"].Value)
+                                   OnClick="Vm!.HandlePullImageAsync"
+                                   Disabled="Vm!.IsPulling || string.IsNullOrWhiteSpace(Vm!.PullImageName)">
+                            @(Vm!.IsPulling ? Localizer["PULLING"].Value : Localizer["PULL_IMAGE"].Value)
                         </MudButton>
                     </MudStack>
                 </MudStack>
             </MudTabPanel>
-            
+
             <MudTabPanel Text="@Localizer["IMPORT_FROM_TARBALL"]" Icon="@Icons.Material.Filled.Upload">
                 <MudStack Spacing="3">
-                    <MudFileUpload T="IBrowserFile" 
+                    <MudFileUpload T="IBrowserFile"
                                    Accept=".tar,.tar.gz,.tgz"
-                                   FilesChanged="Vm.OnTarballSelected"
+                                   FilesChanged="Vm!.OnTarballSelected"
                                    MaximumFileCount="1"
-                                   Disabled="Vm.IsLoading">
+                                   Disabled="Vm!.IsLoading">
                         <ActivatorContent>
                             <MudButton Variant="Variant.Filled"
                                        Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.CloudUpload"
-                                       Disabled="Vm.IsLoading">
+                                       Disabled="Vm!.IsLoading">
                                 @Localizer["SELECT_TARBALL"]
                             </MudButton>
                         </ActivatorContent>
                     </MudFileUpload>
-                    
-                    @if (Vm.SelectedTarball != null)
+
+                    @if (Vm!.SelectedTarball != null)
                     {
-                        <MudChip T="string" 
-                                 Color="Color.Info" 
+                        <MudChip T="string"
+                                 Color="Color.Info"
                                  Icon="@Icons.Material.Filled.InsertDriveFile"
-                                 OnClose="Vm.ClearTarballSelection">
-                            @Vm.SelectedTarball.Name (@Vm.FormatFileSize(Vm.SelectedTarball.Size))
+                                 OnClose="Vm!.ClearTarballSelection">
+                            @Vm!.SelectedTarball.Name (@Vm!.FormatFileSize(Vm!.SelectedTarball.Size))
                         </MudChip>
                     }
-                    
+
                     <MudPaper Class="pa-3" Elevation="0" Style="min-height: 200px;">
-                        @if (Vm.IsLoading)
+                        @if (Vm!.IsLoading)
                         {
-                                <MudText Typo="Typo.subtitle2" Class="mb-2">@Localizer["IMPORT_PROGRESS"]</MudText>
-                            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
-                            <MudPaper Class="pa-2" Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
-                                @foreach (var log in Vm.LoadLogs)
+                            <MudText Typo="Typo.subtitle2" Class="mb-2">@Localizer["IMPORT_PROGRESS"]</MudText>
+                            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2"/>
+                            <MudPaper Class="pa-2"
+                                      Style="height: 250px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px;">
+                                @foreach (var log in Vm!.LoadLogs)
                                 {
                                     <div>@log</div>
                                 }
                             </MudPaper>
                         }
                     </MudPaper>
-                    
+
                     <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
-                        <MudButton Variant="Variant.Text" 
-                                   OnClick="Vm.CloseDialog"
-                                   Disabled="Vm.IsLoading">
+                        <MudButton Variant="Variant.Text"
+                                   OnClick="Vm!.CloseDialog"
+                                   Disabled="Vm!.IsLoading">
                             @Localizer["CANCEL"]
                         </MudButton>
-                        <MudButton Variant="Variant.Filled" 
+                        <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary"
-                                   OnClick="Vm.HandleLoadFromTarballAsync"
-                                   Disabled="Vm.IsLoading || Vm.SelectedTarball == null">
-                            @(Vm.IsLoading ? Localizer["IMPORTING"].Value : Localizer["IMPORT_IMAGE"].Value)
+                                   OnClick="Vm!.HandleLoadFromTarballAsync"
+                                   Disabled="Vm!.IsLoading || Vm!.SelectedTarball == null">
+                            @(Vm!.IsLoading ? Localizer["IMPORTING"].Value : Localizer["IMPORT_IMAGE"].Value)
                         </MudButton>
                     </MudStack>
                 </MudStack>
@@ -285,21 +289,23 @@
 <MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.LargeDialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-1" /> @Localizer["IMAGE_DETAILS"] - @Vm.SelectedImageName
+            <MudIcon Icon="@Icons.Material.Filled.Info"
+                     Class="mr-1"/> @Localizer["IMAGE_DETAILS"] - @Vm!.SelectedImageName
         </MudText>
     </TitleContent>
     <DialogContent>
-        @if (string.IsNullOrEmpty(Vm.InspectJson))
+        @if (string.IsNullOrEmpty(Vm!.InspectJson))
         {
-            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2"/>
         }
         else
         {
-            <MudPaper Class="pa-2" Style="height: 500px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px; white-space: pre;">@Vm.InspectJson</MudPaper>
+            <MudPaper Class="pa-2"
+                      Style="height: 500px; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: monospace; font-size: 12px; white-space: pre;">@Vm!.InspectJson</MudPaper>
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
+        <MudButton OnClick="Vm!.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -308,14 +314,14 @@
 
     private async Task ConfirmRemoveSelected()
     {
-        if (Vm?.SelectedImageIds == null || Vm.SelectedImageIds.Count == 0)
+        if (Vm?.SelectedImageIds == null || Vm!.SelectedImageIds.Count == 0)
         {
             return;
         }
 
         var parameters = new DialogParameters
         {
-            { "ContentText", string.Format(Localizer["CONFIRM_REMOVE_SELECTED"], Vm.SelectedImageIds.Count) },
+            { "ContentText", string.Format(Localizer["CONFIRM_REMOVE_SELECTED"], Vm!.SelectedImageIds.Count) },
             { "ButtonText", Localizer["REMOVE"] },
             { "Color", Color.Error }
         };
@@ -327,10 +333,5 @@
         {
             await Vm!.RemoveSelectedImagesAsync();
         }
-    }
-
-    public void Dispose()
-    {
-        // Clean up resources if needed
     }
 }
