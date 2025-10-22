@@ -40,6 +40,30 @@ public class CreateContainerModel
     public bool AttachStdin { get; set; } = false;
     public bool AttachStdout { get; set; } = true;
     public bool AttachStderr { get; set; } = true;
+
+    public string EntryPointText
+    {
+        get => string.Join("\n", Entrypoint ?? []);
+        set
+        {
+            Entrypoint = value
+                .Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .ToList();
+        }
+    }
+
+    public string CommandText
+    {
+        get => string.Join("\n", Command ?? []);
+        set
+        {
+            Command = value
+                .Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .ToList();
+        }
+    }
 }
 
 public class LabelModel

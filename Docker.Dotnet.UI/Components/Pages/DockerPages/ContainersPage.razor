@@ -80,7 +80,8 @@
                            Margin="Margin.Dense"
                            Label="@Localizer["FILTER_BY_STATUS"]"
                            T="string"
-                           ValueChanged="@((string val) => {
+                           ValueChanged="@((string val) =>
+                                         {
                                              Vm!.StatusFilter = val;
                                              Vm!.ApplyFilters();
                                          })"
@@ -95,7 +96,6 @@
     </MudPaper>
 
     <!-- Batch Actions Toolbar -->
-
     @if (Vm?.Containers == null || Vm!.Containers.Count == 0)
     {
         <MudAlert Severity="Severity.Info">@Localizer["NO_CONTAINERS"]</MudAlert>
@@ -277,6 +277,7 @@
     }
 </MudContainer>
 
+<!-- Logs Dialog -->
 <MudDialog @bind-Visible="Vm!.ShowLogsDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -310,6 +311,7 @@
     </DialogActions>
 </MudDialog>
 
+<!-- Container Details Dialog -->
 <MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -333,6 +335,7 @@
     </DialogActions>
 </MudDialog>
 
+<!-- Stats Dialog -->
 <MudDialog @bind-Visible="Vm!.ShowStatsDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -354,7 +357,8 @@
                         <MudStack Spacing="2">
                             <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                                 <MudText Typo="Typo.h6">@Localizer["CPU_USAGE"]</MudText>
-                                <MudText Typo="Typo.h6" Color="Color.Primary">@Vm!.CpuPercent.ToString("0.00")%</MudText>
+                                <MudText Typo="Typo.h6" Color="Color.Primary">@Vm!.CpuPercent.ToString("0.00")%
+                                </MudText>
                             </MudStack>
                             <MudProgressLinear Color="Color.Primary" Value="@Vm!.CpuPercent" Class="mt-2"/>
                         </MudStack>
@@ -404,6 +408,7 @@
     </DialogActions>
 </MudDialog>
 
+<!-- Create Container Dialog -->
 <MudDialog @bind-Visible="Vm!.ShowCreateDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -413,7 +418,8 @@
     <DialogContent>
         @if (!string.IsNullOrEmpty(Vm!.CreateError))
         {
-            <MudAlert Severity="Severity.Error" Class="mb-3" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.CreateError = null)">
+            <MudAlert Severity="Severity.Error" Class="mb-3" ShowCloseIcon="true"
+                      CloseIconClicked="@(() => Vm!.CreateError = null)">
                 @Vm!.CreateError
             </MudAlert>
         }
@@ -426,7 +432,8 @@
             </MudAlert>
         }
 
-        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4">
+        @* style="height: 60vh; overflow-y: auto;" *@
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4 fixed-tabs-panel">
             <MudTabPanel Text="@Localizer["BASIC"]">
                 <MudStack Spacing="3">
                     <MudTextField @bind-Value="Vm!.CreateModel.Image"
@@ -616,7 +623,11 @@
                     {
                         <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
                             <MudTextField Value="@alias"
-                                          ValueChanged="@((string val) => { var idx = Vm!.CreateModel.NetworkAliases.IndexOf(alias); if (idx >= 0) Vm!.CreateModel.NetworkAliases[idx] = val; })"
+                                          ValueChanged="@((string val) =>
+                                                        {
+                                                            var idx = Vm!.CreateModel.NetworkAliases.IndexOf(alias);
+                                                            if (idx >= 0) Vm!.CreateModel.NetworkAliases[idx] = val;
+                                                        })"
                                           Label="@Localizer["ALIASES"]"
                                           Disabled="@Vm!.IsCreating"
                                           Variant="Variant.Outlined"
@@ -677,7 +688,7 @@
 
             <MudTabPanel Text="@Localizer["ADVANCED"]">
                 <MudStack Spacing="3">
-                    <MudTextField @bind-Value="@entrypointText"
+                    <MudTextField @bind-Value="@Vm!.CreateModel.EntryPointText"
                                   Label="@Localizer["ENTRYPOINT"]"
                                   Lines="3"
                                   Placeholder="/bin/sh"
@@ -685,7 +696,7 @@
                                   Variant="Variant.Outlined"
                                   HelperText="One per line or space-separated"/>
 
-                    <MudTextField @bind-Value="@commandText"
+                    <MudTextField @bind-Value="@Vm!.CreateModel.CommandText"
                                   Label="@Localizer["COMMAND"]"
                                   Lines="3"
                                   Placeholder="-c echo hello"
@@ -737,38 +748,15 @@
     </DialogActions>
 </MudDialog>
 
+<style>
+    .fixed-tabs-panel {
+        height: 60vh;
+        overflow-y: auto;
+    }
+</style>
+
 @code {
     [Inject] private IDialogService DialogService { get; set; } = default!;
-
-    private string entrypointText
-    {
-        get => string.Join("\n", Vm?.CreateModel?.Entrypoint ?? new List<string>());
-        set
-        {
-            if (Vm?.CreateModel != null)
-            {
-                Vm.CreateModel.Entrypoint = value
-                    .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                    .ToList();
-            }
-        }
-    }
-
-    private string commandText
-    {
-        get => string.Join("\n", Vm?.CreateModel?.Command ?? new List<string>());
-        set
-        {
-            if (Vm?.CreateModel != null)
-            {
-                Vm.CreateModel.Command = value
-                    .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                    .ToList();
-            }
-        }
-    }
 
     private async Task ConfirmRemoveSelected()
     {
@@ -779,7 +767,7 @@
 
         var parameters = new DialogParameters
         {
-            { "ContentText", string.Format(Localizer["CONFIRM_REMOVE_SELECTED"], Vm!.SelectedContainerIds.Count) },
+            { "ContentText", Localizer["CONFIRM_REMOVE_SELECTED", Vm!.SelectedContainerIds.Count] },
             { "ButtonText", Localizer["REMOVE"] },
             { "Color", Color.Error }
         };
