@@ -586,6 +586,37 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
     public string? CreateError { get; set; }
     public string? CreateProgress { get; set; }
 
+    // Docker Run Parser state
+    public string DockerRunCommand { get; set; } = string.Empty;
+    public bool IsParsing { get; set; }
+    public string? ParseError { get; set; }
+    public string? ParseSuccess { get; set; }
+
+    // Text parsing properties for Entrypoint and Command
+    public string EntrypointText
+    {
+        get => string.Join("\n", CreateModel.Entrypoint);
+        set
+        {
+            CreateModel.Entrypoint = value
+                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .ToList();
+        }
+    }
+
+    public string CommandText
+    {
+        get => string.Join("\n", CreateModel.Command);
+        set
+        {
+            CreateModel.Command = value
+                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .ToList();
+        }
+    }
+
     public async Task OpenCreateDialog()
     {
         CreateModel = new CreateContainerModel();
@@ -613,6 +644,9 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         CreateModel = new CreateContainerModel();
         CreateError = null;
         CreateProgress = null;
+        DockerRunCommand = string.Empty;
+        ParseError = null;
+        ParseSuccess = null;
         NotifyStateChanged();
     }
 
@@ -948,6 +982,312 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
                 yield return "Invalid IPv4 address";
             }
         }
+    }
+
+    public void ParseDockerRunCommand()
+    {
+        IsParsing = true;
+        ParseError = null;
+        ParseSuccess = null;
+        NotifyStateChanged();
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(DockerRunCommand))
+            {
+                ParseError = "Please enter a docker run command";
+                return;
+            }
+
+            // Parse the docker run command
+            var command = DockerRunCommand.Trim();
+            
+            // Remove "docker run" prefix if present
+            if (command.StartsWith("docker run", StringComparison.OrdinalIgnoreCase))
+            {
+                command = command.Substring("docker run".Length).Trim();
+            }
+
+            // Split command while preserving quoted strings
+            var args = SplitCommandLine(command);
+            
+            // Parse arguments
+            for (int i = 0; i < args.Count; i++)
+            {
+                var arg = args[i];
+                
+                if (arg == "-d" || arg == "--detach")
+                {
+                    // Detached mode - already default
+                    continue;
+                }
+                else if (arg == "--name" && i + 1 < args.Count)
+                {
+                    CreateModel.ContainerName = args[++i];
+                }
+                else if (arg == "--restart" && i + 1 < args.Count)
+                {
+                    var policy = args[++i];
+                    if (policy.StartsWith("on-failure"))
+                    {
+                        CreateModel.RestartPolicyType = "on-failure";
+                        var parts = policy.Split(':');
+                        if (parts.Length > 1 && int.TryParse(parts[1], out var count))
+                        {
+                            CreateModel.MaximumRetryCount = count;
+                        }
+                    }
+                    else
+                    {
+                        CreateModel.RestartPolicyType = policy;
+                    }
+                }
+                else if ((arg == "-p" || arg == "--publish") && i + 1 < args.Count)
+                {
+                    var portMapping = args[++i];
+                    ParsePortMapping(portMapping);
+                }
+                else if ((arg == "-v" || arg == "--volume") && i + 1 < args.Count)
+                {
+                    var volumeMapping = args[++i];
+                    ParseVolumeMapping(volumeMapping);
+                }
+                else if ((arg == "-e" || arg == "--env") && i + 1 < args.Count)
+                {
+                    var envVar = args[++i];
+                    ParseEnvironmentVariable(envVar);
+                }
+                else if (arg == "--network" && i + 1 < args.Count)
+                {
+                    CreateModel.NetworkMode = args[++i];
+                }
+                else if (arg == "-w" || arg == "--workdir" && i + 1 < args.Count)
+                {
+                    CreateModel.WorkingDir = args[++i];
+                }
+                else if (arg == "--entrypoint" && i + 1 < args.Count)
+                {
+                    CreateModel.Entrypoint = new List<string> { args[++i] };
+                }
+                else if (arg == "-t" || arg == "--tty")
+                {
+                    CreateModel.Tty = true;
+                }
+                else if (arg == "-i" || arg == "--interactive")
+                {
+                    CreateModel.AttachStdin = true;
+                }
+                else if (arg == "--cpus" && i + 1 < args.Count)
+                {
+                    if (double.TryParse(args[++i], out var cpus))
+                    {
+                        CreateModel.CpuLimit = cpus;
+                    }
+                }
+                else if ((arg == "-m" || arg == "--memory") && i + 1 < args.Count)
+                {
+                    var memory = args[++i];
+                    CreateModel.MemoryLimitMiB = ParseMemorySize(memory);
+                }
+                else if (arg == "--label" && i + 1 < args.Count)
+                {
+                    var label = args[++i];
+                    var parts = label.Split('=', 2);
+                    if (parts.Length == 2)
+                    {
+                        CreateModel.Labels.Add(new LabelModel { Key = parts[0], Value = parts[1] });
+                    }
+                }
+                else if (!arg.StartsWith("-") && string.IsNullOrEmpty(CreateModel.Image))
+                {
+                    // This should be the image name
+                    CreateModel.Image = arg;
+                }
+                else if (!arg.StartsWith("-") && !string.IsNullOrEmpty(CreateModel.Image))
+                {
+                    // These are command arguments
+                    if (CreateModel.Command == null || CreateModel.Command.Count == 0)
+                    {
+                        CreateModel.Command = new List<string>();
+                    }
+                    CreateModel.Command.Add(arg);
+                }
+            }
+
+            ParseSuccess = "Command parsed successfully!";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ParseError = $"Failed to parse command: {ex.Message}";
+        }
+        finally
+        {
+            IsParsing = false;
+            NotifyStateChanged();
+        }
+    }
+
+    private List<string> SplitCommandLine(string commandLine)
+    {
+        var args = new List<string>();
+        var currentArg = new System.Text.StringBuilder();
+        var inQuotes = false;
+        var quoteChar = '\0';
+
+        for (int i = 0; i < commandLine.Length; i++)
+        {
+            var c = commandLine[i];
+
+            if ((c == '"' || c == '\'') && !inQuotes)
+            {
+                inQuotes = true;
+                quoteChar = c;
+            }
+            else if (c == quoteChar && inQuotes)
+            {
+                inQuotes = false;
+                quoteChar = '\0';
+            }
+            else if (char.IsWhiteSpace(c) && !inQuotes)
+            {
+                if (currentArg.Length > 0)
+                {
+                    args.Add(currentArg.ToString());
+                    currentArg.Clear();
+                }
+            }
+            else if (c == '\\' && i + 1 < commandLine.Length && commandLine[i + 1] == '\n')
+            {
+                // Skip line continuation
+                i++;
+            }
+            else
+            {
+                currentArg.Append(c);
+            }
+        }
+
+        if (currentArg.Length > 0)
+        {
+            args.Add(currentArg.ToString());
+        }
+
+        return args;
+    }
+
+    private void ParsePortMapping(string portMapping)
+    {
+        // Format: [hostIp:][hostPort:]containerPort[/protocol]
+        var parts = portMapping.Split(':');
+        string? hostPort = null;
+        string? containerPort = null;
+        string protocol = "tcp";
+
+        if (parts.Length == 1)
+        {
+            // Just container port
+            containerPort = parts[0];
+        }
+        else if (parts.Length == 2)
+        {
+            // host:container
+            hostPort = parts[0];
+            containerPort = parts[1];
+        }
+        else if (parts.Length == 3)
+        {
+            // ip:host:container (ignore IP for now)
+            hostPort = parts[1];
+            containerPort = parts[2];
+        }
+
+        // Extract protocol if present
+        if (containerPort != null && containerPort.Contains('/'))
+        {
+            var portParts = containerPort.Split('/');
+            containerPort = portParts[0];
+            protocol = portParts[1].ToLower();
+        }
+
+        if (!string.IsNullOrEmpty(containerPort))
+        {
+            CreateModel.Ports.Add(new PortMappingModel
+            {
+                HostPort = hostPort ?? "",
+                ContainerPort = containerPort,
+                Protocol = protocol
+            });
+        }
+    }
+
+    private void ParseVolumeMapping(string volumeMapping)
+    {
+        // Format: [source:]destination[:mode]
+        var parts = volumeMapping.Split(':');
+        string source = "";
+        string target = "";
+        string mode = "rw";
+
+        if (parts.Length == 1)
+        {
+            // Just target (anonymous volume)
+            target = parts[0];
+        }
+        else if (parts.Length >= 2)
+        {
+            source = parts[0];
+            target = parts[1];
+            if (parts.Length >= 3)
+            {
+                mode = parts[2];
+            }
+        }
+
+        if (!string.IsNullOrEmpty(target))
+        {
+            CreateModel.Volumes.Add(new VolumeModel
+            {
+                Source = source,
+                Target = target,
+                Mode = mode
+            });
+        }
+    }
+
+    private void ParseEnvironmentVariable(string envVar)
+    {
+        var parts = envVar.Split('=', 2);
+        if (parts.Length >= 1)
+        {
+            CreateModel.EnvironmentVariables.Add(new EnvironmentVariableModel
+            {
+                Key = parts[0],
+                Value = parts.Length > 1 ? parts[1] : ""
+            });
+        }
+    }
+
+    private long ParseMemorySize(string memory)
+    {
+        // Parse memory size like "512m", "2g", etc.
+        memory = memory.ToLower().Trim();
+        var numberPart = new string(memory.TakeWhile(c => char.IsDigit(c) || c == '.').ToArray());
+        var unit = new string(memory.SkipWhile(c => char.IsDigit(c) || c == '.').ToArray());
+
+        if (!double.TryParse(numberPart, out var size))
+        {
+            return 0;
+        }
+
+        return unit switch
+        {
+            "k" or "kb" => (long)(size / 1024),
+            "m" or "mb" => (long)size,
+            "g" or "gb" => (long)(size * 1024),
+            "t" or "tb" => (long)(size * 1024 * 1024),
+            _ => (long)size // Assume bytes, convert to MiB
+        };
     }
 }
 

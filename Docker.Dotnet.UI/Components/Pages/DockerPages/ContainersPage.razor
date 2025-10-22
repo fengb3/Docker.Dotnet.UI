@@ -686,9 +686,55 @@
                 </MudStack>
             </MudTabPanel>
 
+            <MudTabPanel Text="@Localizer["DOCKER_RUN_PARSER"]">
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Text">
+                        @Localizer["PARSE_HELP"]
+                    </MudAlert>
+
+                    @if (!string.IsNullOrEmpty(Vm!.ParseSuccess))
+                    {
+                        <MudAlert Severity="Severity.Success" Class="mb-3" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ParseSuccess = null)">
+                            @Vm!.ParseSuccess
+                        </MudAlert>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Vm!.ParseError))
+                    {
+                        <MudAlert Severity="Severity.Error" Class="mb-3" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ParseError = null)">
+                            @Vm!.ParseError
+                        </MudAlert>
+                    }
+
+                    <MudTextField @bind-Value="Vm!.DockerRunCommand"
+                                  Label="@Localizer["DOCKER_RUN_COMMAND"]"
+                                  Placeholder="@Localizer["DOCKER_RUN_PLACEHOLDER"]"
+                                  Lines="10"
+                                  Disabled="@Vm!.IsParsing"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Example: docker run -d --name my-container -p 8080:80 -v /data:/app/data nginx:latest"/>
+
+                    <MudButton Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.AutoAwesome"
+                               OnClick="@(() => Vm!.ParseDockerRunCommand())"
+                               Disabled="@Vm!.IsParsing">
+                        @if (Vm!.IsParsing)
+                        {
+                            <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true"/>
+                            @Localizer["PARSING"]
+                        }
+                        else
+                        {
+                            @Localizer["PARSE_COMMAND"]
+                        }
+                    </MudButton>
+                </MudStack>
+            </MudTabPanel>
+
             <MudTabPanel Text="@Localizer["ADVANCED"]">
                 <MudStack Spacing="3">
-                    <MudTextField @bind-Value="@Vm!.CreateModel.EntryPointText"
+                    <MudTextField @bind-Value="Vm!.EntrypointText"
                                   Label="@Localizer["ENTRYPOINT"]"
                                   Lines="3"
                                   Placeholder="/bin/sh"
@@ -696,7 +742,7 @@
                                   Variant="Variant.Outlined"
                                   HelperText="One per line or space-separated"/>
 
-                    <MudTextField @bind-Value="@Vm!.CreateModel.CommandText"
+                    <MudTextField @bind-Value="Vm!.CommandText"
                                   Label="@Localizer["COMMAND"]"
                                   Lines="3"
                                   Placeholder="-c echo hello"

@@ -247,3 +247,13 @@
 " ",CREATE_FAILED,Failed to create container,容器创建失败,Failed to create container,コンテナの作成に失敗しました,컨테이너 생성 실패,Error al crear el contenedor,error message
 " ",START_AFTER_CREATE,Start after create,创建后启动,Start after create,作成後に起動,생성 후 시작,Iniciar después de crear,label
 " ",START_FAILED,Failed to start container,容器启动失败,Failed to start container,コンテナの起動に失敗しました,컨테이너 시작 실패,Error al iniciar el contenedor,error message
+
+# Docker Run Parser tab strings,,,,,,,,
+" ",DOCKER_RUN_PARSER,Docker Run Parser,Docker Run 解析器,Docker Run Parser,Docker Run パーサー,Docker Run 파서,Analizador de Docker Run,tab title
+" ",DOCKER_RUN_COMMAND,Docker Run Command,Docker Run 命令,Docker Run Command,Docker Run コマンド,Docker Run 명령,Comando Docker Run,label
+" ",DOCKER_RUN_PLACEHOLDER,"Paste your docker run command here...","在此粘贴您的 docker run 命令...","Paste your docker run command here...","docker run コマンドをここに貼り付けてください...","여기에 docker run 명령을 붙여넣으세요...","Pegue su comando docker run aquí...",placeholder
+" ",PARSE_COMMAND,Parse Command,解析命令,Parse Command,コマンドを解析,명령 파싱,Analizar comando,button text
+" ",PARSING,Parsing...,解析中...,Parsing...,解析中...,파싱 중...,Analizando...,status message
+" ",PARSE_SUCCESS,Command parsed successfully,命令解析成功,Command parsed successfully,コマンドが正常に解析されました,명령이 성공적으로 파싱되었습니다,Comando analizado correctamente,success message
+" ",PARSE_FAILED,Failed to parse command,命令解析失败,Failed to parse command,コマンドの解析に失敗しました,명령 파싱 실패,Error al analizar el comando,error message
+" ",PARSE_HELP,"Enter a complete docker run command to automatically parse and populate the form fields","输入完整的 docker run 命令以自动解析并填充表单字段","Enter a complete docker run command to automatically parse and populate the form fields","完全な docker run コマンドを入力すると、自動的に解析してフォームフィールドに入力されます","완전한 docker run 명령을 입력하면 자동으로 파싱하여 양식 필드를 채웁니다","Ingrese un comando docker run completo para analizar y completar automáticamente los campos del formulario",help text
