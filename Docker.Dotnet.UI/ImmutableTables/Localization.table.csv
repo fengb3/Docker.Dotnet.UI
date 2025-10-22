@@ -186,3 +186,64 @@
 " ",NETWORK_RX,Network RX,网络接收,Network RX,ネットワーク RX,네트워크 RX,Red RX,label
 " ",NETWORK_TX,Network TX,网络发送,Network TX,ネットワーク TX,네트워크 TX,Red TX,label
 " ",AUTO_REFRESH,Auto Refresh,自动刷新,Auto Refresh,自動更新,자동 새로고침,Actualización automática,label
+
+# Create container dialog strings,,,,,,,,
+" ",CREATE,Create,创建,Créer,作成,생성,Crear,button text for create action
+" ",IMAGE_PLACEHOLDER,"e.g.: nginx:latest, mysql:8.0, ubuntu","例如: nginx:latest, mysql:8.0, ubuntu","ex.: nginx:latest, mysql:8.0, ubuntu","例: nginx:latest, mysql:8.0, ubuntu","예: nginx:latest, mysql:8.0, ubuntu","ej.: nginx:latest, mysql:8.0, ubuntu",placeholder for image field
+" ",AUTO_PULL_IF_MISSING,Auto-pull if missing,本地无镜像时自动拉取,Auto-pull if missing,ローカルにない場合は自動プル,없으면 자동으로 가져오기,Auto-extraer si falta,checkbox label
+" ",AUTO_START_AFTER_CREATE,Auto-start after create,创建后自动启动,Démarrage automatique après création,作成後に自動起動,생성 후 자동 시작,Inicio automático después de crear,checkbox label
+" ",LABELS,Labels,标签,Étiquettes,ラベル,레이블,Etiquetas,section header
+" ",ADD_LABEL,Add Label,添加标签,Add Label,ラベルを追加,레이블 추가,Agregar etiqueta,button text
+" ",PORTS,Ports,端口,Ports,ポート,포트,Puertos,tab title
+" ",ADD_PORT,Add Port,添加端口,Add Port,ポートを追加,포트 추가,Agregar puerto,button text
+" ",HOST_PORT,Host Port,宿主机端口,Host Port,ホストポート,호스트 포트,Puerto del host,label
+" ",CONTAINER_PORT,Container Port,容器端口,Container Port,コンテナポート,컨테이너 포트,Puerto del contenedor,label
+" ",PROTOCOL,Protocol,协议,Protocol,プロトコル,프로토콜,Protocolo,label
+" ",TCP,TCP,TCP,TCP,TCP,TCP,TCP,protocol option
+" ",UDP,UDP,UDP,UDP,UDP,UDP,UDP,protocol option
+" ",REMOVE_ROW,Remove Row,移除行,Remove Row,行を削除,행 삭제,Eliminar fila,button text
+" ",VOLUMES,Volumes,卷,Volumes,ボリューム,볼륨,Volúmenes,tab title
+" ",ADD_VOLUME,Add Volume,添加卷,Add Volume,ボリュームを追加,볼륨 추가,Agregar volumen,button text
+" ",HOST_PATH_OR_VOLUME,Host Path or Volume,宿主机路径或卷名,Host Path or Volume,ホストパスまたはボリューム,호스트 경로 또는 볼륨,Ruta del host o volumen,label
+" ",CONTAINER_PATH,Container Path,容器路径,Container Path,コンテナパス,컨테이너 경로,Ruta del contenedor,label
+" ",MODE,Mode,模式,Mode,モード,모드,Modo,label
+" ",READ_ONLY,Read Only,只读,Read Only,読み取り専用,읽기 전용,Solo lectura,mode option
+" ",READ_WRITE,Read/Write,读写,Read/Write,読み書き,읽기/쓰기,Lectura/escritura,mode option
+" ",ENV_VARIABLES,Environment Variables,环境变量,Environment Variables,環境変数,환경 변수,Variables de entorno,tab title
+" ",ADD_ENV,Add Environment Variable,添加环境变量,Add Environment Variable,環境変数を追加,환경 변수 추가,Agregar variable de entorno,button text
+" ",KEY,Key,键,Key,キー,키,Clave,label
+" ",VALUE,Value,值,Value,値,값,Valor,label
+" ",NETWORK,Network,网络,Network,ネットワーク,네트워크,Red,tab title
+" ",SELECT_NETWORK,Select Network,选择网络,Select Network,ネットワークを選択,네트워크 선택,Seleccionar red,label
+" ",ALIASES,Aliases,别名,Aliases,エイリアス,별칭,Alias,label
+" ",IPV4_ADDRESS,IPv4 Address,IPv4 地址,IPv4 Address,IPv4 アドレス,IPv4 주소,Dirección IPv4,label
+" ",RESOURCES,Resources,资源,Resources,リソース,리소스,Recursos,tab title
+" ",CPU_LIMIT,CPU Limit (cores),CPU 限制（核数）,CPU Limit (cores),CPU 制限（コア）,CPU 제한(코어),Límite de CPU (núcleos),label
+" ",MEMORY_LIMIT_MIB,Memory Limit (MiB),内存限制（MiB）,Memory Limit (MiB),メモリ制限（MiB）,메모리 제한(MiB),Límite de memoria (MiB),label
+" ",RESTART_POLICY,Restart Policy,重启策略,Restart Policy,再起動ポリシー,재시작 정책,Política de reinicio,label
+" ",NO_RESTART,No,无,No,なし,없음,No,restart policy option
+" ",ALWAYS,Always,总是,Always,常に,항상,Siempre,restart policy option
+" ",UNLESS_STOPPED,Unless Stopped,除非停止,Unless Stopped,停止されていない限り,중지되지 않는 한,A menos que se detenga,restart policy option
+" ",ON_FAILURE,On Failure,失败时,On Failure,失敗時,실패 시,En caso de fallo,restart policy option
+" ",MAX_RETRY,Max Retry Count,最大重试次数,Max Retry Count,最大リトライ回数,최대 재시도 횟수,Número máximo de reintentos,label
+" ",ADVANCED,Advanced,高级,Advanced,高度,고급,Avanzado,tab title
+" ",ENTRYPOINT,Entrypoint,入口点,Entrypoint,エントリーポイント,진입점,Punto de entrada,label
+" ",COMMAND,Command,命令,Command,コマンド,명령,Comando,label
+" ",WORKING_DIR,Working Directory,工作目录,Working Directory,作業ディレクトリ,작업 디렉토리,Directorio de trabajo,label
+" ",TTY,TTY,TTY,TTY,TTY,TTY,TTY,label
+" ",ATTACH_STDIN,Attach STDIN,附加 STDIN,Attach STDIN,STDIN をアタッチ,STDIN 연결,Adjuntar STDIN,label
+" ",ATTACH_STDOUT,Attach STDOUT,附加 STDOUT,Attach STDOUT,STDOUT をアタッチ,STDOUT 연결,Adjuntar STDOUT,label
+" ",ATTACH_STDERR,Attach STDERR,附加 STDERR,Attach STDERR,STDERR をアタッチ,STDERR 연결,Adjuntar STDERR,label
+" ",BASIC,Basic,基础,Basic,基本,기본,Básico,tab title
+" ",VALIDATION_REQUIRED,This field is required,此字段为必填项,This field is required,このフィールドは必須です,이 필드는 필수입니다,Este campo es obligatorio,validation message
+" ",VALIDATION_INVALID_NAME,Invalid container name,无效的容器名称,Invalid container name,無効なコンテナ名,잘못된 컨테이너 이름,Nombre de contenedor no válido,validation message
+" ",VALIDATION_INVALID_PORT,Invalid port number,无效的端口号,Invalid port number,無効なポート番号,잘못된 포트 번호,Número de puerto no válido,validation message
+" ",VALIDATION_DUP_PORT,Duplicate port mapping,重复的端口映射,Duplicate port mapping,重複するポートマッピング,중복된 포트 매핑,Mapeo de puerto duplicado,validation message
+" ",VALIDATION_INVALID_IP,Invalid IP address,无效的 IP 地址,Invalid IP address,無効な IP アドレス,잘못된 IP 주소,Dirección IP no válida,validation message
+" ",PULLING_IMAGE,Pulling image...,拉取镜像中...,Pulling image...,イメージをプル中...,이미지를 가져오는 중...,Extrayendo imagen...,status message
+" ",PULL_PROGRESS,Pull Progress,拉取进度,Pull Progress,プル進捗,풀 진행률,Progreso de extracción,label
+" ",CREATE_IN_PROGRESS,Creating container...,创建容器中...,Creating container...,コンテナを作成中...,컨테이너 생성 중...,Creando contenedor...,status message
+" ",CREATE_SUCCESS,Container created successfully,容器创建成功,Container created successfully,コンテナが正常に作成されました,컨테이너가 성공적으로 생성되었습니다,Contenedor creado correctamente,success message
+" ",CREATE_FAILED,Failed to create container,容器创建失败,Failed to create container,コンテナの作成に失敗しました,컨테이너 생성 실패,Error al crear el contenedor,error message
+" ",START_AFTER_CREATE,Start after create,创建后启动,Start after create,作成後に起動,생성 후 시작,Iniciar después de crear,label
+" ",START_FAILED,Failed to start container,容器启动失败,Failed to start container,コンテナの起動に失敗しました,컨테이너 시작 실패,Error al iniciar el contenedor,error message

@@ -577,6 +577,378 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
             await RefreshContainersAsync();
         }
     }
+
+    // Create container state
+    public bool ShowCreateDialog { get; set; }
+    public bool IsCreating { get; set; }
+    public CreateContainerModel CreateModel { get; set; } = new();
+    public List<NetworkListItemViewModel> AvailableNetworks { get; set; } = new();
+    public string? CreateError { get; set; }
+    public string? CreateProgress { get; set; }
+
+    public async Task OpenCreateDialog()
+    {
+        CreateModel = new CreateContainerModel();
+        CreateError = null;
+        CreateProgress = null;
+        ShowCreateDialog = true;
+        
+        // Load available networks
+        try
+        {
+            var networks = await dockerClient.Networks.ListNetworksAsync();
+            AvailableNetworks = networks.ToViewModel().ToList();
+        }
+        catch (Exception ex)
+        {
+            CreateError = $"Failed to load networks: {ex.Message}";
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public void CloseCreateDialog()
+    {
+        ShowCreateDialog = false;
+        CreateModel = new CreateContainerModel();
+        CreateError = null;
+        CreateProgress = null;
+        NotifyStateChanged();
+    }
+
+    public async Task CreateContainerAsync()
+    {
+        IsCreating = true;
+        CreateError = null;
+        NotifyStateChanged();
+
+        try
+        {
+            // Validate
+            var errors = ValidateCreateModel(CreateModel).ToList();
+            if (errors.Any())
+            {
+                CreateError = string.Join("; ", errors);
+                return;
+            }
+
+            // Parse image name and tag
+            var imageParts = CreateModel.Image.Split(':');
+            var imageName = imageParts[0];
+            var imageTag = imageParts.Length > 1 ? imageParts[1] : "latest";
+            var fullImage = $"{imageName}:{imageTag}";
+
+            // Ensure image exists
+            if (CreateModel.PullIfNotExists)
+            {
+                await EnsureImageExistsAsync(imageName, imageTag);
+            }
+
+            // Build create parameters
+            var createParams = BuildCreateContainerParameters(CreateModel, fullImage);
+
+            // Create container
+            CreateProgress = "Creating container...";
+            NotifyStateChanged();
+
+            var response = await dockerClient.Containers.CreateContainerAsync(createParams);
+
+            // Optionally start the container
+            if (CreateModel.AutoStartAfterCreate)
+            {
+                CreateProgress = "Starting container...";
+                NotifyStateChanged();
+                
+                try
+                {
+                    await dockerClient.Containers.StartContainerAsync(response.ID, new ContainerStartParameters());
+                }
+                catch (Exception ex)
+                {
+                    CreateError = $"Container created but failed to start: {ex.Message}";
+                    await RefreshContainersAsync();
+                    return;
+                }
+            }
+
+            // Success
+            await RefreshContainersAsync();
+            CloseCreateDialog();
+        }
+        catch (Exception ex)
+        {
+            CreateError = $"Failed to create container: {ex.Message}";
+        }
+        finally
+        {
+            IsCreating = false;
+            CreateProgress = null;
+            NotifyStateChanged();
+        }
+    }
+
+    private async Task EnsureImageExistsAsync(string imageName, string imageTag)
+    {
+        try
+        {
+            await dockerClient.Images.InspectImageAsync($"{imageName}:{imageTag}");
+        }
+        catch (DockerImageNotFoundException)
+        {
+            // Image not found, pull it
+            CreateProgress = $"Pulling image {imageName}:{imageTag}...";
+            NotifyStateChanged();
+
+            var progress = new Progress<JSONMessage>(message =>
+            {
+                if (!string.IsNullOrEmpty(message.Status))
+                {
+                    var progressText = message.Status;
+                    if (message.ProgressMessage != null)
+                    {
+                        progressText += $" {message.ProgressMessage}";
+                    }
+                    CreateProgress = progressText;
+                    NotifyStateChanged();
+                }
+            });
+
+            await dockerClient.Images.CreateImageAsync(
+                new ImagesCreateParameters
+                {
+                    FromImage = imageName,
+                    Tag = imageTag
+                },
+                null,
+                progress
+            );
+        }
+    }
+
+    private CreateContainerParameters BuildCreateContainerParameters(CreateContainerModel model, string fullImage)
+    {
+        var parameters = new CreateContainerParameters
+        {
+            Image = fullImage,
+            Name = string.IsNullOrWhiteSpace(model.ContainerName) ? null : model.ContainerName,
+            Tty = model.Tty,
+            AttachStdin = model.AttachStdin,
+            AttachStdout = model.AttachStdout,
+            AttachStderr = model.AttachStderr,
+            WorkingDir = string.IsNullOrWhiteSpace(model.WorkingDir) ? null : model.WorkingDir,
+        };
+
+        // Labels
+        if (model.Labels.Any())
+        {
+            parameters.Labels = model.Labels
+                .Where(l => !string.IsNullOrWhiteSpace(l.Key))
+                .ToDictionary(l => l.Key, l => l.Value);
+        }
+
+        // Environment variables
+        if (model.EnvironmentVariables.Any())
+        {
+            parameters.Env = model.EnvironmentVariables
+                .Where(e => !string.IsNullOrWhiteSpace(e.Key))
+                .Select(e => $"{e.Key}={e.Value}")
+                .ToList();
+        }
+
+        // Exposed ports
+        if (model.Ports.Any())
+        {
+            parameters.ExposedPorts = new Dictionary<string, EmptyStruct>();
+            foreach (var port in model.Ports.Where(p => !string.IsNullOrWhiteSpace(p.ContainerPort)))
+            {
+                parameters.ExposedPorts[$"{port.ContainerPort}/{port.Protocol}"] = default;
+            }
+        }
+
+        // Entrypoint and Cmd
+        if (model.Entrypoint.Any())
+        {
+            parameters.Entrypoint = model.Entrypoint;
+        }
+        if (model.Command.Any())
+        {
+            parameters.Cmd = model.Command;
+        }
+
+        // Host config
+        parameters.HostConfig = BuildHostConfig(model);
+
+        // Networking config
+        if (!string.IsNullOrWhiteSpace(model.NetworkMode) && model.NetworkMode != "bridge")
+        {
+            parameters.NetworkingConfig = BuildNetworkingConfig(model);
+        }
+
+        return parameters;
+    }
+
+    private HostConfig BuildHostConfig(CreateContainerModel model)
+    {
+        var hostConfig = new HostConfig();
+
+        // Port bindings
+        if (model.Ports.Any())
+        {
+            hostConfig.PortBindings = new Dictionary<string, IList<PortBinding>>();
+            foreach (var port in model.Ports.Where(p => !string.IsNullOrWhiteSpace(p.ContainerPort)))
+            {
+                var key = $"{port.ContainerPort}/{port.Protocol}";
+                hostConfig.PortBindings[key] = new List<PortBinding>
+                {
+                    new PortBinding
+                    {
+                        HostPort = string.IsNullOrWhiteSpace(port.HostPort) ? "" : port.HostPort,
+                        HostIP = ""
+                    }
+                };
+            }
+        }
+
+        // Volume binds
+        if (model.Volumes.Any())
+        {
+            hostConfig.Binds = model.Volumes
+                .Where(v => !string.IsNullOrWhiteSpace(v.Target))
+                .Select(v => $"{v.Source}:{v.Target}:{v.Mode}")
+                .ToList();
+        }
+
+        // Resource limits
+        if (model.CpuLimit > 0)
+        {
+            hostConfig.NanoCPUs = (long)(model.CpuLimit * 1_000_000_000);
+        }
+        if (model.MemoryLimitMiB > 0)
+        {
+            hostConfig.Memory = model.MemoryLimitMiB * 1024 * 1024;
+        }
+
+        // Restart policy
+        hostConfig.RestartPolicy = new RestartPolicy
+        {
+            Name = model.RestartPolicyType switch
+            {
+                "always" => RestartPolicyKind.Always,
+                "unless-stopped" => RestartPolicyKind.UnlessStopped,
+                "on-failure" => RestartPolicyKind.OnFailure,
+                _ => RestartPolicyKind.No
+            },
+            MaximumRetryCount = model.RestartPolicyType == "on-failure" ? model.MaximumRetryCount : 0
+        };
+
+        // Network mode
+        if (!string.IsNullOrWhiteSpace(model.NetworkMode))
+        {
+            hostConfig.NetworkMode = model.NetworkMode;
+        }
+
+        return hostConfig;
+    }
+
+    private NetworkingConfig BuildNetworkingConfig(CreateContainerModel model)
+    {
+        var config = new NetworkingConfig
+        {
+            EndpointsConfig = new Dictionary<string, EndpointSettings>()
+        };
+
+        var endpointSettings = new EndpointSettings();
+
+        if (model.NetworkAliases.Any())
+        {
+            endpointSettings.Aliases = model.NetworkAliases;
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.IPv4Address))
+        {
+            endpointSettings.IPAddress = model.IPv4Address;
+        }
+
+        config.EndpointsConfig[model.NetworkMode] = endpointSettings;
+
+        return config;
+    }
+
+    private IEnumerable<string> ValidateCreateModel(CreateContainerModel model)
+    {
+        // Image is required
+        if (string.IsNullOrWhiteSpace(model.Image))
+        {
+            yield return "Image is required";
+        }
+
+        // Container name validation (if provided)
+        if (!string.IsNullOrWhiteSpace(model.ContainerName))
+        {
+            if (!System.Text.RegularExpressions.Regex.IsMatch(model.ContainerName, @"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"))
+            {
+                yield return "Invalid container name. Must start with alphanumeric and contain only [a-zA-Z0-9_.-]";
+            }
+        }
+
+        // Port validation
+        var portSet = new HashSet<string>();
+        foreach (var port in model.Ports)
+        {
+            if (string.IsNullOrWhiteSpace(port.ContainerPort))
+            {
+                yield return "Container port is required for all port mappings";
+                continue;
+            }
+
+            if (!int.TryParse(port.ContainerPort, out var containerPort) || containerPort < 1 || containerPort > 65535)
+            {
+                yield return $"Invalid container port: {port.ContainerPort}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(port.HostPort))
+            {
+                if (!int.TryParse(port.HostPort, out var hostPort) || hostPort < 1 || hostPort > 65535)
+                {
+                    yield return $"Invalid host port: {port.HostPort}";
+                }
+
+                var portKey = $"{port.HostPort}/{port.Protocol}";
+                if (portSet.Contains(portKey))
+                {
+                    yield return $"Duplicate host port mapping: {portKey}";
+                }
+                portSet.Add(portKey);
+            }
+        }
+
+        // Volume validation
+        foreach (var volume in model.Volumes)
+        {
+            if (string.IsNullOrWhiteSpace(volume.Target))
+            {
+                yield return "Container path is required for all volume mappings";
+            }
+        }
+
+        // Environment variable validation
+        foreach (var env in model.EnvironmentVariables)
+        {
+            if (string.IsNullOrWhiteSpace(env.Key))
+            {
+                yield return "Environment variable key is required";
+            }
+        }
+
+        // IPv4 address validation
+        if (!string.IsNullOrWhiteSpace(model.IPv4Address))
+        {
+            if (!System.Net.IPAddress.TryParse(model.IPv4Address, out var ip) || ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                yield return "Invalid IPv4 address";
+            }
+        }
+    }
 }
 
 public class ContainerListItemViewModel
