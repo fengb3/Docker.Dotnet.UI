@@ -631,7 +631,7 @@
                                Variant="Variant.Outlined"
                                Disabled="@Vm!.IsCreating"
                                OnClick="@(() => Vm!.CreateModel.NetworkAliases.Add(""))">
-                        @Localizer["ADD_LABEL"]
+                        @Localizer["ADD_ALIAS"]
                     </MudButton>
                 </MudStack>
             </MudTabPanel>
@@ -677,7 +677,7 @@
 
             <MudTabPanel Text="@Localizer["ADVANCED"]">
                 <MudStack Spacing="3">
-                    <MudTextField @bind-Value="@entrypointText"
+                    <MudTextField @bind-Value="Vm!.EntrypointText"
                                   Label="@Localizer["ENTRYPOINT"]"
                                   Lines="3"
                                   Placeholder="/bin/sh"
@@ -685,7 +685,7 @@
                                   Variant="Variant.Outlined"
                                   HelperText="One per line or space-separated"/>
 
-                    <MudTextField @bind-Value="@commandText"
+                    <MudTextField @bind-Value="Vm!.CommandText"
                                   Label="@Localizer["COMMAND"]"
                                   Lines="3"
                                   Placeholder="-c echo hello"
@@ -739,36 +739,6 @@
 
 @code {
     [Inject] private IDialogService DialogService { get; set; } = default!;
-
-    private string entrypointText
-    {
-        get => string.Join("\n", Vm?.CreateModel?.Entrypoint ?? new List<string>());
-        set
-        {
-            if (Vm?.CreateModel != null)
-            {
-                Vm.CreateModel.Entrypoint = value
-                    .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                    .ToList();
-            }
-        }
-    }
-
-    private string commandText
-    {
-        get => string.Join("\n", Vm?.CreateModel?.Command ?? new List<string>());
-        set
-        {
-            if (Vm?.CreateModel != null)
-            {
-                Vm.CreateModel.Command = value
-                    .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                    .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                    .ToList();
-            }
-        }
-    }
 
     private async Task ConfirmRemoveSelected()
     {
