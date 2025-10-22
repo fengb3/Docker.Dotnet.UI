@@ -16,24 +16,8 @@ cd Docker.Dotnet.UI
 dotnet run
 ```
 
-然后在浏览器访问: http://localhost:5000 或 https://localhost:5001
+然后在浏览器访问: https://localhost:7150 or http://localhost:5149
 
-### 方法 2：使用一键脚本
-
-**Windows (PowerShell):**
-
-```powershell
-.\build-and-run.ps1
-```
-
-**Linux/Mac:**
-
-```bash
-chmod +x build-and-run.sh
-./build-and-run.sh
-```
-
-脚本会自动构建 Docker 镜像，然后提示您运行容器。
 
 ### 方法 3：使用 Docker Compose
 
