@@ -46,10 +46,9 @@ public class CreateContainerModel
         get => string.Join("\n", Entrypoint ?? []);
         set
         {
-            Entrypoint = value
+            Entrypoint = [.. value
                 .Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
-                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                .ToList();
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))];
         }
     }
 
@@ -58,10 +57,9 @@ public class CreateContainerModel
         get => string.Join("\n", Command ?? []);
         set
         {
-            Command = value
+            Command = [.. value
                 .Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
-                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                .ToList();
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))];
         }
     }
 }

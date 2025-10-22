@@ -586,31 +586,6 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
     public string? CreateError { get; set; }
     public string? CreateProgress { get; set; }
 
-    // Text parsing properties for Entrypoint and Command
-    public string EntrypointText
-    {
-        get => string.Join("\n", CreateModel.Entrypoint);
-        set
-        {
-            CreateModel.Entrypoint = value
-                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                .ToList();
-        }
-    }
-
-    public string CommandText
-    {
-        get => string.Join("\n", CreateModel.Command);
-        set
-        {
-            CreateModel.Command = value
-                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-                .ToList();
-        }
-    }
-
     public async Task OpenCreateDialog()
     {
         CreateModel = new CreateContainerModel();
