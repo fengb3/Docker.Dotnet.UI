@@ -27,6 +27,36 @@
         </MudStack>
     </MudStack>
     
+    <!-- Search Bar -->
+    <MudPaper Class="pa-3 mb-3" Elevation="1">
+        <MudTextField @bind-Value="Vm!.SearchText" 
+                      Label="@Localizer["SEARCH"]"
+                      Placeholder="@Localizer["SEARCH_PLACEHOLDER"]"
+                      Adornment="Adornment.Start" 
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      Immediate="true"
+                      OnKeyUp="@(() => Vm.ApplyFilters())"
+                      Variant="Variant.Outlined" />
+    </MudPaper>
+
+    <!-- Batch Actions Toolbar -->
+    @if (Vm.SelectedImageIds.Count > 0)
+    {
+        <MudPaper Class="pa-3 mb-3" Elevation="2">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                <MudText Typo="Typo.body1">
+                    <strong>@Vm.SelectedImageIds.Count</strong> @Localizer["SELECTED_ITEMS"]
+                </MudText>
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Error" 
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           OnClick="@(() => ConfirmRemoveSelected())">
+                    @Localizer["REMOVE_SELECTED"]
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+    }
+    
     @if (Vm?.Images == null || Vm.Images.Count == 0)
     {
         <MudAlert Severity="Severity.Info">@Localizer["NO_IMAGES"]</MudAlert>
@@ -35,7 +65,21 @@
     {
         <MudPaper Class="pa-3 mb-3" Elevation="0" >
             <MudGrid Spacing="2">
-                <MudItem xs="3" Class="d-flex align-center">
+                <MudItem xs="1" Class="d-flex align-center">
+                    <MudCheckBox T="bool" Value="@Vm.SelectAll" 
+                                 ValueChanged="@((bool val) => Vm!.ToggleSelectAll())" 
+                                 Color="Color.Primary" />
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="1" Class="d-flex align-center">
+                    <MudCheckBox T="bool" Value="@Vm.SelectAll" 
+                                 ValueChanged="@((bool val) => Vm!.ToggleSelectAll())" 
+                                 Color="Color.Primary" />
+                    <MudSpacer/>
+                    <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
+                </MudItem>
+                <MudItem xs="2" Class="d-flex align-center">
                     <MudText Typo="Typo.subtitle2" Color="Color.Surface">@Localizer["IMAGE_NAME"]</MudText>
                     <MudSpacer/>
                     <MudDivider Vertical FlexItem DividerType="DividerType.FullWidth" />
@@ -71,7 +115,14 @@
             {
                 <MudCard Class="pa-3">
                     <MudGrid Spacing="2">
-                        <MudItem xs="3" Class="d-flex align-center">
+                        <MudItem xs="1" Class="d-flex align-center">
+                            <MudCheckBox T="bool" 
+                                         Value="@Vm.SelectedImageIds.Contains(image.ID)" 
+                                         ValueChanged="@((bool val) => Vm!.ToggleImageSelection(image.ID))" 
+                                         Color="Color.Primary" />
+                        </MudItem>
+                        
+                        <MudItem xs="2" Class="d-flex align-center">
                             <MudText Typo="Typo.body2" Style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 @image.ImageName
                             </MudText>
@@ -258,3 +309,35 @@
         <MudButton OnClick="Vm.CloseInspectDialog">@Localizer["CANCEL"]</MudButton>
     </DialogActions>
 </MudDialog>
+
+@code {
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+
+    private async Task ConfirmRemoveSelected()
+    {
+        if (Vm?.SelectedImageIds == null || Vm.SelectedImageIds.Count == 0)
+        {
+            return;
+        }
+
+        var parameters = new DialogParameters
+        {
+            { "ContentText", string.Format(Localizer["CONFIRM_REMOVE_SELECTED"], Vm.SelectedImageIds.Count) },
+            { "ButtonText", Localizer["REMOVE"] },
+            { "Color", Color.Error }
+        };
+
+        var dialog = await DialogService.ShowAsync<MudMessageBox>(Localizer["REMOVE_SELECTED"], parameters);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+            await Vm!.RemoveSelectedImagesAsync();
+        }
+    }
+
+    public void Dispose()
+    {
+        // Clean up resources if needed
+    }
+}

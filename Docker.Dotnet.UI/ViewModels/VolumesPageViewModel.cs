@@ -14,7 +14,15 @@ public class VolumesPageViewModel(DockerClient client) : ViewModel
         await RefreshVolumesAsync();
     }
 
+    private IList<VolumeListItemViewModel>? _allVolumes;
     public IList<VolumeListItemViewModel>? Volumes { get; set; }
+    
+    // Search/Filter state
+    public string SearchText { get; set; } = string.Empty;
+    
+    // Batch operations state
+    public HashSet<string> SelectedVolumeNames { get; } = new();
+    public bool SelectAll { get; set; }
 
     // Dialog states
     public bool ShowCreateDialog { get; set; }
@@ -38,7 +46,31 @@ public class VolumesPageViewModel(DockerClient client) : ViewModel
     public async Task RefreshVolumesAsync()
     {
         var volumes = await client.Volumes.ListAsync();
-        Volumes = volumes.Volumes.ToViewModel();
+        _allVolumes = volumes.Volumes.ToViewModel();
+        ApplyFilters();
+    }
+
+    public void ApplyFilters()
+    {
+        if (_allVolumes == null)
+        {
+            Volumes = null;
+            return;
+        }
+
+        var filtered = _allVolumes.AsEnumerable();
+
+        // Apply search filter
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var searchLower = SearchText.ToLowerInvariant();
+            filtered = filtered.Where(v =>
+                v.Name.ToLowerInvariant().Contains(searchLower) ||
+                v.Driver.ToLowerInvariant().Contains(searchLower)
+            );
+        }
+
+        Volumes = filtered.ToList();
         NotifyStateChanged();
     }
 
@@ -129,6 +161,66 @@ public class VolumesPageViewModel(DockerClient client) : ViewModel
         await RefreshVolumesAsync();
     }
 
+    public void ToggleSelectAll()
+    {
+        SelectAll = !SelectAll;
+        SelectedVolumeNames.Clear();
+        
+        if (SelectAll && Volumes != null)
+        {
+            foreach (var volume in Volumes)
+            {
+                SelectedVolumeNames.Add(volume.Name);
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public void ToggleVolumeSelection(string volumeName)
+    {
+        if (SelectedVolumeNames.Contains(volumeName))
+        {
+            SelectedVolumeNames.Remove(volumeName);
+            SelectAll = false;
+        }
+        else
+        {
+            SelectedVolumeNames.Add(volumeName);
+            
+            // Check if all volumes are now selected
+            if (Volumes != null && SelectedVolumeNames.Count == Volumes.Count)
+            {
+                SelectAll = true;
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public async Task RemoveSelectedVolumesAsync()
+    {
+        if (SelectedVolumeNames.Count == 0) return;
+
+        var tasks = SelectedVolumeNames
+            .Select(name => client.Volumes.RemoveAsync(name, force: true))
+            .ToArray();
+
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception)
+        {
+            // Ignore errors - some volumes may fail to delete
+        }
+        finally
+        {
+            SelectedVolumeNames.Clear();
+            SelectAll = false;
+            await RefreshVolumesAsync();
+        }
+    }
 
 }
 
