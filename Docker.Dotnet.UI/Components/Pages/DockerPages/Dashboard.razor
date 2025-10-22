@@ -27,7 +27,7 @@
         <!-- Resource Overview Cards -->
         <MudGrid Class="mb-4">
             <MudItem xs="12" sm="6" md="3">
-                <MudCard Elevation="2">
+                <MudCard Elevation="2" Style="height: 100%;">
                     <MudCardContent>
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
@@ -48,12 +48,13 @@
             </MudItem>
 
             <MudItem xs="12" sm="6" md="3">
-                <MudCard Elevation="2">
+                <MudCard Elevation="2" Style="height: 100%;">
                     <MudCardContent>
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_IMAGES"]</MudText>
                                 <MudText Typo="Typo.h4">@Vm.TotalImages</MudText>
+                                <MudText Typo="Typo.caption" Style="visibility: hidden;">-</MudText>
                             </div>
                             <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Large" Color="Color.Info" />
                         </MudStack>
@@ -65,12 +66,13 @@
             </MudItem>
 
             <MudItem xs="12" sm="6" md="3">
-                <MudCard Elevation="2">
+                <MudCard Elevation="2" Style="height: 100%;">
                     <MudCardContent>
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_VOLUMES"]</MudText>
                                 <MudText Typo="Typo.h4">@Vm.TotalVolumes</MudText>
+                                <MudText Typo="Typo.caption" Style="visibility: hidden;">-</MudText>
                             </div>
                             <MudIcon Icon="@Icons.Material.Filled.Storage" Size="Size.Large" Color="Color.Warning" />
                         </MudStack>
@@ -82,12 +84,13 @@
             </MudItem>
 
             <MudItem xs="12" sm="6" md="3">
-                <MudCard Elevation="2">
+                <MudCard Elevation="2" Style="height: 100%;">
                     <MudCardContent>
                         <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                             <div>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">@Localizer["DOCKER_NETWORKS"]</MudText>
                                 <MudText Typo="Typo.h4">@Vm.TotalNetworks</MudText>
+                                <MudText Typo="Typo.caption" Style="visibility: hidden;">-</MudText>
                             </div>
                             <MudIcon Icon="@Icons.Material.Filled.Hub" Size="Size.Large" Color="Color.Success" />
                         </MudStack>

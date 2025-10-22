@@ -14,7 +14,15 @@ public class NetworksPageViewModel(DockerClient dockerClient) : ViewModel
         await RefreshNetworksAsync();
     }
 
+    private IList<NetworkListItemViewModel>? _allNetworks;
     public IList<NetworkListItemViewModel>? Networks { get; set; }
+    
+    // Search/Filter state
+    public string SearchText { get; set; } = string.Empty;
+    
+    // Batch operations state
+    public HashSet<string> SelectedNetworkIds { get; } = new();
+    public bool SelectAll { get; set; }
 
     // Dialog states
     public bool ShowCreateDialog { get; set; }
@@ -39,7 +47,32 @@ public class NetworksPageViewModel(DockerClient dockerClient) : ViewModel
     public async Task RefreshNetworksAsync()
     {
         var networks = await dockerClient.Networks.ListNetworksAsync();
-        Networks = networks.ToViewModel();
+        _allNetworks = networks.ToViewModel();
+        ApplyFilters();
+    }
+
+    public void ApplyFilters()
+    {
+        if (_allNetworks == null)
+        {
+            Networks = null;
+            return;
+        }
+
+        var filtered = _allNetworks.AsEnumerable();
+
+        // Apply search filter
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var searchLower = SearchText.ToLowerInvariant();
+            filtered = filtered.Where(n =>
+                n.Name.ToLowerInvariant().Contains(searchLower) ||
+                n.Driver.ToLowerInvariant().Contains(searchLower) ||
+                n.ShortId.ToLowerInvariant().Contains(searchLower)
+            );
+        }
+
+        Networks = filtered.ToList();
         NotifyStateChanged();
     }
 
@@ -126,6 +159,66 @@ public class NetworksPageViewModel(DockerClient dockerClient) : ViewModel
         NotifyStateChanged();
     }
 
+    public void ToggleSelectAll()
+    {
+        SelectAll = !SelectAll;
+        SelectedNetworkIds.Clear();
+        
+        if (SelectAll && Networks != null)
+        {
+            foreach (var network in Networks)
+            {
+                SelectedNetworkIds.Add(network.ID);
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public void ToggleNetworkSelection(string networkId)
+    {
+        if (SelectedNetworkIds.Contains(networkId))
+        {
+            SelectedNetworkIds.Remove(networkId);
+            SelectAll = false;
+        }
+        else
+        {
+            SelectedNetworkIds.Add(networkId);
+            
+            // Check if all networks are now selected
+            if (Networks != null && SelectedNetworkIds.Count == Networks.Count)
+            {
+                SelectAll = true;
+            }
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public async Task RemoveSelectedNetworksAsync()
+    {
+        if (SelectedNetworkIds.Count == 0) return;
+
+        var tasks = SelectedNetworkIds
+            .Select(id => dockerClient.Networks.DeleteNetworkAsync(id))
+            .ToArray();
+
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception)
+        {
+            // Ignore errors - some networks may fail to delete (system networks, etc.)
+        }
+        finally
+        {
+            SelectedNetworkIds.Clear();
+            SelectAll = false;
+            await RefreshNetworksAsync();
+        }
+    }
 
 }
 
