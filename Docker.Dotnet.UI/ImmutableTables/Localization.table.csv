@@ -23,6 +23,7 @@
 " ",LOGS,Logs,日志,Logs,ログ,로그,Registros,action button tooltip
 " ",STATS,Stats,统计,Stats,統計,통계,Estadísticas,action button tooltip
 " ",INSPECT,Inspect,检查,Inspect,検査,검사,Inspeccionar,action button tooltip
+" ",PORTS_AND_VOLUMES,Ports & Volumes,端口和卷,Ports & Volumes,ポートとボリューム,포트 및 볼륨,Puertos y Volúmenes,tab label
 " ",CREATE_CONTAINER,Create Container,创建容器,Create Container,コンテナを作成,컨테이너 생성,Crear contenedor,button text
 " ",CONTAINER_LOGS,Container Logs,容器日志,Container Logs,コンテナログ,컨테이너 로그,Registros del contenedor,dialog title
 " ",CONTAINER_STATS,Container Stats,容器统计,Container Stats,コンテナ統計,컨테이너 통계,Estadísticas del contenedor,dialog title
