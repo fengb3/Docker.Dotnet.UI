@@ -8,10 +8,9 @@ Welcome to Docker.Dotnet.UI - a modern web-based interface for managing Docker c
 
 ### First Time Login
 1. Open your browser and navigate to the application URL (typically http://localhost:8080)
-2. Use the default credentials:
+2. Set up your initial admin account for example:
    - **Username**: `admin`
    - **Password**: `Test123!`
-3. **Important**: Change your password immediately after first login
 
 ### Changing Your Password
 *Note: User management features may be added in future versions*
