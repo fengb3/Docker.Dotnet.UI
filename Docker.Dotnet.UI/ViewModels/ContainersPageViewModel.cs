@@ -577,6 +577,718 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
             await RefreshContainersAsync();
         }
     }
+
+    // Create container state
+    public bool ShowCreateDialog { get; set; }
+    public bool IsCreating { get; set; }
+    public CreateContainerModel CreateModel { get; set; } = new();
+    public List<NetworkListItemViewModel> AvailableNetworks { get; set; } = new();
+    public string? CreateError { get; set; }
+    public string? CreateProgress { get; set; }
+
+    // Docker Run Parser state
+    public string DockerRunCommand { get; set; } = string.Empty;
+    public bool IsParsing { get; set; }
+    public string? ParseError { get; set; }
+    public string? ParseSuccess { get; set; }
+
+    // Text parsing properties for Entrypoint and Command
+    public string EntrypointText
+    {
+        get => string.Join("\n", CreateModel.Entrypoint);
+        set
+        {
+            CreateModel.Entrypoint = value
+                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .ToList();
+        }
+    }
+
+    public string CommandText
+    {
+        get => string.Join("\n", CreateModel.Command);
+        set
+        {
+            CreateModel.Command = value
+                .Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .ToList();
+        }
+    }
+
+    public async Task OpenCreateDialog()
+    {
+        CreateModel = new CreateContainerModel();
+        CreateError = null;
+        CreateProgress = null;
+        ShowCreateDialog = true;
+        
+        // Load available networks
+        try
+        {
+            var networks = await dockerClient.Networks.ListNetworksAsync();
+            AvailableNetworks = networks.ToViewModel().ToList();
+        }
+        catch (Exception ex)
+        {
+            CreateError = $"Failed to load networks: {ex.Message}";
+        }
+        
+        NotifyStateChanged();
+    }
+
+    public void CloseCreateDialog()
+    {
+        ShowCreateDialog = false;
+        CreateModel = new CreateContainerModel();
+        CreateError = null;
+        CreateProgress = null;
+        DockerRunCommand = string.Empty;
+        ParseError = null;
+        ParseSuccess = null;
+        NotifyStateChanged();
+    }
+
+    public async Task CreateContainerAsync()
+    {
+        IsCreating = true;
+        CreateError = null;
+        NotifyStateChanged();
+
+        try
+        {
+            // Validate
+            var errors = ValidateCreateModel(CreateModel).ToList();
+            if (errors.Any())
+            {
+                CreateError = string.Join("; ", errors);
+                return;
+            }
+
+            // Parse image name and tag
+            var imageParts = CreateModel.Image.Split(':');
+            var imageName = imageParts[0];
+            var imageTag = imageParts.Length > 1 ? imageParts[1] : "latest";
+            var fullImage = $"{imageName}:{imageTag}";
+
+            // Ensure image exists
+            if (CreateModel.PullIfNotExists)
+            {
+                await EnsureImageExistsAsync(imageName, imageTag);
+            }
+
+            // Build create parameters
+            var createParams = BuildCreateContainerParameters(CreateModel, fullImage);
+
+            // Create container
+            CreateProgress = "Creating container...";
+            NotifyStateChanged();
+
+            var response = await dockerClient.Containers.CreateContainerAsync(createParams);
+
+            // Optionally start the container
+            if (CreateModel.AutoStartAfterCreate)
+            {
+                CreateProgress = "Starting container...";
+                NotifyStateChanged();
+                
+                try
+                {
+                    await dockerClient.Containers.StartContainerAsync(response.ID, new ContainerStartParameters());
+                }
+                catch (Exception ex)
+                {
+                    CreateError = $"Container created but failed to start: {ex.Message}";
+                    await RefreshContainersAsync();
+                    return;
+                }
+            }
+
+            // Success
+            await RefreshContainersAsync();
+            CloseCreateDialog();
+        }
+        catch (Exception ex)
+        {
+            CreateError = $"Failed to create container: {ex.Message}";
+        }
+        finally
+        {
+            IsCreating = false;
+            CreateProgress = null;
+            NotifyStateChanged();
+        }
+    }
+
+    private async Task EnsureImageExistsAsync(string imageName, string imageTag)
+    {
+        try
+        {
+            await dockerClient.Images.InspectImageAsync($"{imageName}:{imageTag}");
+        }
+        catch (DockerImageNotFoundException)
+        {
+            // Image not found, pull it
+            CreateProgress = $"Pulling image {imageName}:{imageTag}...";
+            NotifyStateChanged();
+
+            var progress = new Progress<JSONMessage>(message =>
+            {
+                if (!string.IsNullOrEmpty(message.Status))
+                {
+                    var progressText = message.Status;
+                    if (message.ProgressMessage != null)
+                    {
+                        progressText += $" {message.ProgressMessage}";
+                    }
+                    CreateProgress = progressText;
+                    NotifyStateChanged();
+                }
+            });
+
+            await dockerClient.Images.CreateImageAsync(
+                new ImagesCreateParameters
+                {
+                    FromImage = imageName,
+                    Tag = imageTag
+                },
+                null,
+                progress
+            );
+        }
+    }
+
+    private CreateContainerParameters BuildCreateContainerParameters(CreateContainerModel model, string fullImage)
+    {
+        var parameters = new CreateContainerParameters
+        {
+            Image = fullImage,
+            Name = string.IsNullOrWhiteSpace(model.ContainerName) ? null : model.ContainerName,
+            Tty = model.Tty,
+            AttachStdin = model.AttachStdin,
+            AttachStdout = model.AttachStdout,
+            AttachStderr = model.AttachStderr,
+            WorkingDir = string.IsNullOrWhiteSpace(model.WorkingDir) ? null : model.WorkingDir,
+        };
+
+        // Labels
+        if (model.Labels.Any())
+        {
+            parameters.Labels = model.Labels
+                .Where(l => !string.IsNullOrWhiteSpace(l.Key))
+                .ToDictionary(l => l.Key, l => l.Value);
+        }
+
+        // Environment variables
+        if (model.EnvironmentVariables.Any())
+        {
+            parameters.Env = model.EnvironmentVariables
+                .Where(e => !string.IsNullOrWhiteSpace(e.Key))
+                .Select(e => $"{e.Key}={e.Value}")
+                .ToList();
+        }
+
+        // Exposed ports
+        if (model.Ports.Any())
+        {
+            parameters.ExposedPorts = new Dictionary<string, EmptyStruct>();
+            foreach (var port in model.Ports.Where(p => !string.IsNullOrWhiteSpace(p.ContainerPort)))
+            {
+                parameters.ExposedPorts[$"{port.ContainerPort}/{port.Protocol}"] = default;
+            }
+        }
+
+        // Entrypoint and Cmd
+        if (model.Entrypoint.Any())
+        {
+            parameters.Entrypoint = model.Entrypoint;
+        }
+        if (model.Command.Any())
+        {
+            parameters.Cmd = model.Command;
+        }
+
+        // Host config
+        parameters.HostConfig = BuildHostConfig(model);
+
+        // Networking config
+        if (!string.IsNullOrWhiteSpace(model.NetworkMode) && model.NetworkMode != "bridge")
+        {
+            parameters.NetworkingConfig = BuildNetworkingConfig(model);
+        }
+
+        return parameters;
+    }
+
+    private HostConfig BuildHostConfig(CreateContainerModel model)
+    {
+        var hostConfig = new HostConfig();
+
+        // Port bindings
+        if (model.Ports.Any())
+        {
+            hostConfig.PortBindings = new Dictionary<string, IList<PortBinding>>();
+            foreach (var port in model.Ports.Where(p => !string.IsNullOrWhiteSpace(p.ContainerPort)))
+            {
+                var key = $"{port.ContainerPort}/{port.Protocol}";
+                hostConfig.PortBindings[key] = new List<PortBinding>
+                {
+                    new PortBinding
+                    {
+                        HostPort = string.IsNullOrWhiteSpace(port.HostPort) ? "" : port.HostPort,
+                        HostIP = ""
+                    }
+                };
+            }
+        }
+
+        // Volume binds
+        if (model.Volumes.Any())
+        {
+            hostConfig.Binds = model.Volumes
+                .Where(v => !string.IsNullOrWhiteSpace(v.Target))
+                .Select(v => $"{v.Source}:{v.Target}:{v.Mode}")
+                .ToList();
+        }
+
+        // Resource limits
+        if (model.CpuLimit > 0)
+        {
+            hostConfig.NanoCPUs = (long)(model.CpuLimit * 1_000_000_000);
+        }
+        if (model.MemoryLimitMiB > 0)
+        {
+            hostConfig.Memory = model.MemoryLimitMiB * 1024 * 1024;
+        }
+
+        // Restart policy
+        hostConfig.RestartPolicy = new RestartPolicy
+        {
+            Name = model.RestartPolicyType switch
+            {
+                "always" => RestartPolicyKind.Always,
+                "unless-stopped" => RestartPolicyKind.UnlessStopped,
+                "on-failure" => RestartPolicyKind.OnFailure,
+                _ => RestartPolicyKind.No
+            },
+            MaximumRetryCount = model.RestartPolicyType == "on-failure" ? model.MaximumRetryCount : 0
+        };
+
+        // Network mode
+        if (!string.IsNullOrWhiteSpace(model.NetworkMode))
+        {
+            hostConfig.NetworkMode = model.NetworkMode;
+        }
+
+        return hostConfig;
+    }
+
+    private NetworkingConfig BuildNetworkingConfig(CreateContainerModel model)
+    {
+        var config = new NetworkingConfig
+        {
+            EndpointsConfig = new Dictionary<string, EndpointSettings>()
+        };
+
+        var endpointSettings = new EndpointSettings();
+
+        if (model.NetworkAliases.Any())
+        {
+            endpointSettings.Aliases = model.NetworkAliases;
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.IPv4Address))
+        {
+            endpointSettings.IPAddress = model.IPv4Address;
+        }
+
+        config.EndpointsConfig[model.NetworkMode] = endpointSettings;
+
+        return config;
+    }
+
+    private IEnumerable<string> ValidateCreateModel(CreateContainerModel model)
+    {
+        // Image is required
+        if (string.IsNullOrWhiteSpace(model.Image))
+        {
+            yield return "Image is required";
+        }
+
+        // Container name validation (if provided)
+        if (!string.IsNullOrWhiteSpace(model.ContainerName))
+        {
+            if (!System.Text.RegularExpressions.Regex.IsMatch(model.ContainerName, @"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"))
+            {
+                yield return "Invalid container name. Must start with alphanumeric and contain only [a-zA-Z0-9_.-]";
+            }
+        }
+
+        // Port validation
+        var portSet = new HashSet<string>();
+        foreach (var port in model.Ports)
+        {
+            if (string.IsNullOrWhiteSpace(port.ContainerPort))
+            {
+                yield return "Container port is required for all port mappings";
+                continue;
+            }
+
+            if (!int.TryParse(port.ContainerPort, out var containerPort) || containerPort < 1 || containerPort > 65535)
+            {
+                yield return $"Invalid container port: {port.ContainerPort}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(port.HostPort))
+            {
+                if (!int.TryParse(port.HostPort, out var hostPort) || hostPort < 1 || hostPort > 65535)
+                {
+                    yield return $"Invalid host port: {port.HostPort}";
+                }
+
+                var portKey = $"{port.HostPort}/{port.Protocol}";
+                if (portSet.Contains(portKey))
+                {
+                    yield return $"Duplicate host port mapping: {portKey}";
+                }
+                portSet.Add(portKey);
+            }
+        }
+
+        // Volume validation
+        foreach (var volume in model.Volumes)
+        {
+            if (string.IsNullOrWhiteSpace(volume.Target))
+            {
+                yield return "Container path is required for all volume mappings";
+            }
+        }
+
+        // Environment variable validation
+        foreach (var env in model.EnvironmentVariables)
+        {
+            if (string.IsNullOrWhiteSpace(env.Key))
+            {
+                yield return "Environment variable key is required";
+            }
+        }
+
+        // IPv4 address validation
+        if (!string.IsNullOrWhiteSpace(model.IPv4Address))
+        {
+            if (!System.Net.IPAddress.TryParse(model.IPv4Address, out var ip) || ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                yield return "Invalid IPv4 address";
+            }
+        }
+    }
+
+    public void ParseDockerRunCommand()
+    {
+        IsParsing = true;
+        ParseError = null;
+        ParseSuccess = null;
+        NotifyStateChanged();
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(DockerRunCommand))
+            {
+                ParseError = "Please enter a docker run command";
+                return;
+            }
+
+            // Parse the docker run command
+            var command = DockerRunCommand.Trim();
+            
+            // Remove "docker run" prefix if present
+            if (command.StartsWith("docker run", StringComparison.OrdinalIgnoreCase))
+            {
+                command = command.Substring("docker run".Length).Trim();
+            }
+
+            // Split command while preserving quoted strings
+            var args = SplitCommandLine(command);
+            
+            // Parse arguments
+            for (int i = 0; i < args.Count; i++)
+            {
+                var arg = args[i];
+                
+                if (arg == "-d" || arg == "--detach")
+                {
+                    // Detached mode - already default
+                    continue;
+                }
+                else if (arg == "--name" && i + 1 < args.Count)
+                {
+                    CreateModel.ContainerName = args[++i];
+                }
+                else if (arg == "--restart" && i + 1 < args.Count)
+                {
+                    var policy = args[++i];
+                    if (policy.StartsWith("on-failure"))
+                    {
+                        CreateModel.RestartPolicyType = "on-failure";
+                        var parts = policy.Split(':');
+                        if (parts.Length > 1 && int.TryParse(parts[1], out var count))
+                        {
+                            CreateModel.MaximumRetryCount = count;
+                        }
+                    }
+                    else
+                    {
+                        CreateModel.RestartPolicyType = policy;
+                    }
+                }
+                else if ((arg == "-p" || arg == "--publish") && i + 1 < args.Count)
+                {
+                    var portMapping = args[++i];
+                    ParsePortMapping(portMapping);
+                }
+                else if ((arg == "-v" || arg == "--volume") && i + 1 < args.Count)
+                {
+                    var volumeMapping = args[++i];
+                    ParseVolumeMapping(volumeMapping);
+                }
+                else if ((arg == "-e" || arg == "--env") && i + 1 < args.Count)
+                {
+                    var envVar = args[++i];
+                    ParseEnvironmentVariable(envVar);
+                }
+                else if (arg == "--network" && i + 1 < args.Count)
+                {
+                    CreateModel.NetworkMode = args[++i];
+                }
+                else if (arg == "-w" || arg == "--workdir" && i + 1 < args.Count)
+                {
+                    CreateModel.WorkingDir = args[++i];
+                }
+                else if (arg == "--entrypoint" && i + 1 < args.Count)
+                {
+                    CreateModel.Entrypoint = new List<string> { args[++i] };
+                }
+                else if (arg == "-t" || arg == "--tty")
+                {
+                    CreateModel.Tty = true;
+                }
+                else if (arg == "-i" || arg == "--interactive")
+                {
+                    CreateModel.AttachStdin = true;
+                }
+                else if (arg == "--cpus" && i + 1 < args.Count)
+                {
+                    if (double.TryParse(args[++i], out var cpus))
+                    {
+                        CreateModel.CpuLimit = cpus;
+                    }
+                }
+                else if ((arg == "-m" || arg == "--memory") && i + 1 < args.Count)
+                {
+                    var memory = args[++i];
+                    CreateModel.MemoryLimitMiB = ParseMemorySize(memory);
+                }
+                else if (arg == "--label" && i + 1 < args.Count)
+                {
+                    var label = args[++i];
+                    var parts = label.Split('=', 2);
+                    if (parts.Length == 2)
+                    {
+                        CreateModel.Labels.Add(new LabelModel { Key = parts[0], Value = parts[1] });
+                    }
+                }
+                else if (!arg.StartsWith("-") && string.IsNullOrEmpty(CreateModel.Image))
+                {
+                    // This should be the image name
+                    CreateModel.Image = arg;
+                }
+                else if (!arg.StartsWith("-") && !string.IsNullOrEmpty(CreateModel.Image))
+                {
+                    // These are command arguments
+                    if (CreateModel.Command == null || CreateModel.Command.Count == 0)
+                    {
+                        CreateModel.Command = new List<string>();
+                    }
+                    CreateModel.Command.Add(arg);
+                }
+            }
+
+            ParseSuccess = "Command parsed successfully!";
+            NotifyStateChanged();
+        }
+        catch (Exception ex)
+        {
+            ParseError = $"Failed to parse command: {ex.Message}";
+        }
+        finally
+        {
+            IsParsing = false;
+            NotifyStateChanged();
+        }
+    }
+
+    private List<string> SplitCommandLine(string commandLine)
+    {
+        var args = new List<string>();
+        var currentArg = new System.Text.StringBuilder();
+        var inQuotes = false;
+        var quoteChar = '\0';
+
+        for (int i = 0; i < commandLine.Length; i++)
+        {
+            var c = commandLine[i];
+
+            if ((c == '"' || c == '\'') && !inQuotes)
+            {
+                inQuotes = true;
+                quoteChar = c;
+            }
+            else if (c == quoteChar && inQuotes)
+            {
+                inQuotes = false;
+                quoteChar = '\0';
+            }
+            else if (char.IsWhiteSpace(c) && !inQuotes)
+            {
+                if (currentArg.Length > 0)
+                {
+                    args.Add(currentArg.ToString());
+                    currentArg.Clear();
+                }
+            }
+            else if (c == '\\' && i + 1 < commandLine.Length && commandLine[i + 1] == '\n')
+            {
+                // Skip line continuation
+                i++;
+            }
+            else
+            {
+                currentArg.Append(c);
+            }
+        }
+
+        if (currentArg.Length > 0)
+        {
+            args.Add(currentArg.ToString());
+        }
+
+        return args;
+    }
+
+    private void ParsePortMapping(string portMapping)
+    {
+        // Format: [hostIp:][hostPort:]containerPort[/protocol]
+        var parts = portMapping.Split(':');
+        string? hostPort = null;
+        string? containerPort = null;
+        string protocol = "tcp";
+
+        if (parts.Length == 1)
+        {
+            // Just container port
+            containerPort = parts[0];
+        }
+        else if (parts.Length == 2)
+        {
+            // host:container
+            hostPort = parts[0];
+            containerPort = parts[1];
+        }
+        else if (parts.Length == 3)
+        {
+            // ip:host:container (ignore IP for now)
+            hostPort = parts[1];
+            containerPort = parts[2];
+        }
+
+        // Extract protocol if present
+        if (containerPort != null && containerPort.Contains('/'))
+        {
+            var portParts = containerPort.Split('/');
+            containerPort = portParts[0];
+            protocol = portParts[1].ToLower();
+        }
+
+        if (!string.IsNullOrEmpty(containerPort))
+        {
+            CreateModel.Ports.Add(new PortMappingModel
+            {
+                HostPort = hostPort ?? "",
+                ContainerPort = containerPort,
+                Protocol = protocol
+            });
+        }
+    }
+
+    private void ParseVolumeMapping(string volumeMapping)
+    {
+        // Format: [source:]destination[:mode]
+        var parts = volumeMapping.Split(':');
+        string source = "";
+        string target = "";
+        string mode = "rw";
+
+        if (parts.Length == 1)
+        {
+            // Just target (anonymous volume)
+            target = parts[0];
+        }
+        else if (parts.Length >= 2)
+        {
+            source = parts[0];
+            target = parts[1];
+            if (parts.Length >= 3)
+            {
+                mode = parts[2];
+            }
+        }
+
+        if (!string.IsNullOrEmpty(target))
+        {
+            CreateModel.Volumes.Add(new VolumeModel
+            {
+                Source = source,
+                Target = target,
+                Mode = mode
+            });
+        }
+    }
+
+    private void ParseEnvironmentVariable(string envVar)
+    {
+        var parts = envVar.Split('=', 2);
+        if (parts.Length >= 1)
+        {
+            CreateModel.EnvironmentVariables.Add(new EnvironmentVariableModel
+            {
+                Key = parts[0],
+                Value = parts.Length > 1 ? parts[1] : ""
+            });
+        }
+    }
+
+    private long ParseMemorySize(string memory)
+    {
+        // Parse memory size like "512m", "2g", etc.
+        memory = memory.ToLower().Trim();
+        var numberPart = new string(memory.TakeWhile(c => char.IsDigit(c) || c == '.').ToArray());
+        var unit = new string(memory.SkipWhile(c => char.IsDigit(c) || c == '.').ToArray());
+
+        if (!double.TryParse(numberPart, out var size))
+        {
+            return 0;
+        }
+
+        return unit switch
+        {
+            "k" or "kb" => (long)(size / 1024),
+            "m" or "mb" => (long)size,
+            "g" or "gb" => (long)(size * 1024),
+            "t" or "tb" => (long)(size * 1024 * 1024),
+            _ => (long)size // Assume bytes, convert to MiB
+        };
+    }
 }
 
 public class ContainerListItemViewModel

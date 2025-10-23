@@ -40,6 +40,12 @@
             }
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="@(() => Vm!.OpenCreateDialog())">
+                @Localizer["CREATE_CONTAINER"]
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Refresh"
                        OnClick="@(() => Vm!.RefreshContainersAsync())">
                 @Localizer["REFRESH"]
@@ -74,7 +80,8 @@
                            Margin="Margin.Dense"
                            Label="@Localizer["FILTER_BY_STATUS"]"
                            T="string"
-                           ValueChanged="@((string val) => {
+                           ValueChanged="@((string val) =>
+                                         {
                                              Vm!.StatusFilter = val;
                                              Vm!.ApplyFilters();
                                          })"
@@ -89,7 +96,6 @@
     </MudPaper>
 
     <!-- Batch Actions Toolbar -->
-
     @if (Vm?.Containers == null || Vm!.Containers.Count == 0)
     {
         <MudAlert Severity="Severity.Info">@Localizer["NO_CONTAINERS"]</MudAlert>
@@ -271,6 +277,7 @@
     }
 </MudContainer>
 
+<!-- Logs Dialog -->
 <MudDialog @bind-Visible="Vm!.ShowLogsDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -304,6 +311,7 @@
     </DialogActions>
 </MudDialog>
 
+<!-- Container Details Dialog -->
 <MudDialog @bind-Visible="Vm!.ShowInspectDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -327,6 +335,7 @@
     </DialogActions>
 </MudDialog>
 
+<!-- Stats Dialog -->
 <MudDialog @bind-Visible="Vm!.ShowStatsDialog" Options="Vm!.DialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
@@ -348,7 +357,8 @@
                         <MudStack Spacing="2">
                             <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                                 <MudText Typo="Typo.h6">@Localizer["CPU_USAGE"]</MudText>
-                                <MudText Typo="Typo.h6" Color="Color.Primary">@Vm!.CpuPercent.ToString("0.00")%</MudText>
+                                <MudText Typo="Typo.h6" Color="Color.Primary">@Vm!.CpuPercent.ToString("0.00")%
+                                </MudText>
                             </MudStack>
                             <MudProgressLinear Color="Color.Primary" Value="@Vm!.CpuPercent" Class="mt-2"/>
                         </MudStack>
@@ -398,6 +408,399 @@
     </DialogActions>
 </MudDialog>
 
+<!-- Create Container Dialog -->
+<MudDialog @bind-Visible="Vm!.ShowCreateDialog" Options="Vm!.DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-1"/> @Localizer["CREATE_CONTAINER"]
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (!string.IsNullOrEmpty(Vm!.CreateError))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-3" ShowCloseIcon="true"
+                      CloseIconClicked="@(() => Vm!.CreateError = null)">
+                @Vm!.CreateError
+            </MudAlert>
+        }
+
+        @if (!string.IsNullOrEmpty(Vm!.CreateProgress))
+        {
+            <MudAlert Severity="Severity.Info" Class="mb-3">
+                @Vm!.CreateProgress
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mt-2"/>
+            </MudAlert>
+        }
+
+        @* style="height: 60vh; overflow-y: auto;" *@
+        <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-4 fixed-tabs-panel" EnableScrollButtons="true">
+            <MudTabPanel Text="@Localizer["BASIC"]">
+                <MudStack Spacing="3">
+                    <MudTextField @bind-Value="Vm!.CreateModel.Image"
+                                  Label="@Localizer["IMAGE"]"
+                                  Placeholder="@Localizer["IMAGE_PLACEHOLDER"]"
+                                  Required="true"
+                                  Disabled="@Vm!.IsCreating"
+                                  Variant="Variant.Outlined"/>
+
+                    <MudTextField @bind-Value="Vm!.CreateModel.ContainerName"
+                                  Label="@Localizer["CONTAINER_NAME"]"
+                                  Placeholder="my-container"
+                                  Disabled="@Vm!.IsCreating"
+                                  Variant="Variant.Outlined"/>
+
+                    <MudCheckBox @bind-Value="Vm!.CreateModel.PullIfNotExists"
+                                 Label="@Localizer["AUTO_PULL_IF_MISSING"]"
+                                 Disabled="@Vm!.IsCreating"
+                                 Color="Color.Primary"/>
+
+                    <MudCheckBox @bind-Value="Vm!.CreateModel.AutoStartAfterCreate"
+                                 Label="@Localizer["AUTO_START_AFTER_CREATE"]"
+                                 Disabled="@Vm!.IsCreating"
+                                 Color="Color.Primary"/>
+
+                    <MudText Typo="Typo.subtitle1">@Localizer["LABELS"]</MudText>
+                    @foreach (var label in Vm!.CreateModel.Labels)
+                    {
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudTextField @bind-Value="label.Key"
+                                          Label="@Localizer["KEY"]"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudTextField @bind-Value="label.Value"
+                                          Label="@Localizer["VALUE"]"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Disabled="@Vm!.IsCreating"
+                                           OnClick="@(() => Vm!.CreateModel.Labels.Remove(label))"/>
+                        </MudStack>
+                    }
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                               Variant="Variant.Outlined"
+                               Disabled="@Vm!.IsCreating"
+                               OnClick="@(() => Vm!.CreateModel.Labels.Add(new LabelModel()))">
+                        @Localizer["ADD_LABEL"]
+                    </MudButton>
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@Localizer["PORTS_AND_VOLUMES"]">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.subtitle1">@Localizer["PORTS"]</MudText>
+                    @foreach (var port in Vm!.CreateModel.Ports)
+                    {
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudTextField @bind-Value="port.HostPort"
+                                          Label="@Localizer["HOST_PORT"]"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudTextField @bind-Value="port.ContainerPort"
+                                          Label="@Localizer["CONTAINER_PORT"]"
+                                          Required="true"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudSelect @bind-Value="port.Protocol"
+                                       Label="@Localizer["PROTOCOL"]"
+                                       Disabled="@Vm!.IsCreating"
+                                       Variant="Variant.Outlined"
+                                       Style="flex: 1">
+                                <MudSelectItem Value="@("tcp")">@Localizer["TCP"]</MudSelectItem>
+                                <MudSelectItem Value="@("udp")">@Localizer["UDP"]</MudSelectItem>
+                            </MudSelect>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Disabled="@Vm!.IsCreating"
+                                           OnClick="@(() => Vm!.CreateModel.Ports.Remove(port))"/>
+                        </MudStack>
+                    }
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                               Variant="Variant.Outlined"
+                               Disabled="@Vm!.IsCreating"
+                               OnClick="@(() => Vm!.CreateModel.Ports.Add(new PortMappingModel()))">
+                        @Localizer["ADD_PORT"]
+                    </MudButton>
+
+                    <MudDivider Class="my-4"/>
+
+                    <MudText Typo="Typo.subtitle1">@Localizer["VOLUMES"]</MudText>
+                    @foreach (var volume in Vm!.CreateModel.Volumes)
+                    {
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudTextField @bind-Value="volume.Source"
+                                          Label="@Localizer["HOST_PATH_OR_VOLUME"]"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudTextField @bind-Value="volume.Target"
+                                          Label="@Localizer["CONTAINER_PATH"]"
+                                          Required="true"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudSelect @bind-Value="volume.Mode"
+                                       Label="@Localizer["MODE"]"
+                                       Disabled="@Vm!.IsCreating"
+                                       Variant="Variant.Outlined"
+                                       Style="flex: 1">
+                                <MudSelectItem Value="@("rw")">@Localizer["READ_WRITE"]</MudSelectItem>
+                                <MudSelectItem Value="@("ro")">@Localizer["READ_ONLY"]</MudSelectItem>
+                            </MudSelect>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Disabled="@Vm!.IsCreating"
+                                           OnClick="@(() => Vm!.CreateModel.Volumes.Remove(volume))"/>
+                        </MudStack>
+                    }
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                               Variant="Variant.Outlined"
+                               Disabled="@Vm!.IsCreating"
+                               OnClick="@(() => Vm!.CreateModel.Volumes.Add(new VolumeModel()))">
+                        @Localizer["ADD_VOLUME"]
+                    </MudButton>
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@Localizer["ENV_VARIABLES"]">
+                <MudStack Spacing="3">
+                    @foreach (var env in Vm!.CreateModel.EnvironmentVariables)
+                    {
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudTextField @bind-Value="env.Key"
+                                          Label="@Localizer["KEY"]"
+                                          Required="true"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudTextField @bind-Value="env.Value"
+                                          Label="@Localizer["VALUE"]"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Disabled="@Vm!.IsCreating"
+                                           OnClick="@(() => Vm!.CreateModel.EnvironmentVariables.Remove(env))"/>
+                        </MudStack>
+                    }
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                               Variant="Variant.Outlined"
+                               Disabled="@Vm!.IsCreating"
+                               OnClick="@(() => Vm!.CreateModel.EnvironmentVariables.Add(new EnvironmentVariableModel()))">
+                        @Localizer["ADD_ENV"]
+                    </MudButton>
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@Localizer["NETWORK"]">
+                <MudStack Spacing="3">
+                    <MudSelect @bind-Value="Vm!.CreateModel.NetworkMode"
+                               Label="@Localizer["SELECT_NETWORK"]"
+                               Disabled="@Vm!.IsCreating"
+                               Variant="Variant.Outlined">
+                        <MudSelectItem Value="@("bridge")">bridge</MudSelectItem>
+                        <MudSelectItem Value="@("host")">host</MudSelectItem>
+                        <MudSelectItem Value="@("none")">none</MudSelectItem>
+                        @foreach (var network in Vm!.AvailableNetworks)
+                        {
+                            <MudSelectItem Value="@network.Name">@network.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudTextField @bind-Value="Vm!.CreateModel.IPv4Address"
+                                  Label="@Localizer["IPV4_ADDRESS"]"
+                                  Placeholder="192.168.1.100"
+                                  Disabled="@Vm!.IsCreating"
+                                  Variant="Variant.Outlined"/>
+
+                    <MudText Typo="Typo.subtitle1">@Localizer["ALIASES"]</MudText>
+                    @foreach (var alias in Vm!.CreateModel.NetworkAliases.ToList())
+                    {
+                        <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                            <MudTextField Value="@alias"
+                                          ValueChanged="@((string val) =>
+                                                        {
+                                                            var idx = Vm!.CreateModel.NetworkAliases.IndexOf(alias);
+                                                            if (idx >= 0) Vm!.CreateModel.NetworkAliases[idx] = val;
+                                                        })"
+                                          Label="@Localizer["ALIASES"]"
+                                          Disabled="@Vm!.IsCreating"
+                                          Variant="Variant.Outlined"
+                                          Style="flex: 1"/>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Disabled="@Vm!.IsCreating"
+                                           OnClick="@(() => Vm!.CreateModel.NetworkAliases.Remove(alias))"/>
+                        </MudStack>
+                    }
+                    <MudButton StartIcon="@Icons.Material.Filled.Add"
+                               Variant="Variant.Outlined"
+                               Disabled="@Vm!.IsCreating"
+                               OnClick="@(() => Vm!.CreateModel.NetworkAliases.Add(""))">
+                        @Localizer["ADD_ALIAS"]
+                    </MudButton>
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@Localizer["RESOURCES"]">
+                <MudStack Spacing="3">
+                    <MudNumericField @bind-Value="Vm!.CreateModel.CpuLimit"
+                                     Label="@Localizer["CPU_LIMIT"]"
+                                     Min="0"
+                                     Step="0.1"
+                                     Disabled="@Vm!.IsCreating"
+                                     Variant="Variant.Outlined"
+                                     HideSpinButtons="false"/>
+
+                    <MudNumericField @bind-Value="Vm!.CreateModel.MemoryLimitMiB"
+                                     Label="@Localizer["MEMORY_LIMIT_MIB"]"
+                                     Min="0"
+                                     Disabled="@Vm!.IsCreating"
+                                     Variant="Variant.Outlined"
+                                     HideSpinButtons="false"/>
+
+                    <MudSelect @bind-Value="Vm!.CreateModel.RestartPolicyType"
+                               Label="@Localizer["RESTART_POLICY"]"
+                               Disabled="@Vm!.IsCreating"
+                               Variant="Variant.Outlined">
+                        <MudSelectItem Value="@("no")">@Localizer["NO_RESTART"]</MudSelectItem>
+                        <MudSelectItem Value="@("always")">@Localizer["ALWAYS"]</MudSelectItem>
+                        <MudSelectItem Value="@("unless-stopped")">@Localizer["UNLESS_STOPPED"]</MudSelectItem>
+                        <MudSelectItem Value="@("on-failure")">@Localizer["ON_FAILURE"]</MudSelectItem>
+                    </MudSelect>
+
+                    @if (Vm!.CreateModel.RestartPolicyType == "on-failure")
+                    {
+                        <MudNumericField @bind-Value="Vm!.CreateModel.MaximumRetryCount"
+                                         Label="@Localizer["MAX_RETRY"]"
+                                         Min="0"
+                                         Disabled="@Vm!.IsCreating"
+                                         Variant="Variant.Outlined"
+                                         HideSpinButtons="false"/>
+                    }
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@Localizer["DOCKER_RUN_PARSER"]">
+                <MudStack Spacing="3">
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Text">
+                        @Localizer["PARSE_HELP"]
+                    </MudAlert>
+
+                    @if (!string.IsNullOrEmpty(Vm!.ParseSuccess))
+                    {
+                        <MudAlert Severity="Severity.Success" Class="mb-3" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ParseSuccess = null)">
+                            @Vm!.ParseSuccess
+                        </MudAlert>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Vm!.ParseError))
+                    {
+                        <MudAlert Severity="Severity.Error" Class="mb-3" ShowCloseIcon="true" CloseIconClicked="@(() => Vm!.ParseError = null)">
+                            @Vm!.ParseError
+                        </MudAlert>
+                    }
+
+                    <MudTextField @bind-Value="Vm!.DockerRunCommand"
+                                  Label="@Localizer["DOCKER_RUN_COMMAND"]"
+                                  Placeholder="@Localizer["DOCKER_RUN_PLACEHOLDER"]"
+                                  Lines="10"
+                                  Disabled="@Vm!.IsParsing"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Example: docker run -d --name my-container -p 8080:80 -v /data:/app/data nginx:latest"/>
+
+                    <MudButton Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.AutoAwesome"
+                               OnClick="@(() => Vm!.ParseDockerRunCommand())"
+                               Disabled="@Vm!.IsParsing">
+                        @if (Vm!.IsParsing)
+                        {
+                            <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true"/>
+                            @Localizer["PARSING"]
+                        }
+                        else
+                        {
+                            @Localizer["PARSE_COMMAND"]
+                        }
+                    </MudButton>
+                </MudStack>
+            </MudTabPanel>
+
+            <MudTabPanel Text="@Localizer["ADVANCED"]">
+                <MudStack Spacing="3">
+                    <MudTextField @bind-Value="Vm!.EntrypointText"
+                                  Label="@Localizer["ENTRYPOINT"]"
+                                  Lines="3"
+                                  Placeholder="/bin/sh"
+                                  Disabled="@Vm!.IsCreating"
+                                  Variant="Variant.Outlined"
+                                  HelperText="One per line or space-separated"/>
+
+                    <MudTextField @bind-Value="Vm!.CommandText"
+                                  Label="@Localizer["COMMAND"]"
+                                  Lines="3"
+                                  Placeholder="-c echo hello"
+                                  Disabled="@Vm!.IsCreating"
+                                  Variant="Variant.Outlined"
+                                  HelperText="One per line or space-separated"/>
+
+                    <MudTextField @bind-Value="Vm!.CreateModel.WorkingDir"
+                                  Label="@Localizer["WORKING_DIR"]"
+                                  Placeholder="/app"
+                                  Disabled="@Vm!.IsCreating"
+                                  Variant="Variant.Outlined"/>
+
+                    <MudCheckBox @bind-Value="Vm!.CreateModel.Tty"
+                                 Label="@Localizer["TTY"]"
+                                 Disabled="@Vm!.IsCreating"
+                                 Color="Color.Primary"/>
+
+                    <MudCheckBox @bind-Value="Vm!.CreateModel.AttachStdin"
+                                 Label="@Localizer["ATTACH_STDIN"]"
+                                 Disabled="@Vm!.IsCreating"
+                                 Color="Color.Primary"/>
+
+                    <MudCheckBox @bind-Value="Vm!.CreateModel.AttachStdout"
+                                 Label="@Localizer["ATTACH_STDOUT"]"
+                                 Disabled="@Vm!.IsCreating"
+                                 Color="Color.Primary"/>
+
+                    <MudCheckBox @bind-Value="Vm!.CreateModel.AttachStderr"
+                                 Label="@Localizer["ATTACH_STDERR"]"
+                                 Disabled="@Vm!.IsCreating"
+                                 Color="Color.Primary"/>
+                </MudStack>
+            </MudTabPanel>
+        </MudTabs>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm!.CloseCreateDialog" Disabled="@Vm!.IsCreating">@Localizer["CANCEL"]</MudButton>
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   OnClick="@(() => Vm!.CreateContainerAsync())"
+                   Disabled="@Vm!.IsCreating">
+            @if (Vm!.IsCreating)
+            {
+                <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true"/>
+            }
+            @Localizer["CREATE"]
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .fixed-tabs-panel {
+        height: 60vh;
+        overflow-y: auto;
+    }
+</style>
+
 @code {
     [Inject] private IDialogService DialogService { get; set; } = default!;
 
@@ -410,7 +813,7 @@
 
         var parameters = new DialogParameters
         {
-            { "ContentText", string.Format(Localizer["CONFIRM_REMOVE_SELECTED"], Vm!.SelectedContainerIds.Count) },
+            { "ContentText", Localizer["CONFIRM_REMOVE_SELECTED", Vm!.SelectedContainerIds.Count] },
             { "ButtonText", Localizer["REMOVE"] },
             { "Color", Color.Error }
         };
