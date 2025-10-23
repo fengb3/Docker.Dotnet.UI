@@ -1,4 +1,0 @@
----
-alwaysApply: true
----
-razor files should only contains mininal logic, the data and logic should be in viewmodel

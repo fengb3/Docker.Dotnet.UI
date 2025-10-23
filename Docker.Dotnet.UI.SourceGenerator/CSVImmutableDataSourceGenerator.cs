@@ -147,24 +147,12 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
                                 );
 
                                 // add indexer for accessing properties by name
-                                innerCls += "public object this[string index] ";
-                                innerCls.CodeBlock(codeblock =>
-                                    {
-                                        codeblock += "get";
-                                        codeblock.CodeBlock(getBlock =>
-                                        {
-                                            getBlock += "return index switch ";
-                                            getBlock.CodeBlock(switchBlock =>
-                                                switchBlock.AppendBatch(properties,
-                                                    (@switch, prop) =>
-                                                        @switch + $"\"{prop.csvName}\" => {prop.Name},"
-                                                ) +
-                                                "_ => throw new IndexOutOfRangeException($\"Index {index} is out of range.\")"
-                                            );
-                                            getBlock += ";";
-                                        });
-                                    }
+                                innerCls += "public object this[string index] { get { return index switch { ";
+                                innerCls += string.Join(
+                                    " ",
+                                    properties.Select(p => $"\"{p.csvName}\" => {p.Name},")
                                 );
+                                innerCls += "_ => throw new IndexOutOfRangeException($\"Index {index} is out of range.\"), }; } }";
                             }
                         );
 
