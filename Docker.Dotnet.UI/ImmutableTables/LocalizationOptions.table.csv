@@ -1,8 +1,8 @@
 ,[Key]option-key:int,language:string,language-code:string,descriptions:string
 #,# 选项键值,# 语言,# 语言代码,# 描述
-,1,"en","en-US","Specifies localization options for the application."
-,2,"zh","zh-CN","指定应用程序的本地化选项。"
-,3,"fr","fr-FR","Spécifie les options de localisation pour l'application."
-,4,"ja","ja-JP","アプリケーションのローカリゼーションオプションを指定します。"
-,5,"ko","ko-KR","애플리케이션의 로컬라이제이션 옵션을 지정합니다."
-,6,"es","es-ES","Especifica las opciones de localización para la aplicación。"
+,1,English,en-us,Specifies localization options for the application.
+,2,中文,zh-cn,指定应用程序的本地化选项。
+,3,Français,fr-fr,Spécifie les options de localisation pour l'application.
+,4,日本語,ja,アプリケーションのローカリゼーションオプションを指定します。
+,5,한국어,ko-kr,애플리케이션의 로컬라이제이션 옵션을 지정합니다.
+,6,Español,es,Especifica las opciones de localización para la aplicación。

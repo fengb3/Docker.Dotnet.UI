@@ -1,6 +1,8 @@
 using Docker.DotNet.Models;
 using Riok.Mapperly.Abstractions;
 
+#pragma warning disable // #warning directive
+
 namespace Docker.Dotnet.UI.ViewModels;
 
 [Mapper]
