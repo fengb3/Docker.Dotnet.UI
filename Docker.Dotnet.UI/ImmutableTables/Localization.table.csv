@@ -1,6 +1,12 @@
 ,[Key]resource-key:string,en-us:string,zh-cn:string,fr-fr:string,ja:string,ko-kr:string,es:string,Descriptions:string
 #,# 资源键值,# 英语,# 汉语,# 法语,# 日语,# 韩语,# 西语,# 描述
 
+# Navigation menu items,,,,,,,,
+" ",NAV_CONTAINERS,Containers,容器,Containers,コンテナ,컨테이너,Contenedores,nav menu item
+" ",NAV_IMAGES,Images,镜像,Images,イメージ,이미지,Imágenes,nav menu item
+" ",NAV_VOLUMES,Volumes,卷,Volumes,ボリューム,볼륨,Volúmenes,nav menu item
+" ",NAV_NETWORKS,Networks,网络,Networks,ネットワーク,네트워크,Redes,nav menu item
+
 # Containers page strings,,,,,,,,
 " ",DOCKER_CONTAINERS,Docker Containers,Docker 容器,Docker Containers,Docker コンテナ,Docker 컨테이너,Contenedores Docker,page title: Docker Containers
 " ",NO_CONTAINERS,No containers,暂无容器,No containers,コンテナがありません,컨테이너 없음,No hay contenedores,empty state message

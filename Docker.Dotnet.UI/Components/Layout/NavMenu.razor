@@ -1,14 +1,57 @@
+@implements IDisposable
 @inject Microsoft.Extensions.Localization.IStringLocalizer Localizer
+@using Docker.Dotnet.UI.Services
 
 <MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">@Localizer["DASHBOARD"]</MudNavLink>
+    <MudNavLink Href="/" Match="NavLinkMatch.All">
+        <span style="margin-right: 8px;">📊</span>@Localizer["DASHBOARD"]
+    </MudNavLink>
     <MudDivider Class="my-2" />
-    <MudNavLink Href="containers" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Tab">Containers</MudNavLink>
-    <MudNavLink Href="images" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Tab">Images</MudNavLink>
-    <MudNavLink Href="volumes" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Tab">Volumes</MudNavLink>
-    <MudNavLink Href="networks" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.TwoTone.Hub">Networks</MudNavLink>
+    <MudNavLink Href="containers" Match="NavLinkMatch.Prefix">
+        <span style="margin-right: 8px;">📦</span>@Localizer["NAV_CONTAINERS"]
+    </MudNavLink>
+    <MudNavLink Href="images" Match="NavLinkMatch.Prefix">
+        <span style="margin-right: 8px;">🖼️</span>@Localizer["NAV_IMAGES"]
+    </MudNavLink>
+    <MudNavLink Href="volumes" Match="NavLinkMatch.Prefix">
+        <span style="margin-right: 8px;">💾</span>@Localizer["NAV_VOLUMES"]
+    </MudNavLink>
+    <MudNavLink Href="networks" Match="NavLinkMatch.Prefix">
+        <span style="margin-right: 8px;">🌐</span>@Localizer["NAV_NETWORKS"]
+    </MudNavLink>
     <MudDivider Class="my-2" />
-    <MudNavLink Href="Account/Profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">@Localizer["PROFILE"]</MudNavLink>
-    <MudNavLink Href="Account/UserManagement" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">@Localizer["USER_MANAGEMENT"]</MudNavLink>
+    <MudNavLink Href="Account/Profile" Match="NavLinkMatch.Prefix">
+        <span style="margin-right: 8px;">👤</span>@Localizer["PROFILE"]
+    </MudNavLink>
+    <MudNavLink Href="Account/UserManagement" Match="NavLinkMatch.Prefix">
+        <span style="margin-right: 8px;">👥</span>@Localizer["USER_MANAGEMENT"]
+    </MudNavLink>
 </MudNavMenu>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        
+        // Subscribe to language change events
+        if (Localizer is MyLocalizer myLocalizer)
+        {
+            myLocalizer.LanguageChanged += OnLanguageChanged;
+        }
+    }
+
+    private void OnLanguageChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe from language change events
+        if (Localizer is MyLocalizer myLocalizer)
+        {
+            myLocalizer.LanguageChanged -= OnLanguageChanged;
+        }
+    }
+}
 
