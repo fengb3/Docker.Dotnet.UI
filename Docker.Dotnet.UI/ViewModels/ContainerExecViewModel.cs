@@ -86,7 +86,7 @@ public class ContainerExecViewModel(DockerClient dockerClient, ILogger<Container
             // Start reading output
             _readTask = Task.Run(ReadOutputLoopAsync, _cancellationTokenSource.Token);
 
-            logger.LogDebug("Container exec session started for {ContainerId} with shell {Shell}", containerId, Shell);
+            logger.LogDebug("Container exec session started with shell {Shell}", Shell);
         }
         catch (TimeoutException)
         {
@@ -101,7 +101,7 @@ public class ContainerExecViewModel(DockerClient dockerClient, ILogger<Container
             IsConnecting = false;
             IsConnected = false;
             NotifyStateChanged();
-            logger.LogError(ex, "Failed to start exec session for container {ContainerId}", containerId);
+            logger.LogError(ex, "Failed to start exec session for container");
         }
     }
 
@@ -126,7 +126,7 @@ public class ContainerExecViewModel(DockerClient dockerClient, ILogger<Container
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Failed to detect platform for container {ContainerId}, using default shell", containerId);
+            logger.LogWarning(ex, "Failed to detect platform for container, using default shell");
             Shell = "/bin/sh";
         }
     }
