@@ -53,8 +53,46 @@ Navigate to **Containers** from the main menu to manage your Docker containers.
 #### Advanced Operations
 - **Pause/Unpause**: Temporarily freeze/unfreeze a running container
 - **View Logs**: Click "Logs" to see the last 500 lines of container output
+- **Terminal**: Open an interactive shell inside a running container
 - **Inspect**: View complete container details in JSON format
 - **Delete**: Remove containers (stopped containers only)
+
+#### Container Terminal (Exec)
+The terminal feature allows you to access an interactive shell inside running containers directly from your browser.
+
+**Features:**
+- **Dialog Mode**: Quick terminal access from the container list
+- **Full-Screen Mode**: Dedicated page for extended sessions
+- **Auto-Detection**: Automatically selects the appropriate shell (sh, bash, or powershell)
+- **Real-Time I/O**: Bidirectional streaming for command execution and output
+
+**How to Use:**
+1. Ensure the container is in "running" state (terminal button is enabled only for running containers)
+2. Click the **Terminal** button (terminal icon) in the container actions
+3. A dialog opens showing:
+   - Connection status (Connecting/Connected/Disconnected)
+   - Terminal output area with monospace font on dark background
+   - Command input field at the bottom
+4. Type commands and press Enter to execute
+5. Use the **Clear** button to clear terminal output
+6. Use the **Disconnect** button to close the exec session
+7. Click **Open in New Page** link for full-screen terminal mode
+
+**Full-Screen Mode:**
+- Access via the link in the dialog or directly at `/containers/{id}/exec`
+- Larger terminal display for extended work
+- Back button returns to containers list
+- Same functionality as dialog mode
+
+**Supported Shells:**
+- Linux containers: `/bin/sh` (default), `/bin/bash` (if available)
+- Windows containers: `powershell.exe`, `cmd.exe`
+
+**Notes:**
+- Terminal is only available for running containers
+- If the container stops during a session, you'll see an error message
+- Click **Reconnect** to start a new session if disconnected
+- Maximum output buffer: 5,000 lines (older output auto-removed)
 
 #### Container Logs
 - Shows the last 500 lines of container output
