@@ -1,93 +1,168 @@
 # Docker.Dotnet.UI
 
-一个基于 Blazor 的 Docker 管理界面，可以通过 Web 浏览器管理 Docker 容器、镜像和卷。
+A modern Blazor Server web UI for managing Docker: containers, images, volumes and networks. It provides a full-featured web interface with multi-language support and live monitoring.
 
-## 前置要求
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
+[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)]()
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)]()
+[![.NET](https://img.shields.io/badge/.NET-9.0-purple.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
-- 已安装 Docker Desktop（Windows）或 Docker Engine（Linux/Mac）
-- 已安装 .NET 9.0 SDK（用于本地开发运行）
+## 📋 Contents
 
-## 快速开始
+- [Quick Start](#quick-start)
+- [Features](#features)
+- [Installation](#installation)
+- [Documentation](#documentation)
+- [Development](#development)
+- [Roadmap](#roadmap)
 
-### 方法 1：本地直接运行（最简单）⭐
+## Requirements
+
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+- .NET 9.0 SDK (for local development)
+
+## Quick Start
+
+### Run locally (simplest)
 
 ```bash
 cd Docker.Dotnet.UI
 dotnet run
 ```
 
-然后在浏览器访问: https://localhost:7150 or http://localhost:5149
+Then open your browser at: https://localhost:7150 or http://localhost:5149
 
-
-### 方法 3：使用 Docker Compose
+### Run with Docker Compose
 
 ```bash
-# 构建并启动
+# Build and start
 docker-compose up -d
 
-# 查看日志
+# View logs
 docker-compose logs -f
 
-# 停止
+# Stop
 docker-compose down
 ```
 
-访问地址: http://localhost:8080
+Access the app at: http://localhost:8080
 
-## 功能特性
+## Features
 
-### 仪表板 📊
-- Docker 系统概览
-- 容器、镜像、卷、网络总数统计
-- 容器运行状态分布（运行中/已停止/已暂停）
-- 系统信息展示（Docker 版本、操作系统、架构、内存、CPU）
-- 一键跳转到各管理页面
+### Dashboard 📊
+- System overview (Docker version, OS, architecture, memory, CPU)
+- Resource counts (containers, images, volumes, networks)
+- Container status distribution (running / stopped / paused)
+- Quick navigation to resource pages
 
-### 容器管理 📦
-- 查看所有容器（运行中/已停止）
-- 启动、停止、重启容器
-- 暂停/恢复容器
-- 查看容器日志
-- 查看容器详细信息
-- 删除容器
+### Container Management 📦
+- List all containers (running/stopped)
+- Start, stop, restart containers
+- Pause / unpause containers
+- View container logs
+- Inspect container details
+- Remove containers
 
-### 镜像管理 🖼️
-- 查看所有镜像
-- 从注册表拉取镜像
-- 从 Tarball 导入镜像
-- 导出镜像到 Tarball
-- 查看镜像详细信息
-- 删除镜像
+### Image Management 🖼️
+- List images
+- Pull images from registries
+- Load images from tar files
+- Export images to tar
+- Inspect image details
+- Remove images
 
-### 卷管理 💾
-- 查看所有卷
-- 创建新卷
-- 查看卷详细信息
-- 清理未使用的卷
-- 删除卷
+### Volume Management 💾
+- List Docker volumes
+- Create volumes (multiple drivers supported)
+- Inspect volume details
+- Prune unused volumes
+- Bulk delete volumes
+- Search/filter by name or driver
 
-### 网络管理 🌐 (新功能)
-- 查看所有网络
-- 创建新网络（支持多种驱动）
-- 查看网络详细信息
-- 删除网络
+### Network Management 🌐
+- List Docker networks
+- Create networks (bridge, host, overlay, macvlan, none)
+- Inspect network details
+- Delete user-created networks (system networks are protected)
+- Bulk delete networks
+- Search/filter by name or driver
 
-### 其他特性
-- 🎨 **现代化 UI**: 使用 MudBlazor 构建的美观界面
-- 🌍 **多语言支持**: 支持中文、英文、日文、韩文、法文、西班牙文
-- 🔒 **身份验证**: ASP.NET Core Identity 用户认证
-- 📊 **实时更新**: 操作后自动刷新列表
+### Advanced
+- Real-time monitoring: container CPU/memory metrics
+- Global search and filtering across resource pages
+- Bulk operations: multi-select start/stop/delete
+- Enhanced image workflows: pull from registry and load from tar
+- Modern UI built with MudBlazor
+- Multi-language localization (6 languages)
+- Authentication via ASP.NET Core Identity
+- Event-driven UI updates for responsive UX
 
-## 详细文档
+## Installation
 
-- 功能详情和实现说明请参阅 [ENHANCEMENTS.md](docs/ENHANCEMENTS.md)
-- Docker 部署详细信息请参阅 [DOCKER_DEPLOY.md](docs/DOCKER_DEPLOY.md)
-- 用户登录与授权 [AUTHENTICATION.md](docs/AUTHENTICATION.md)
+### Prerequisites
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+- .NET 9.0 SDK (for local development)
 
-## 注意事项
+See the full installation instructions: **[Installation Guide](docs/INSTALLATION.md)**
 
-⚠️ 本应用需要访问 Docker socket 来管理容器。在生产环境中使用时，请确保有适当的安全措施。
+## Documentation
 
-## 许可证
+### User Docs
+- **[Installation Guide](docs/INSTALLATION.md)** - Deployment and installation
+- **[User Manual](docs/USER_MANUAL.md)** - How to use the web UI
+- **[Admin Guide](docs/ADMIN_GUIDE.md)** - Configuration and administration
 
-MIT License
+### Technical Docs
+- **[Architecture Overview](docs/ARCHITECTURE.md)** - System design and MVVM pattern
+- **[Authentication](docs/AUTHENTICATION.md)** - Login and security details
+- **[Source Generator README](docs/SOURCEGENERATOR_README.md)** - CSV-to-code generation
+
+### Project Info
+- **[Acceptance Status](docs/ACCEPTANCE_STATUS.md)** - v0.1.0 acceptance report
+- **[v0.2.0 Roadmap](docs/ROADMAP_v0.2.0.md)** - Next-version plan
+- **[Enhancements](docs/ENHANCEMENTS.md)** - Development history
+- **[API](docs/API.md)** - Future API plans (currently Web UI only)
+
+## Development
+
+### Run locally
+```bash
+# Clone
+git clone https://github.com/fengb3/Docker.Dotnet.UI.git
+cd Docker.Dotnet.UI
+
+# Run
+cd Docker.Dotnet.UI
+dotnet run
+```
+
+Open: https://localhost:7150
+
+### Contributing
+Pull requests welcome. See architecture docs for development guidelines.
+
+## Roadmap
+
+### Current version: v0.1.0 ✅
+- Full Docker resource management (containers/images/volumes/networks)
+- Real-time monitoring and bulk operations
+- Multi-language localization
+- Production-ready
+
+### Next version: v0.2.0 🚀 (planned Q1 2026)
+- Docker Compose management
+- Container terminal access (exec)
+- REST API for programmatic access
+- Image build from Dockerfile
+- Enhanced monitoring with historical charts and alerts
+
+See details: **[v0.2.0 Roadmap](docs/ROADMAP_v0.2.0.md)**
+
+## License
+
+MIT License — see [LICENSE](LICENSE)
+
+---
+
+If this project is helpful, please give it a star! ⭐
