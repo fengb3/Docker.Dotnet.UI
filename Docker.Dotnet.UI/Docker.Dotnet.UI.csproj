@@ -1,40 +1,44 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>7ae0a38b-f140-433e-8852-e2970ecabebb</UserSecretsId>
-        <Version>0.0.6</Version>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <Authors>fengb3</Authors>
-        <!-- <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled</ContainerBaseImage>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>7ae0a38b-f140-433e-8852-e2970ecabebb</UserSecretsId>
+    <Version>0.0.7</Version>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Authors>fengb3</Authors>
+    <!-- <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled</ContainerBaseImage>
         <ContainerRepository>docker-dotnet-ui</ContainerRepository>
         <ContainerImageTags>$(Version);latest</ContainerImageTags> -->
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
-        <PackageReference Include="Docker.DotNet" Version="3.125.15"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.9"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.3"/>
-        <PackageReference Include="MudBlazor" Version="8.13.0"/>
-        <PackageReference Include="AutoRegisterInject" Version="1.4.1"/>
-        <PackageReference Include="Riok.Mapperly" Version="4.3.0-next.5"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Docker.Dotnet.UI.SourceGenerator\Docker.Dotnet.UI.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="..\.dockerignore">
-            <Link>.dockerignore</Link>
-        </Content>
-    </ItemGroup>
-    <ItemGroup>
-        <AdditionalFiles Include="ImmutableTables\*.table.csv"/>
-        <None Remove="ImmutableTables\*.table.csv"/>
-    </ItemGroup>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Docker.DotNet" Version="3.125.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.3" />
+    <PackageReference Include="MudBlazor" Version="8.13.0" />
+    <PackageReference Include="AutoRegisterInject" Version="1.4.1" />
+    <PackageReference Include="Riok.Mapperly" Version="4.3.0-next.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference
+      Include="..\Docker.Dotnet.UI.SourceGenerator\Docker.Dotnet.UI.SourceGenerator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="ImmutableTables\*.table.csv" />
+    <None Remove="ImmutableTables\*.table.csv" />
+  </ItemGroup>
 </Project>

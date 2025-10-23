@@ -109,7 +109,8 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
 
         cb.Using("System", "System.Collections.Generic");
 
-        cb.Namespace(ExportedNamespace,
+        cb.Namespace(
+            ExportedNamespace,
             ns =>
             {
                 ns.Class(
@@ -122,8 +123,11 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
                             {
                                 foreach (var propertyInfo in properties)
                                 {
-                                    innerCls.Property(propertyInfo.TypeName, propertyInfo.Name,
-                                        accessors: "{get; private set;}");
+                                    innerCls.Property(
+                                        propertyInfo.TypeName,
+                                        propertyInfo.Name,
+                                        accessors: "{get; private set;}"
+                                    );
                                 }
 
                                 innerCls.Constructor(
@@ -147,12 +151,14 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
                                 );
 
                                 // add indexer for accessing properties by name
-                                innerCls += "public object this[string index] { get { return index switch { ";
+                                innerCls +=
+                                    "public object this[string index] { get { return index switch { ";
                                 innerCls += string.Join(
                                     " ",
                                     properties.Select(p => $"\"{p.csvName}\" => {p.Name},")
                                 );
-                                innerCls += "_ => throw new IndexOutOfRangeException($\"Index {index} is out of range.\"), }; } }";
+                                innerCls +=
+                                    "_ => throw new IndexOutOfRangeException($\"Index {index} is out of range.\"), }; } }";
                             }
                         );
 
@@ -174,7 +180,7 @@ public class CsvImmutableDataSourceGenerator : IIncrementalGenerator
                                 {
                                     var keyValue = dataValue[
                                         properties.FirstOrDefault(p => p.IsPrimaryKey)?.Name
-                                        ?? "null"
+                                            ?? "null"
                                     ];
                                     if (pkIsString)
                                     {
