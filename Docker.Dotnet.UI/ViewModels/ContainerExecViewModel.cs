@@ -95,6 +95,15 @@ public class ContainerExecViewModel(DockerClient dockerClient, ILogger<Container
             IsConnected = false;
             NotifyStateChanged();
         }
+        catch (Docker.DotNet.DockerApiException apiEx) when (apiEx.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+        {
+            // Shell not found in container
+            ErrorMessage = $"Shell '{Shell}' not found in container. Try /bin/bash, /bin/sh, or specify a different shell.";
+            IsConnecting = false;
+            IsConnected = false;
+            NotifyStateChanged();
+            logger.LogWarning("Shell not found in container: {Shell}", Shell);
+        }
         catch (Exception ex)
         {
             ErrorMessage = $"Failed to start exec session: {ex.Message}";
@@ -148,6 +157,10 @@ public class ContainerExecViewModel(DockerClient dockerClient, ILogger<Container
                 if (result.EOF)
                 {
                     logger.LogDebug("Exec stream reached EOF");
+                    // Mark as disconnected when stream ends
+                    IsConnected = false;
+                    ErrorMessage = "Session ended. The shell process has terminated.";
+                    NotifyStateChanged();
                     break;
                 }
 

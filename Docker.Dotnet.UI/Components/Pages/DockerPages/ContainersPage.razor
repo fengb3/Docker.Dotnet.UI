@@ -416,7 +416,7 @@
 </MudDialog>
 
 <!-- Terminal Dialog -->
-<MudDialog @bind-Visible="Vm!.ShowExecDialog" Options="@(new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseButton = true })">
+<MudDialog @bind-Visible="Vm!.ShowExecDialog" Options="@(new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseButton = false })">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Terminal" Class="mr-1"/> @Localizer["CONTAINER_TERMINAL"] - @Vm!.SelectedContainerName
@@ -435,7 +435,7 @@
         </div>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Vm!.CloseExecDialog">@Localizer["CANCEL"]</MudButton>
+        <MudButton OnClick="Vm!.CloseExecDialog" Color="Color.Primary">@Localizer["CANCEL"]</MudButton>
     </DialogActions>
 </MudDialog>
 

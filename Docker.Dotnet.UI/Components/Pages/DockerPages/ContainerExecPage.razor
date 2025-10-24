@@ -91,8 +91,8 @@
                           Placeholder="@Localizer["TYPE_COMMAND"]"
                           Variant="Variant.Outlined"
                           Margin="Margin.Dense"
-                          Immediate="true"
-                          OnKeyUp="HandleKeyPress"
+                          Immediate="false"
+                          OnKeyDown="HandleKeyPress"
                           @ref="_inputField"
                           Style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace;"/>
         </MudPaper>
@@ -127,9 +127,14 @@
     {
         if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(_inputCommand))
         {
-            await Vm!.SendInputAsync(_inputCommand + "\n");
+            var command = _inputCommand;
             _inputCommand = string.Empty;
-            StateHasChanged();
+            await Vm!.SendInputAsync(command + "\n");
+            // Force field to clear
+            if (_inputField != null)
+            {
+                await _inputField.Clear();
+            }
         }
     }
 

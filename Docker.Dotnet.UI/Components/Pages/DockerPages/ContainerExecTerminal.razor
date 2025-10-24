@@ -92,8 +92,9 @@
                       Placeholder="@Localizer["TYPE_COMMAND"]"
                       Variant="Variant.Outlined"
                       Margin="Margin.Dense"
-                      Immediate="true"
-                      OnKeyUp="HandleKeyPress"
+                      Immediate="false"
+                      OnKeyDown="HandleKeyPress"
+                      @ref="_inputField"
                       Style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace;"/>
     }
 </MudStack>
@@ -109,6 +110,7 @@
     private IStringLocalizer Localizer { get; set; } = null!;
 
     private string _inputCommand = string.Empty;
+    private MudTextField<string>? _inputField;
 
     protected override async Task OnInitializedAsync()
     {
@@ -124,9 +126,14 @@
     {
         if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(_inputCommand))
         {
-            await ExecVm.SendInputAsync(_inputCommand + "\n");
+            var command = _inputCommand;
             _inputCommand = string.Empty;
-            StateHasChanged();
+            await ExecVm.SendInputAsync(command + "\n");
+            // Force field to clear
+            if (_inputField != null)
+            {
+                await _inputField.Clear();
+            }
         }
     }
 
