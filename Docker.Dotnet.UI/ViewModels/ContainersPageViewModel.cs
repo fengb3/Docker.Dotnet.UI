@@ -32,6 +32,7 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
     public bool ShowLogsDialog { get; set; }
     public bool ShowInspectDialog { get; set; }
     public bool ShowStatsDialog { get; set; }
+    public bool ShowExecDialog { get; set; }
     public string? SelectedContainerId { get; set; }
     public string? SelectedContainerName { get; set; }
     public List<string> ContainerLogs { get; } = new();
@@ -453,6 +454,20 @@ public class ContainersPageViewModel(DockerClient dockerClient) : ViewModel
         MemoryLimit = "0 B";
         NetworkRx = "0 B";
         NetworkTx = "0 B";
+        NotifyStateChanged();
+    }
+
+    public void OpenExecDialog(string containerId, string containerName)
+    {
+        SelectedContainerId = containerId;
+        SelectedContainerName = containerName;
+        ShowExecDialog = true;
+        NotifyStateChanged();
+    }
+
+    public void CloseExecDialog()
+    {
+        ShowExecDialog = false;
         NotifyStateChanged();
     }
 
