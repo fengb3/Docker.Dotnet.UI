@@ -72,10 +72,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: 登录 GitHub Container Registry
-        if: vars.GHCR_REGISTRY != ''
         uses: docker/login-action@v3
         with:
-          registry: ${{ vars.GHCR_REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -112,11 +111,9 @@ jobs:
             add_tag "${{ vars.DOCKERHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
           fi
 
-          # GitHub Container Registry
-          if [ -n "${{ vars.GHCR_REGISTRY }}" ]; then
-            add_tag "${{ vars.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-            add_tag "${{ vars.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}"
-          fi
+          # GitHub Container Registry (always included)
+          add_tag "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"
+          add_tag "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"
 
           # 自定义镜像仓库 1
           if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
