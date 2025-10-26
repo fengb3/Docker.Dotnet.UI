@@ -30,6 +30,7 @@ public abstract class ViewModel : IViewModel
     /// </summary>
     protected void NotifyStateChanged()
     {
+        // Console.WriteLine("notify state changed invoked");
         OnStateChanged?.Invoke();
     }
 }

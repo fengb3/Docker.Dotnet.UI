@@ -25,15 +25,6 @@ public class MyLocalizer(UserPreferencesService preferencesService) : IStringLoc
         }
     }
 
-    // public async Task<string> GetCurrentLanguageAsync()
-    // {
-    //     if (_cachedLanguage == null)
-    //     {
-    //         _cachedLanguage = preferencesService.Language;
-    //     }
-    //     return _cachedLanguage;
-    // }
-
     public async Task SetLanguageAsync(string language)
     {
         _cachedLanguage = language;

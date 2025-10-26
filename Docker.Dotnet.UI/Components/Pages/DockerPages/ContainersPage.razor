@@ -2,6 +2,7 @@
 @using Docker.DotNet
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
+@using Docker.Dotnet.UI.Components.Components
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @implements IDisposable
 
@@ -416,7 +417,7 @@
 </MudDialog>
 
 <!-- Terminal Dialog -->
-<MudDialog @bind-Visible="Vm!.ShowExecDialog" Options="@(new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseButton = false })">
+<MudDialog @bind-Visible="Vm!.ShowExecDialog" Options="@(new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseButton = true })">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Terminal" Class="mr-1"/> @Localizer["CONTAINER_TERMINAL"] - @Vm!.SelectedContainerName
@@ -425,7 +426,7 @@
     <DialogContent>
         @if (!string.IsNullOrEmpty(Vm!.SelectedContainerId))
         {
-            <ContainerExecTerminal ContainerId="@Vm!.SelectedContainerId" ContainerName="@Vm!.SelectedContainerName" />
+            <DockerExecComponent ContainerId="@Vm!.SelectedContainerId"/>
         }
         <div class="d-flex justify-end mt-2">
             <MudLink Href="@($"/containers/{Vm!.SelectedContainerId}/exec")" Target="_blank">
