@@ -57,6 +57,7 @@
 " ",PULL_IMAGE,Pull image,拉取镜像,Pull image,イメージをプル,이미지 가져오기,Extraer imagen,button text
 " ",PULLING,Pulling...,拉取中...,Pulling...,プル中...,가져오는 중...,Extrayendo...,in-progress text
 " ",CANCEL,Cancel,取消,Cancel,キャンセル,취소,Cancelar,button text
+" ",BACK,Back,返回,Back,戻る,뒤로,Volver,button text
 " ",SELECT_TARBALL,Select Tarball file,选择 Tarball 文件,Select Tarball file,Tarball ファイルを選択,Tarball 파일 선택,Seleccionar archivo Tarball,upload button
 " ",IMPORT_PROGRESS,Import progress:,导入进度：,Import progress:,インポート進捗:,가져오기 진행률:,Progreso de importación:,progress label
 " ",IMPORT_IMAGE,Import image,导入镜像,Import image,イメージをインポート,이미지 가져오기,Importar imagen,button text
@@ -264,3 +265,28 @@
 " ",PARSE_SUCCESS,Command parsed successfully,命令解析成功,Command parsed successfully,コマンドが正常に解析されました,명령이 성공적으로 파싱되었습니다,Comando analizado correctamente,success message
 " ",PARSE_FAILED,Failed to parse command,命令解析失败,Failed to parse command,コマンドの解析に失敗しました,명령 파싱 실패,Error al analizar el comando,error message
 " ",PARSE_HELP,"Enter a complete docker run command to automatically parse and populate the form fields","输入完整的 docker run 命令以自动解析并填充表单字段","Enter a complete docker run command to automatically parse and populate the form fields","完全な docker run コマンドを入力すると、自動的に解析してフォームフィールドに入力されます","완전한 docker run 명령을 입력하면 자동으로 파싱하여 양식 필드를 채웁니다","Ingrese un comando docker run completo para analizar y completar automáticamente los campos del formulario",help text
+
+# Container Exec Terminal strings,,,,,,,,
+" ",TERMINAL,Terminal,终端,Terminal,ターミナル,터미널,Terminal,menu item / button tooltip
+" ",OPEN_TERMINAL,Open Terminal,打开终端,Open Terminal,ターミナルを開く,터미널 열기,Abrir terminal,button text
+" ",OPEN_IN_NEW_PAGE,Open in New Page,在新页面中打开,Open in New Page,新しいページで開く,새 페이지에서 열기,Abrir en nueva página,link text
+" ",CONTAINER_TERMINAL,Container Terminal,容器终端,Container Terminal,コンテナターミナル,컨테이너 터미널,Terminal del contenedor,dialog/page title
+" ",EXEC_CONNECTING,Connecting...,连接中...,Connecting...,接続中...,연결 중...,Conectando...,status message
+" ",EXEC_CONNECTED,Connected,已连接,Connected,接続済み,연결됨,Conectado,status message
+" ",EXEC_DISCONNECTED,Disconnected,已断开,Disconnected,切断済み,연결 끊김,Desconectado,status message
+" ",EXEC_RECONNECT,Reconnect,重新连接,Reconnect,再接続,재연결,Reconectar,button text
+" ",EXEC_CLEAR,Clear,清屏,Clear,クリア,지우기,Limpiar,button text
+" ",EXEC_COPY_ALL,Copy All,复制全部,Copy All,すべてコピー,모두 복사,Copiar todo,button text
+" ",EXEC_SETTINGS,Settings,设置,Settings,設定,설정,Configuración,button text
+" ",EXEC_SHELL,Shell,Shell,Shell,シェル,셸,Shell,label
+" ",EXEC_WORKDIR,Working Directory,工作目录,Working Directory,作業ディレクトリ,작업 디렉토리,Directorio de trabajo,label
+" ",EXEC_USER,User,用户,User,ユーザー,사용자,Usuario,label
+" ",EXEC_TTY,TTY,TTY,TTY,TTY,TTY,TTY,label
+" ",CONTAINER_NOT_RUNNING,Container is not running. Cannot open terminal.,容器未运行，无法打开终端。,Container is not running. Cannot open terminal.,コンテナが実行されていません。ターミナルを開けません。,컨테이너가 실행 중이 아닙니다. 터미널을 열 수 없습니다.,El contenedor no se está ejecutando. No se puede abrir el terminal.,error message
+" ",EXEC_UNAVAILABLE_SHELL,Shell not available in container,容器中 Shell 不可用,Shell not available in container,コンテナで Shell が利用できません,컨테이너에서 셸을 사용할 수 없습니다,Shell no disponible en el contenedor,error message
+" ",RESIZE,Resize,调整大小,Resize,サイズ変更,크기 조정,Redimensionar,button text
+" ",ROWS,Rows,行数,Rows,行数,행 수,Filas,label
+" ",COLS,Columns,列数,Columns,列数,열 수,Columnas,label
+" ",EXEC_SESSION_ENDED,Session ended. Container may have stopped or exec process terminated.,会话已结束。容器可能已停止或执行进程已终止。,Session ended. Container may have stopped or exec process terminated.,セッションが終了しました。コンテナが停止したか、exec プロセスが終了した可能性があります。,세션이 종료되었습니다. 컨테이너가 중지되었거나 exec 프로세스가 종료되었을 수 있습니다.,Sesión finalizada. El contenedor puede haberse detenido o el proceso exec ha terminado.,status message
+" ",DISCONNECT,Disconnect,断开连接,Disconnect,切断,연결 끊기,Desconectar,button text
+" ",TYPE_COMMAND,Type command and press Enter...,输入命令并按回车...,Type command and press Enter...,コマンドを入力して Enter キーを押してください...,명령을 입력하고 Enter를 누르세요...,Escriba el comando y presione Enter...,placeholder text

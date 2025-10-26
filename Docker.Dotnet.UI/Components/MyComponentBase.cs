@@ -28,8 +28,15 @@ public class MyComponentBase : ComponentBase, IDisposable
         {
             myLocalizer.LanguageChanged += OnLanguageChanged;
         }
+        
+        await MyOnInitializedAsync();
 
         StateHasChanged();
+    }
+    
+    protected virtual Task MyOnInitializedAsync()
+    {
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -88,6 +95,7 @@ public class MyComponentBase<T> : MyComponentBase
         // Subscribe to ViewModel state change events
         Vm.OnStateChanged += OnViewModelStateChanged;
 
+        await MyOnInitializedAsync();
         await Vm.InitializeAsync();
         StateHasChanged();
     }
@@ -97,6 +105,7 @@ public class MyComponentBase<T> : MyComponentBase
     /// </summary>
     protected virtual void OnViewModelStateChanged()
     {
+        // Console.WriteLine("on view model state changed invoked");
         InvokeAsync(StateHasChanged);
     }
 

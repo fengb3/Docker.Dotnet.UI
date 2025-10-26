@@ -1,0 +1,34 @@
+﻿@inherits MyComponentBase<DockerExecComponentViewModel>
+
+<div style="display: flex; flex-direction: column; height: 100%;">
+    <!-- Terminal Output -->
+    <MudPaper Class="pa-3"
+              Style="flex: 1; overflow-y: auto; background-color: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 13px; white-space: pre-wrap; word-wrap: break-word;">
+        @* <text>@Vm!.ExecOutput</text> *@
+        @foreach (var line in Vm!.ExecOutputList)
+        {
+            <div>@line</div>
+        }
+    </MudPaper>
+
+    <MudTextField @bind-Value="Vm!.InputCommand"
+                  Placeholder="@Localizer["TYPE_COMMAND"]"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Immediate="true"
+                  OnKeyDown="Vm!.HandleKeyPress"
+                  @ref="Vm!.InputField"
+                  Style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace;"/>
+</div>
+
+@code {
+    [Parameter]
+    public string ContainerId { get; set; } = string.Empty;
+
+    protected override Task MyOnInitializedAsync()
+    {
+        Vm!.ContainerId = ContainerId;
+        
+        return Task.CompletedTask;
+    }
+}

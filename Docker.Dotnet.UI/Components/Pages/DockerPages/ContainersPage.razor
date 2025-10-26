@@ -2,6 +2,7 @@
 @using Docker.DotNet
 @using Docker.DotNet.Models
 @using Docker.Dotnet.UI.ViewModels
+@using Docker.Dotnet.UI.Components.Components
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @implements IDisposable
 
@@ -245,6 +246,13 @@
                                                    title='@Localizer["START"]'/>
                                 }
 
+                                <MudIconButton Icon="@Icons.Material.Filled.Terminal"
+                                               Color="Color.Primary"
+                                               Size="Size.Small"
+                                               Disabled="@(container.State != "running")"
+                                               OnClick="@(() => Vm!.OpenExecDialog(container.ID, container.ContainerName))"
+                                               title='@Localizer["TERMINAL"]'/>
+
                                 <MudIconButton Icon="@Icons.Material.Filled.Article"
                                                Color="Color.Primary"
                                                Size="Size.Small"
@@ -405,6 +413,30 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Vm!.CloseStatsDialog">@Localizer["CANCEL"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- Terminal Dialog -->
+<MudDialog @bind-Visible="Vm!.ShowExecDialog" Options="@(new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseButton = true })">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Terminal" Class="mr-1"/> @Localizer["CONTAINER_TERMINAL"] - @Vm!.SelectedContainerName
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (!string.IsNullOrEmpty(Vm!.SelectedContainerId))
+        {
+            <DockerExecComponent ContainerId="@Vm!.SelectedContainerId"/>
+        }
+        <div class="d-flex justify-end mt-2">
+            <MudLink Href="@($"/containers/{Vm!.SelectedContainerId}/exec")" Target="_blank">
+                <MudIcon Icon="@Icons.Material.Filled.OpenInNew" Size="Size.Small" Class="mr-1"/>
+                @Localizer["OPEN_IN_NEW_PAGE"]
+            </MudLink>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Vm!.CloseExecDialog" Color="Color.Primary">@Localizer["CANCEL"]</MudButton>
     </DialogActions>
 </MudDialog>
 

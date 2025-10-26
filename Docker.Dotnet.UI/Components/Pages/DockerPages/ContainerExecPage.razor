@@ -1,0 +1,10 @@
+@page "/containers/{containerId}/exec"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using Docker.Dotnet.UI.Components.Components
+
+<DockerExecComponent ContainerId="@ContainerId" />
+
+@code {
+    [Parameter]
+    public string? ContainerId { get; set; }
+}
