@@ -1,292 +1,293 @@
-,[Key]resource-key:string,en-us:string,zh-cn:string,fr-fr:string,ja:string,ko-kr:string,es:string,Descriptions:string
-#,# 资源键值,# 英语,# 汉语,# 法语,# 日语,# 韩语,# 西语,# 描述
+,[Key]resource-key:string,en-us:string,zh-cn:string,zh-tw:string,fr-fr:string,ja:string,ko-kr:string,es:string,Descriptions:string
+#,# 资源键值,# 英语,# 汉语,# 繁體中文,# 法语,# 日语,# 韩语,# 西语,# 描述
 
-# Navigation menu items,,,,,,,,
-" ",NAV_CONTAINERS,Containers,容器,Containers,コンテナ,컨테이너,Contenedores,nav menu item
-" ",NAV_IMAGES,Images,镜像,Images,イメージ,이미지,Imágenes,nav menu item
-" ",NAV_VOLUMES,Volumes,卷,Volumes,ボリューム,볼륨,Volúmenes,nav menu item
-" ",NAV_NETWORKS,Networks,网络,Networks,ネットワーク,네트워크,Redes,nav menu item
+# Navigation menu items,,,,,,,,,
+ ,NAV_CONTAINERS,Containers,容器,容器,Containers,コンテナ,컨테이너,Contenedores,nav menu item
+ ,NAV_IMAGES,Images,镜像,映像,Images,イメージ,이미지,Imágenes,nav menu item
+ ,NAV_VOLUMES,Volumes,卷,卷,Volumes,ボリューム,볼륨,Volúmenes,nav menu item
+ ,NAV_NETWORKS,Networks,网络,網路,Networks,ネットワーク,네트워크,Redes,nav menu item
 
-# Containers page strings,,,,,,,,
-" ",DOCKER_CONTAINERS,Docker Containers,Docker 容器,Docker Containers,Docker コンテナ,Docker 컨테이너,Contenedores Docker,page title: Docker Containers
-" ",NO_CONTAINERS,No containers,暂无容器,No containers,コンテナがありません,컨테이너 없음,No hay contenedores,empty state message
-" ",CONTAINER_NAME,Container Name,容器名称,Container Name,コンテナ名,컨테이너 이름,Nombre del contenedor,table header
-" ",STATUS,Status,状态,Statut,ステータス,상태,Estado,table header
-" ",CONTAINER_ID,Container ID,容器 ID,Container ID,コンテナ ID,컨테이너 ID,ID del contenedor,table header
-" ",IMAGE_NAME,Image Name,镜像名称,Image Name,イメージ名,이미지 이름,Nombre de la imagen,table header
-" ",IMAGE,Image,镜像,Image,イメージ,이미지,Imagen,table header
-" ",PORT_MAPPINGS,Port mappings,端口映射,Port mappings,ポートマッピング,포트 매핑,Mapeos de puertos,table header
-" ",CREATED_AT,Created At,创建时间,Created At,作成日時,생성일시,Creado el,table header
-" ",ACTIONS,Actions,操作,Actions,操作,동작,Acciones,table header
-" ",MORE,More,更多,Plus,もっと見る,더보기,Más,more options tooltip
-" ",START,Start,启动,Start,起動,시작,Iniciar,action button tooltip
-" ",STOP,Stop,停止,Stop,停止,정지,Detener,action button tooltip
-" ",RESTART,Restart,重启,Restart,再起動,재시작,Reiniciar,action button tooltip
-" ",PAUSE,Pause,暂停,Pause,一時停止,일시정지,Pausar,action button tooltip
-" ",UNPAUSE,Unpause,恢复,Unpause,再開,재개,Reanudar,action button tooltip
-" ",REMOVE,Remove,删除,Remove,削除,삭제,Eliminar,action button tooltip
-" ",INFO,Info,信息,Info,情報,정보,Información,action button tooltip
-" ",LOGS,Logs,日志,Logs,ログ,로그,Registros,action button tooltip
-" ",STATS,Stats,统计,Stats,統計,통계,Estadísticas,action button tooltip
-" ",INSPECT,Inspect,检查,Inspect,検査,검사,Inspeccionar,action button tooltip
-" ",PORTS_AND_VOLUMES,Ports & Volumes,端口和卷,Ports & Volumes,ポートとボリューム,포트 및 볼륨,Puertos y Volúmenes,tab label
-" ",CREATE_CONTAINER,Create Container,创建容器,Create Container,コンテナを作成,컨테이너 생성,Crear contenedor,button text
-" ",CONTAINER_LOGS,Container Logs,容器日志,Container Logs,コンテナログ,컨테이너 로그,Registros del contenedor,dialog title
-" ",CONTAINER_STATS,Container Stats,容器统计,Container Stats,コンテナ統計,컨테이너 통계,Estadísticas del contenedor,dialog title
-" ",CONTAINER_DETAILS,Container Details,容器详情,Container Details,コンテナ詳細,컨테이너 세부정보,Detalles del contenedor,dialog title
-" ",CPU_USAGE,CPU Usage,CPU 使用率,CPU Usage,CPU 使用率,CPU 사용률,Uso de CPU,label
-" ",MEMORY_USAGE,Memory Usage,内存使用,Memory Usage,メモリ使用量,메모리 사용량,Uso de memoria,label
-" ",NETWORK_IO,Network I/O,网络 I/O,Network I/O,ネットワーク I/O,네트워크 I/O,E/S de red,label
-" ",BLOCK_IO,Block I/O,磁盘 I/O,Block I/O,ブロック I/O,블록 I/O,E/S de bloques,label
-" ",LOADING_LOGS,Loading logs...,加载日志中...,Loading logs...,ログを読み込んでいます...,로그를 불러오는 중...,Cargando registros...,loading state
-" ",NO_LOGS_AVAILABLE,No logs available,暂无日志,No logs available,ログがありません,로그가 없습니다,No hay registros disponibles,empty state
-" ",REFRESH,Refresh,刷新,Refresh,更新,새로고침,Actualizar,button text
+# Containers page strings,,,,,,,,,
+ ,DOCKER_CONTAINERS,Docker Containers,Docker 容器,Docker 容器,Docker Containers,Docker コンテナ,Docker 컨테이너,Contenedores Docker,page title: Docker Containers
+ ,NO_CONTAINERS,No containers,暂无容器,暫無容器,No containers,コンテナがありません,컨테이너 없음,No hay contenedores,empty state message
+ ,CONTAINER_NAME,Container Name,容器名称,容器名稱,Container Name,コンテナ名,컨테이너 이름,Nombre del contenedor,table header
+ ,STATUS,Status,状态,狀態,Statut,ステータス,상태,Estado,table header
+ ,CONTAINER_ID,Container ID,容器 ID,容器 ID,Container ID,コンテナ ID,컨테이너 ID,ID del contenedor,table header
+ ,IMAGE_NAME,Image Name,镜像名称,映像名稱,Image Name,イメージ名,이미지 이름,Nombre de la imagen,table header
+ ,IMAGE,Image,镜像,映像,Image,イメージ,이미지,Imagen,table header
+ ,PORT_MAPPINGS,Port mappings,端口映射,埠映射,Port mappings,ポートマッピング,포트 매핑,Mapeos de puertos,table header
+ ,CREATED_AT,Created At,创建时间,建立時間,Created At,作成日時,생성일시,Creado el,table header
+ ,ACTIONS,Actions,操作,操作,Actions,操作,동작,Acciones,table header
+ ,MORE,More,更多,更多,Plus,もっと見る,더보기,Más,more options tooltip
+ ,START,Start,启动,啟動,Start,起動,시작,Iniciar,action button tooltip
+ ,STOP,Stop,停止,停止,Stop,停止,정지,Detener,action button tooltip
+ ,RESTART,Restart,重启,重啟,Restart,再起動,재시작,Reiniciar,action button tooltip
+ ,PAUSE,Pause,暂停,暫停,Pause,一時停止,일시정지,Pausar,action button tooltip
+ ,UNPAUSE,Unpause,恢复,恢復,Unpause,再開,재개,Reanudar,action button tooltip
+ ,REMOVE,Remove,删除,刪除,Remove,削除,삭제,Eliminar,action button tooltip
+ ,INFO,Info,信息,資訊,Info,情報,정보,Información,action button tooltip
+ ,LOGS,Logs,日志,日誌,Logs,ログ,로그,Registros,action button tooltip
+ ,STATS,Stats,统计,統計,Stats,統計,통계,Estadísticas,action button tooltip
+ ,INSPECT,Inspect,检查,檢查,Inspect,検査,검사,Inspeccionar,action button tooltip
+ ,PORTS_AND_VOLUMES,Ports & Volumes,端口和卷,埠和卷,Ports & Volumes,ポートとボリューム,포트 및 볼륨,Puertos y Volúmenes,tab label
+ ,CREATE_CONTAINER,Create Container,创建容器,建立容器,Create Container,コンテナを作成,컨테이너 생성,Crear contenedor,button text
+ ,CONTAINER_LOGS,Container Logs,容器日志,容器日誌,Container Logs,コンテナログ,컨테이너 로그,Registros del contenedor,dialog title
+ ,CONTAINER_STATS,Container Stats,容器统计,容器統計,Container Stats,コンテナ統計,컨테이너 통계,Estadísticas del contenedor,dialog title
+ ,CONTAINER_DETAILS,Container Details,容器详情,容器詳情,Container Details,コンテナ詳細,컨테이너 세부정보,Detalles del contenedor,dialog title
+ ,CPU_USAGE,CPU Usage,CPU 使用率,CPU 使用率,CPU Usage,CPU 使用率,CPU 사용률,Uso de CPU,label
+ ,MEMORY_USAGE,Memory Usage,内存使用,記憶體使用,Memory Usage,メモリ使用量,메모리 사용량,Uso de memoria,label
+ ,NETWORK_IO,Network I/O,网络 I/O,網路 I/O,Network I/O,ネットワーク I/O,네트워크 I/O,E/S de red,label
+ ,BLOCK_IO,Block I/O,磁盘 I/O,磁碟 I/O,Block I/O,ブロック I/O,블록 I/O,E/S de bloques,label
+ ,LOADING_LOGS,Loading logs...,加载日志中...,載入日誌中...,Loading logs...,ログを読み込んでいます...,로그를 불러오는 중...,Cargando registros...,loading state
+ ,NO_LOGS_AVAILABLE,No logs available,暂无日志,暫無日誌,No logs available,ログがありません,로그가 없습니다,No hay registros disponibles,empty state
+ ,REFRESH,Refresh,刷新,重新整理,Refresh,更新,새로고침,Actualizar,button text
 
-# Images page strings,,,,,,,,
-" ",DOCKER_IMAGES,Docker Images,Docker 镜像,Docker Images,Docker イメージ,Docker 이미지,Imágenes Docker,page title: Docker Images
-" ",ADD_IMAGE,Add Image,添加镜像,Add Image,イメージを追加,이미지 추가,Agregar imagen,button text
-" ",NO_IMAGES,No images,暂无镜像,No images,イメージがありません,이미지가 없습니다,No hay imágenes,empty state message
-" ",IMAGE_ID,Image ID,镜像 ID,Image ID,イメージ ID,이미지 ID,ID de la imagen,table header
-" ",PULL_FROM_REGISTRY,Pull from registry,从注册表拉取,Pull from registry,レジストリからプル,레지스트리에서 가져오기,Extraer del registro,tab label
-" ",IMPORT_FROM_TARBALL,Import from Tarball,从 Tarball 导入,Import from Tarball,Tarball からインポート,Tarball에서 가져오기,Importar desde Tarball,tab label
-" ",PULL_IMAGE_NAME_LABEL,Image name,镜像名称,Image name,イメージ名,이미지 이름,Nombre de la imagen,label
-" ",PULL_IMAGE_NAME_PLACEHOLDER,"e.g.: nginx, mysql, ubuntu","例如: nginx, mysql, ubuntu","e.g.: nginx, mysql, ubuntu","例: nginx, mysql, ubuntu","예: nginx, mysql, ubuntu","ej.: nginx, mysql, ubuntu",placeholder example
-" ",TAG,Tag,标签,Tag,タグ,태그,Etiqueta,label
-" ",TAG_PLACEHOLDER,"e.g.: latest, 8.0","例如: latest, 8.0","e.g.: latest, 8.0","例: latest, 8.0","예: latest, 8.0","ej.: latest, 8.0",placeholder example
-" ",PULL_PROGRESS,Pull progress:,拉取进度：,Pull progress:,プル進捗:,풀 진행률:,Progreso de extracción:,progress label
-" ",PULL_IMAGE,Pull image,拉取镜像,Pull image,イメージをプル,이미지 가져오기,Extraer imagen,button text
-" ",PULLING,Pulling...,拉取中...,Pulling...,プル中...,가져오는 중...,Extrayendo...,in-progress text
-" ",CANCEL,Cancel,取消,Cancel,キャンセル,취소,Cancelar,button text
-" ",BACK,Back,返回,Back,戻る,뒤로,Volver,button text
-" ",SELECT_TARBALL,Select Tarball file,选择 Tarball 文件,Select Tarball file,Tarball ファイルを選択,Tarball 파일 선택,Seleccionar archivo Tarball,upload button
-" ",IMPORT_PROGRESS,Import progress:,导入进度：,Import progress:,インポート進捗:,가져오기 진행률:,Progreso de importación:,progress label
-" ",IMPORT_IMAGE,Import image,导入镜像,Import image,イメージをインポート,이미지 가져오기,Importar imagen,button text
-" ",IMPORTING,Importing...,导入中...,Importing...,インポート中...,가져오는 중...,Importando...,in-progress text
-" ",EXPORT_IMAGE,Export image,导出镜像,Export image,イメージをエクスポート,이미지 내보내기,Exportar imagen,action tooltip
-" ",EXPORTING,Exporting...,导出中...,Exporting...,エクスポート中...,내보내는 중...,Exportando...,in-progress text
-" ",IMAGE_DETAILS,Image Details,镜像详情,Image Details,イメージ詳細,이미지 세부정보,Detalles de la imagen,dialog title
-" ",IMAGE_HISTORY,Image History,镜像历史,Image History,イメージ履歴,이미지 히스토리,Historial de la imagen,dialog title
-" ",SEARCH_IMAGES,Search Images,搜索镜像,Search Images,イメージを検索,이미지 검색,Buscar imágenes,button text
-" ",SEARCH,Search,搜索,Search,検索,검색,Buscar,button text
+# Images page strings,,,,,,,,,
+ ,DOCKER_IMAGES,Docker Images,Docker 镜像,Docker 映像,Docker Images,Docker イメージ,Docker 이미지,Imágenes Docker,page title: Docker Images
+ ,ADD_IMAGE,Add Image,添加镜像,新增映像,Add Image,イメージを追加,이미지 추가,Agregar imagen,button text
+ ,NO_IMAGES,No images,暂无镜像,暫無映像,No images,イメージがありません,이미지가 없습니다,No hay imágenes,empty state message
+ ,IMAGE_ID,Image ID,镜像 ID,映像 ID,Image ID,イメージ ID,이미지 ID,ID de la imagen,table header
+ ,PULL_FROM_REGISTRY,Pull from registry,从注册表拉取,從註冊表拉取,Pull from registry,レジストリからプル,레지스트리에서 가져오기,Extraer del registro,tab label
+ ,IMPORT_FROM_TARBALL,Import from Tarball,从 Tarball 导入,從 Tarball 匯入,Import from Tarball,Tarball からインポート,Tarball에서 가져오기,Importar desde Tarball,tab label
+ ,PULL_IMAGE_NAME_LABEL,Image name,镜像名称,映像名稱,Image name,イメージ名,이미지 이름,Nombre de la imagen,label
+ ,PULL_IMAGE_NAME_PLACEHOLDER,e.g.: nginx, mysql, ubuntu,例如: nginx, mysql, ubuntu,"例如: nginx, mysql, ubuntu",e.g.: nginx, mysql, ubuntu,例: nginx, mysql, ubuntu,예: nginx, mysql, ubuntu,ej.: nginx, mysql, ubuntu,placeholder example
+ ,TAG,Tag,标签,標籤,Tag,タグ,태그,Etiqueta,label
+ ,TAG_PLACEHOLDER,e.g.: latest, 8.0,例如: latest, 8.0,"例如: latest, 8.0",e.g.: latest, 8.0,例: latest, 8.0,예: latest, 8.0,ej.: latest, 8.0,placeholder example
+ ,PULL_PROGRESS,Pull progress:,拉取进度：,拉取進度：,Pull progress:,プル進捗:,풀 진행률:,Progreso de extracción:,progress label
+ ,PULL_IMAGE,Pull image,拉取镜像,拉取映像,Pull image,イメージをプル,이미지 가져오기,Extraer imagen,button text
+ ,PULLING,Pulling...,拉取中...,拉取中...,Pulling...,プル中...,가져오는 중...,Extrayendo...,in-progress text
+ ,CANCEL,Cancel,取消,取消,Cancel,キャンセル,취소,Cancelar,button text
+ ,BACK,Back,返回,返回,Back,戻る,뒤로,Volver,button text
+ ,SELECT_TARBALL,Select Tarball file,选择 Tarball 文件,選擇 Tarball 檔案,Select Tarball file,Tarball ファイルを選択,Tarball 파일 선택,Seleccionar archivo Tarball,upload button
+ ,IMPORT_PROGRESS,Import progress:,导入进度：,匯入進度：,Import progress:,インポート進捗:,가져오기 진행률:,Progreso de importación:,progress label
+ ,IMPORT_IMAGE,Import image,导入镜像,匯入映像,Import image,イメージをインポート,이미지 가져오기,Importar imagen,button text
+ ,IMPORTING,Importing...,导入中...,匯入中...,Importing...,インポート中...,가져오는 중...,Importando...,in-progress text
+ ,EXPORT_IMAGE,Export image,导出镜像,匯出映像,Export image,イメージをエクスポート,이미지 내보내기,Exportar imagen,action tooltip
+ ,EXPORTING,Exporting...,导出中...,匯出中...,Exporting...,エクスポート中...,내보내는 중...,Exportando...,in-progress text
+ ,IMAGE_DETAILS,Image Details,镜像详情,映像詳情,Image Details,イメージ詳細,이미지 세부정보,Detalles de la imagen,dialog title
+ ,IMAGE_HISTORY,Image History,镜像历史,映像歷史,Image History,イメージ履歴,이미지 히스토리,Historial de la imagen,dialog title
+ ,SEARCH_IMAGES,Search Images,搜索镜像,搜尋映像,Search Images,イメージを検索,이미지 검색,Buscar imágenes,button text
+ ,SEARCH,Search,搜索,搜尋,Search,検索,검색,Buscar,button text
 
-# Volumes page strings,,,,,,,,
-" ",DOCKER_VOLUMES,Docker Volumes,Docker 卷,Docker Volumes,Docker ボリューム,Docker 볼륨,Volúmenes Docker,page title: Docker Volumes
-" ",NO_VOLUMES,No volumes,暂无卷,No volumes,ボリュームがありません,볼륨 없음,No hay volúmenes,empty state message
-" ",VOLUME_NAME,Volume Name,卷名称,Volume Name,ボリューム名,볼륨 이름,Nombre del volumen,table header
-" ",DRIVER,Driver,驱动,Driver,ドライバ,드라이버,Controlador,table header
-" ",MOUNTPOINT,Mountpoint,挂载点,Mountpoint,マウントポイント,마운트 지점,Punto de montaje,table header
-" ",SIZE,Size,大小,Size,サイズ,크기,Tamaño,table header
-" ",CONTAINERS_COUNT,Containers,容器数,Containers,コンテナ数,컨테이너 수,Contenedores,table header
-" ",CREATE_VOLUME,Create Volume,创建卷,Create Volume,ボリュームを作成,볼륨 생성,Crear volumen,button text
-" ",VOLUME_DETAILS,Volume Details,卷详情,Volume Details,ボリューム詳細,볼륨 세부정보,Detalles del volumen,dialog title
-" ",PRUNE_VOLUMES,Prune Volumes,清理卷,Prune Volumes,ボリュームを整理,볼륨 정리,Limpiar volúmenes,button text
-" ",PRUNE_VOLUMES_CONFIRM,Are you sure you want to remove all unused volumes?,确定要删除所有未使用的卷吗？,Are you sure you want to remove all unused volumes?,未使用のボリュームをすべて削除してもよろしいですか？,사용되지 않는 모든 볼륨을 제거하시겠습니까?,¿Está seguro de que desea eliminar todos los volúmenes no utilizados?,confirmation message
+# Volumes page strings,,,,,,,,,
+ ,DOCKER_VOLUMES,Docker Volumes,Docker 卷,Docker 卷,Docker Volumes,Docker ボリューム,Docker 볼륨,Volúmenes Docker,page title: Docker Volumes
+ ,NO_VOLUMES,No volumes,暂无卷,暫無卷,No volumes,ボリュームがありません,볼륨 없음,No hay volúmenes,empty state message
+ ,VOLUME_NAME,Volume Name,卷名称,卷名稱,Volume Name,ボリューム名,볼륨 이름,Nombre del volumen,table header
+ ,DRIVER,Driver,驱动,驅動,Driver,ドライバ,드라이버,Controlador,table header
+ ,MOUNTPOINT,Mountpoint,挂载点,掛載點,Mountpoint,マウントポイント,마운트 지점,Punto de montaje,table header
+ ,SIZE,Size,大小,大小,Size,サイズ,크기,Tamaño,table header
+ ,CONTAINERS_COUNT,Containers,容器数,容器數,Containers,コンテナ数,컨테이너 수,Contenedores,table header
+ ,CREATE_VOLUME,Create Volume,创建卷,建立卷,Create Volume,ボリュームを作成,볼륨 생성,Crear volumen,button text
+ ,VOLUME_DETAILS,Volume Details,卷详情,卷詳情,Volume Details,ボリューム詳細,볼륨 세부정보,Detalles del volumen,dialog title
+ ,PRUNE_VOLUMES,Prune Volumes,清理卷,清理卷,Prune Volumes,ボリュームを整理,볼륨 정리,Limpiar volúmenes,button text
+ ,PRUNE_VOLUMES_CONFIRM,Are you sure you want to remove all unused volumes?,确定要删除所有未使用的卷吗？,確定要刪除所有未使用的卷嗎？,Are you sure you want to remove all unused volumes?,未使用のボリュームをすべて削除してもよろしいですか？,사용되지 않는 모든 볼륨을 제거하시겠습니까?,¿Está seguro de que desea eliminar todos los volúmenes no utilizados?,confirmation message
 
-# Networks page strings,,,,,,,,
-" ",DOCKER_NETWORKS,Docker Networks,Docker 网络,Docker Networks,Docker ネットワーク,Docker 네트워크,Redes Docker,page title: Docker Networks
-" ",NO_NETWORKS,No networks,暂无网络,No networks,ネットワークがありません,네트워크 없음,No hay redes,empty state message
-" ",NETWORK_NAME,Network Name,网络名称,Network Name,ネットワーク名,네트워크 이름,Nombre de red,table header
-" ",NETWORK_ID,Network ID,网络 ID,Network ID,ネットワーク ID,네트워크 ID,ID de red,table header
-" ",SCOPE,Scope,范围,Scope,スコープ,범위,Ámbito,table header
-" ",CREATE_NETWORK,Create Network,创建网络,Create Network,ネットワークを作成,네트워크 생성,Crear red,button text
-" ",NETWORK_DETAILS,Network Details,网络详情,Network Details,ネットワーク詳細,네트워크 세부정보,Detalles de la red,dialog title
-" ",SUBNET,Subnet,子网,Subnet,サブネット,서브넷,Subred,label
-" ",GATEWAY,Gateway,网关,Gateway,ゲートウェイ,게이트웨이,Puerta de enlace,label
-" ",IP_RANGE,IP Range,IP 范围,IP Range,IP 範囲,IP 범위,Rango de IP,label
+# Networks page strings,,,,,,,,,
+ ,DOCKER_NETWORKS,Docker Networks,Docker 网络,Docker 網路,Docker Networks,Docker ネットワーク,Docker 네트워크,Redes Docker,page title: Docker Networks
+ ,NO_NETWORKS,No networks,暂无网络,暫無網路,No networks,ネットワークがありません,네트워크 없음,No hay redes,empty state message
+ ,NETWORK_NAME,Network Name,网络名称,網路名稱,Network Name,ネットワーク名,네트워크 이름,Nombre de red,table header
+ ,NETWORK_ID,Network ID,网络 ID,網路 ID,Network ID,ネットワーク ID,네트워크 ID,ID de red,table header
+ ,SCOPE,Scope,范围,範圍,Scope,スコープ,범위,Ámbito,table header
+ ,CREATE_NETWORK,Create Network,创建网络,建立網路,Create Network,ネットワークを作成,네트워크 생성,Crear red,button text
+ ,NETWORK_DETAILS,Network Details,网络详情,網路詳情,Network Details,ネットワーク詳細,네트워크 세부정보,Detalles de la red,dialog title
+ ,SUBNET,Subnet,子网,子網路,Subnet,サブネット,서브넷,Subred,label
+ ,GATEWAY,Gateway,网关,閘道,Gateway,ゲートウェイ,게이트웨이,Puerta de enlace,label
+ ,IP_RANGE,IP Range,IP 范围,IP 範圍,IP Range,IP 範囲,IP 범위,Rango de IP,label
 
-# Dashboard page strings,,,,,,,,
-" ",DASHBOARD,Dashboard,仪表板,Dashboard,ダッシュボード,대시보드,Panel de control,page title
-" ",SYSTEM_INFO,System Info,系统信息,System Info,システム情報,시스템 정보,Información del sistema,section title
-" ",DOCKER_VERSION,Docker Version,Docker 版本,Docker Version,Docker バージョン,Docker 버전,Versión de Docker,label
-" ",API_VERSION,API Version,API 版本,API Version,API バージョン,API 버전,Versión de API,label
-" ",OS_TYPE,OS Type,操作系统,OS Type,OS タイプ,OS 유형,Tipo de SO,label
-" ",ARCHITECTURE,Architecture,架构,Architecture,アーキテクチャ,아키텍처,Arquitectura,label
-" ",TOTAL_MEMORY,Total Memory,总内存,Total Memory,総メモリ,총 메모리,Memoria total,label
-" ",CPUS,CPUs,CPU 数,CPUs,CPU 数,CPU 수,CPUs,label
-" ",RESOURCE_USAGE,Resource Usage,资源使用,Resource Usage,リソース使用量,리소스 사용량,Uso de recursos,section title
-" ",RUNNING,Running,运行中,Running,実行中,실행 중,En ejecución,status
-" ",STOPPED,Stopped,已停止,Stopped,停止,중지됨,Detenido,status
-" ",PAUSED,Paused,已暂停,Paused,一時停止,일시중지됨,Pausado,status
+# Dashboard page strings,,,,,,,,,
+ ,DASHBOARD,Dashboard,仪表板,儀表板,Dashboard,ダッシュボード,대시보드,Panel de control,page title
+ ,SYSTEM_INFO,System Info,系统信息,系統資訊,System Info,システム情報,시스템 정보,Información del sistema,section title
+ ,DOCKER_VERSION,Docker Version,Docker 版本,Docker 版本,Docker Version,Docker バージョン,Docker 버전,Versión de Docker,label
+ ,API_VERSION,API Version,API 版本,API 版本,API Version,API バージョン,API 버전,Versión de API,label
+ ,OS_TYPE,OS Type,操作系统,操作系統,OS Type,OS タイプ,OS 유형,Tipo de SO,label
+ ,ARCHITECTURE,Architecture,架构,架構,Architecture,アーキテクチャ,아키텍처,Arquitectura,label
+ ,TOTAL_MEMORY,Total Memory,总内存,總記憶體,Total Memory,総メモリ,총 메모리,Memoria total,label
+ ,CPUS,CPUs,CPU 数,CPU 數,CPUs,CPU 数,CPU 수,CPUs,label
+ ,RESOURCE_USAGE,Resource Usage,资源使用,資源使用,Resource Usage,リソース使用量,리소스 사용량,Uso de recursos,section title
+ ,RUNNING,Running,运行中,執行中,Running,実行中,실행 중,En ejecución,status
+ ,STOPPED,Stopped,已停止,已停止,Stopped,停止,중지됨,Detenido,status
+ ,PAUSED,Paused,已暂停,已暫停,Paused,一時停止,일시중지됨,Pausado,status
 
-# Account page strings,,,,,,,,
-" ",ACCESS_DENIED_TITLE,Access Denied,访问被拒绝,Access Denied,アクセス拒否,접근 거부,Acceso denegado,page title
-" ",ACCESS_DENIED,Access denied,访问被拒绝,Access denied,アクセス拒否,접근 거부,Acceso denegado,short title
-" ",ACCESS_DENIED_MESSAGE,You do not have permission to access this page. Please contact an administrator.,您没有权限访问此页面。请联系管理员获取访问权限。,You do not have permission to access this page.,このページにアクセスする権限がありません。管理者に連絡してください。,이 페이지에 액세스할 권한이 없습니다. 관리자에게 문의하세요.,No tiene permiso para acceder a esta página. Póngase en contacto con un administrador.,detailed message
-" ",RETURN_TO_LOGIN,Return to login,返回登录,Return to login,ログインに戻る,로그인으로 돌아가기,Volver a iniciar sesión,button text
-" ",LOGIN_PAGE_TITLE,Login,登录,Login,ログイン,로그인,Inicio de sesión,page title
-" ",LOGIN,Login,登录,Login,ログイン,로그인,Iniciar sesión,button/label
-" ",USERNAME,Username,用户名,Username,ユーザー名,사용자 이름,Nombre de usuario,label
-" ",PASSWORD,Password,密码,Password,パスワード,비밀번호,Contraseña,label
-" ",REMEMBER_ME,Remember me,记住我,Remember me,ログイン情報を保持する,로그인 정보 기억,Recordarme,checkbox label
-" ",LOGIN_IN_PROGRESS,Logging in...,登录中...,Logging in...,ログイン中...,로그인 중...,Iniciando sesión...,in-progress text
-" ",LOGOUT,Logout,退出登录,Logout,ログアウト,로그아웃,Cerrar sesión,logout menu item
-" ",SWITCH_TO_LIGHT_MODE,Switch to light mode,切换到浅色模式,Switch to light mode,ライトモードに切り替え,라이트 모드로 전환,Cambiar a modo claro,theme toggle tooltip
-" ",SWITCH_TO_DARK_MODE,Switch to dark mode,切换到深色模式,Switch to dark mode,ダークモードに切り替え,다크 모드로 전환,Cambiar a modo oscuro,theme toggle tooltip
-" ",INSTALL_PAGE_TITLE,Initial Setup,初始设置,Initial Setup,初期設定,초기 설정,Configuración inicial,page title
-" ",INSTALL_HEADER,Create Administrator Account,创建管理员账户,Create Administrator Account,管理者アカウントを作成,관리자 계정 생성,Crear cuenta de administrador,header text
-" ",INSTALL_DESCRIPTION,Welcome! Please create an administrator account to get started.,欢迎！请创建管理员账户以开始使用。,Welcome! Please create an administrator account to get started.,ようこそ！開始するには管理者アカウントを作成してください。,환영합니다! 시작하려면 관리자 계정을 만드세요.,¡Bienvenido! Cree una cuenta de administrador para comenzar.,description text
-" ",CREATE_ADMIN_ACCOUNT,Create Admin Account,创建管理员账户,Create Admin Account,管理者アカウントを作成,관리자 계정 생성,Crear cuenta de administrador,button text
-" ",INSTALL_IN_PROGRESS,Creating account...,创建账户中...,Creating account...,アカウントを作成中...,계정 생성 중...,Creando cuenta...,in-progress text
-" ",INSTALL_SUCCESS,Account created successfully! Redirecting...,账户创建成功！正在跳转...,Account created successfully! Redirecting...,アカウントが正常に作成されました！リダイレクト中...,계정이 성공적으로 생성되었습니다! 리디렉션 중...,¡Cuenta creada con éxito! Redirigiendo...,success message
-" ",INSTALL_ERROR,Failed to create account. Please try again.,账户创建失败。请重试。,Failed to create account. Please try again.,アカウントの作成に失敗しました。もう一度お試しください。,계정 생성에 실패했습니다. 다시 시도하세요.,Error al crear la cuenta. Inténtalo de nuevo.,error message
-" ",USERNAME_REQUIRED,Username is required,用户名不能为空,Username is required,ユーザー名は必須です,사용자 이름은 필수입니다,El nombre de usuario es obligatorio,validation error
-" ",PASSWORD_REQUIRED,Password is required,密码不能为空,Password is required,パスワードは必須です,비밀번호는 필수입니다,La contraseña es obligatoria,validation error
-" ",PASSWORD_REQUIREMENTS,Password must be at least 6 characters and contain uppercase letter and number,密码至少需要6个字符且包含大写字母和数字,Password must be at least 6 characters and contain uppercase letter and number,パスワードは6文字以上で、大文字と数字を含む必要があります,비밀번호는 최소 6자 이상이어야 하며 대문자와 숫자를 포함해야 합니다,La contraseña debe tener al menos 6 caracteres y contener letra mayúscula y número,validation hint
+# Account page strings,,,,,,,,,
+ ,ACCESS_DENIED_TITLE,Access Denied,访问被拒绝,存取被拒絕,Access Denied,アクセス拒否,접근 거부,Acceso denegado,page title
+ ,ACCESS_DENIED,Access denied,访问被拒绝,存取被拒絕,Access denied,アクセス拒否,접근 거부,Acceso denegado,short title
+ ,ACCESS_DENIED_MESSAGE,You do not have permission to access this page. Please contact an administrator.,您没有权限访问此页面。请联系管理员获取访问权限。,您沒有權限存取此頁面。請聯絡管理員獲取存取權限。,You do not have permission to access this page.,このページにアクセスする権限がありません。管理者に連絡してください。,이 페이지에 액세스할 권한이 없습니다. 관리자에게 문의하세요.,No tiene permiso para acceder a esta página. Póngase en contacto con un administrador.,detailed message
+ ,RETURN_TO_LOGIN,Return to login,返回登录,返回登入,Return to login,ログインに戻る,로그인으로 돌아가기,Volver a iniciar sesión,button text
+ ,LOGIN_PAGE_TITLE,Login,登录,登入,Login,ログイン,로그인,Inicio de sesión,page title
+ ,LOGIN,Login,登录,登入,Login,ログイン,로그인,Iniciar sesión,button/label
+ ,USERNAME,Username,用户名,使用者名稱,Username,ユーザー名,사용자 이름,Nombre de usuario,label
+ ,PASSWORD,Password,密码,密碼,Password,パスワード,비밀번호,Contraseña,label
+ ,REMEMBER_ME,Remember me,记住我,記住我,Remember me,ログイン情報を保持する,로그인 정보 기억,Recordarme,checkbox label
+ ,LOGIN_IN_PROGRESS,Logging in...,登录中...,登入中...,Logging in...,ログイン中...,로그인 중...,Iniciando sesión...,in-progress text
+ ,LOGOUT,Logout,退出登录,登出登入,Logout,ログアウト,로그아웃,Cerrar sesión,logout menu item
+ ,SWITCH_TO_LIGHT_MODE,Switch to light mode,切换到浅色模式,切換到淺色模式,Switch to light mode,ライトモードに切り替え,라이트 모드로 전환,Cambiar a modo claro,theme toggle tooltip
+ ,SWITCH_TO_DARK_MODE,Switch to dark mode,切换到深色模式,切換到深色模式,Switch to dark mode,ダークモードに切り替え,다크 모드로 전환,Cambiar a modo oscuro,theme toggle tooltip
+ ,INSTALL_PAGE_TITLE,Initial Setup,初始设置,初始設定,Initial Setup,初期設定,초기 설정,Configuración inicial,page title
+ ,INSTALL_HEADER,Create Administrator Account,创建管理员账户,建立管理員帳戶,Create Administrator Account,管理者アカウントを作成,관리자 계정 생성,Crear cuenta de administrador,header text
+ ,INSTALL_DESCRIPTION,Welcome! Please create an administrator account to get started.,欢迎！请创建管理员账户以开始使用。,歡迎！請建立管理員帳戶以開始使用。,Welcome! Please create an administrator account to get started.,ようこそ！開始するには管理者アカウントを作成してください。,환영합니다! 시작하려면 관리자 계정을 만드세요.,¡Bienvenido! Cree una cuenta de administrador para comenzar.,description text
+ ,CREATE_ADMIN_ACCOUNT,Create Admin Account,创建管理员账户,建立管理員帳戶,Create Admin Account,管理者アカウントを作成,관리자 계정 생성,Crear cuenta de administrador,button text
+ ,INSTALL_IN_PROGRESS,Creating account...,创建账户中...,建立帳戶中...,Creating account...,アカウントを作成中...,계정 생성 중...,Creando cuenta...,in-progress text
+ ,INSTALL_SUCCESS,Account created successfully! Redirecting...,账户创建成功！正在跳转...,帳戶建立成功！正在跳轉...,Account created successfully! Redirecting...,アカウントが正常に作成されました！リダイレクト中...,계정이 성공적으로 생성되었습니다! 리디렉션 중...,¡Cuenta creada con éxito! Redirigiendo...,success message
+ ,INSTALL_ERROR,Failed to create account. Please try again.,账户创建失败。请重试。,帳戶建立失敗。請重试。,Failed to create account. Please try again.,アカウントの作成に失敗しました。もう一度お試しください。,계정 생성에 실패했습니다. 다시 시도하세요.,Error al crear la cuenta. Inténtalo de nuevo.,error message
+ ,USERNAME_REQUIRED,Username is required,用户名不能为空,使用者名稱不能為空,Username is required,ユーザー名は必須です,사용자 이름은 필수입니다,El nombre de usuario es obligatorio,validation error
+ ,PASSWORD_REQUIRED,Password is required,密码不能为空,密碼不能為空,Password is required,パスワードは必須です,비밀번호는 필수입니다,La contraseña es obligatoria,validation error
+ ,PASSWORD_REQUIREMENTS,Password must be at least 6 characters and contain uppercase letter and number,密码至少需要6个字符且包含大写字母和数字,密碼至少需要6個字元且包含大寫字母和數字,Password must be at least 6 characters and contain uppercase letter and number,パスワードは6文字以上で、大文字と数字を含む必要があります,비밀번호는 최소 6자 이상이어야 하며 대문자와 숫자를 포함해야 합니다,La contraseña debe tener al menos 6 caracteres y contener letra mayúscula y número,validation hint
 
-# Language names for switcher,,,,,,,,
-" ",LANG_EN_US,English,English,English,English,English,English,language name
-" ",LANG_ZH_CN,中文,中文,中文,中文,中文,中文,language name
-" ",LANG_FR_FR,Français,Français,Français,Français,Français,Français,language name
-" ",LANG_JA,日本語,日本語,日本語,日本語,日本語,日本語,language name
-" ",LANG_KO_KR,한국어,한국어,한국어,한국어,한국어,한국어,language name
-" ",LANG_ES,Español,Español,Español,Español,Español,Español,language name
+# Language names for switcher,,,,,,,,,
+ ,LANG_EN_US,English,English,English,English,English,English,English,language name
+ ,LANG_ZH_CN,中文,中文,中文,中文,中文,中文,中文,language name
+ ,LANG_ZH_TW,繁體中文,繁體中文,繁體中文,繁體中文,繁體中文,繁體中文,繁體中文,language name
+ ,LANG_FR_FR,Français,Français,Français,Français,Français,Français,Français,language name
+ ,LANG_JA,日本語,日本語,日本語,日本語,日本語,日本語,日本語,language name
+ ,LANG_KO_KR,한국어,한국어,한국어,한국어,한국어,한국어,한국어,language name
+ ,LANG_ES,Español,Español,Español,Español,Español,Español,Español,language name
 
-# User profile page strings,,,,,,,,
-" ",USER_PROFILE,User Profile,用户配置,User Profile,ユーザープロファイル,사용자 프로필,Perfil de usuario,page title
-" ",PROFILE,Profile,配置,Profile,プロファイル,프로필,Perfil,nav menu item
-" ",CHANGE_PASSWORD,Change Password,修改密码,Change Password,パスワードを変更,비밀번호 변경,Cambiar contraseña,section title
-" ",CURRENT_PASSWORD,Current Password,当前密码,Current Password,現在のパスワード,현재 비밀번호,Contraseña actual,label
-" ",NEW_PASSWORD,New Password,新密码,New Password,新しいパスワード,새 비밀번호,Nueva contraseña,label
-" ",CONFIRM_PASSWORD,Confirm Password,确认密码,Confirm Password,パスワードを確認,비밀번호 확인,Confirmar contraseña,label
-" ",UPDATE_PASSWORD,Update Password,更新密码,Update Password,パスワードを更新,비밀번호 업데이트,Actualizar contraseña,button text
-" ",PASSWORD_UPDATED,Password updated successfully,密码更新成功,Password updated successfully,パスワードが正常に更新されました,비밀번호가 성공적으로 업데이트되었습니다,Contraseña actualizada correctamente,success message
-" ",PASSWORD_UPDATE_FAILED,Failed to update password,密码更新失败,Failed to update password,パスワードの更新に失敗しました,비밀번호 업데이트 실패,Error al actualizar la contraseña,error message
-" ",CURRENT_PASSWORD_INCORRECT,Current password is incorrect,当前密码不正确,Current password is incorrect,現在のパスワードが正しくありません,현재 비밀번호가 올바르지 않습니다,La contraseña actual es incorrecta,error message
-" ",PASSWORDS_DO_NOT_MATCH,Passwords do not match,密码不匹配,Passwords do not match,パスワードが一致しません,비밀번호가 일치하지 않습니다,Las contraseñas no coinciden,error message
-" ",EMAIL,Email,邮箱,Email,メール,이메일,Correo electrónico,label
-" ",ACCOUNT_INFORMATION,Account Information,账户信息,Account Information,アカウント情報,계정 정보,Información de la cuenta,section title
+# User profile page strings,,,,,,,,,
+ ,USER_PROFILE,User Profile,用户配置,用户設定檔,User Profile,ユーザープロファイル,사용자 프로필,Perfil de usuario,page title
+ ,PROFILE,Profile,配置,設定檔,Profile,プロファイル,프로필,Perfil,nav menu item
+ ,CHANGE_PASSWORD,Change Password,修改密码,修改密碼,Change Password,パスワードを変更,비밀번호 변경,Cambiar contraseña,section title
+ ,CURRENT_PASSWORD,Current Password,当前密码,目前密碼,Current Password,現在のパスワード,현재 비밀번호,Contraseña actual,label
+ ,NEW_PASSWORD,New Password,新密码,新密碼,New Password,新しいパスワード,새 비밀번호,Nueva contraseña,label
+ ,CONFIRM_PASSWORD,Confirm Password,确认密码,確認密碼,Confirm Password,パスワードを確認,비밀번호 확인,Confirmar contraseña,label
+ ,UPDATE_PASSWORD,Update Password,更新密码,更新密碼,Update Password,パスワードを更新,비밀번호 업데이트,Actualizar contraseña,button text
+ ,PASSWORD_UPDATED,Password updated successfully,密码更新成功,密碼更新成功,Password updated successfully,パスワードが正常に更新されました,비밀번호가 성공적으로 업데이트되었습니다,Contraseña actualizada correctamente,success message
+ ,PASSWORD_UPDATE_FAILED,Failed to update password,密码更新失败,密碼更新失敗,Failed to update password,パスワードの更新に失敗しました,비밀번호 업데이트 실패,Error al actualizar la contraseña,error message
+ ,CURRENT_PASSWORD_INCORRECT,Current password is incorrect,当前密码不正确,目前密碼不正確,Current password is incorrect,現在のパスワードが正しくありません,현재 비밀번호가 올바르지 않습니다,La contraseña actual es incorrecta,error message
+ ,PASSWORDS_DO_NOT_MATCH,Passwords do not match,密码不匹配,密碼不相符,Passwords do not match,パスワードが一致しません,비밀번호가 일치하지 않습니다,Las contraseñas no coinciden,error message
+ ,EMAIL,Email,邮箱,電子郵件,Email,メール,이메일,Correo electrónico,label
+ ,ACCOUNT_INFORMATION,Account Information,账户信息,帳戶資訊,Account Information,アカウント情報,계정 정보,Información de la cuenta,section title
 
-# User management page strings (admin only),,,,,,,,
-" ",USER_MANAGEMENT,User Management,用户管理,User Management,ユーザー管理,사용자 관리,Gestión de usuarios,page title
-" ",CREATE_USER,Create User,创建用户,Create User,ユーザーを作成,사용자 생성,Crear usuario,button text
-" ",USER_CREATED,User created successfully,用户创建成功,User created successfully,ユーザーが正常に作成されました,사용자가 성공적으로 생성되었습니다,Usuario creado correctamente,success message
-" ",USER_DELETED,User deleted successfully,用户删除成功,User deleted successfully,ユーザーが正常に削除されました,사용자가 성공적으로 삭제되었습니다,Usuario eliminado correctamente,success message
-" ",CONFIRM_DELETE_USER,Are you sure you want to delete this user?,确定要删除此用户吗？,Are you sure you want to delete this user?,このユーザーを削除してもよろしいですか？,이 사용자를 삭제하시겠습니까?,¿Está seguro de que desea eliminar este usuario?,confirmation message
-" ",NO_USERS,No users found,未找到用户,No users found,ユーザーが見つかりません,사용자를 찾을 수 없습니다,No se encontraron usuarios,empty state message
-" ",USERS,Users,用户,Users,ユーザー,사용자,Usuarios,label
-" ",USER_COUNT,User Count,用户数,User Count,ユーザー数,사용자 수,Número de usuarios,label
-" ",CREATE_USER_DIALOG,Create New User,创建新用户,Create New User,新しいユーザーを作成,새 사용자 생성,Crear nuevo usuario,dialog title
-" ",ADMIN_ONLY,Admin Only,仅管理员,Admin Only,管理者のみ,관리자 전용,Solo administrador,label
+# User management page strings (admin only),,,,,,,,,
+ ,USER_MANAGEMENT,User Management,用户管理,用户管理,User Management,ユーザー管理,사용자 관리,Gestión de usuarios,page title
+ ,CREATE_USER,Create User,创建用户,建立用户,Create User,ユーザーを作成,사용자 생성,Crear usuario,button text
+ ,USER_CREATED,User created successfully,用户创建成功,用户建立成功,User created successfully,ユーザーが正常に作成されました,사용자가 성공적으로 생성되었습니다,Usuario creado correctamente,success message
+ ,USER_DELETED,User deleted successfully,用户删除成功,用户刪除成功,User deleted successfully,ユーザーが正常に削除されました,사용자가 성공적으로 삭제되었습니다,Usuario eliminado correctamente,success message
+ ,CONFIRM_DELETE_USER,Are you sure you want to delete this user?,确定要删除此用户吗？,確定要刪除此用户嗎？,Are you sure you want to delete this user?,このユーザーを削除してもよろしいですか？,이 사용자를 삭제하시겠습니까?,¿Está seguro de que desea eliminar este usuario?,confirmation message
+ ,NO_USERS,No users found,未找到用户,未找到用户,No users found,ユーザーが見つかりません,사용자를 찾을 수 없습니다,No se encontraron usuarios,empty state message
+ ,USERS,Users,用户,用户,Users,ユーザー,사용자,Usuarios,label
+ ,USER_COUNT,User Count,用户数,用户數,User Count,ユーザー数,사용자 수,Número de usuarios,label
+ ,CREATE_USER_DIALOG,Create New User,创建新用户,建立新用户,Create New User,新しいユーザーを作成,새 사용자 생성,Crear nuevo usuario,dialog title
+ ,ADMIN_ONLY,Admin Only,仅管理员,僅管理員,Admin Only,管理者のみ,관리자 전용,Solo administrador,label
 
-# Search and filter strings,,,,,,,,
-" ",SEARCH_PLACEHOLDER,Search...,搜索...,Rechercher...,検索...,검색...,Buscar...,search input placeholder
-" ",FILTER,Filter,筛选,Filtre,フィルタ,필터,Filtro,filter label
-" ",CLEAR_FILTER,Clear Filter,清除筛选,Clear Filter,フィルタをクリア,필터 지우기,Limpiar filtro,button text
-" ",FILTER_BY_STATUS,Filter by Status,按状态筛选,Filter by Status,ステータスでフィルタ,상태별 필터,Filtrar por estado,filter label
-" ",FILTER_BY_NAME,Filter by Name,按名称筛选,Filter by Name,名前でフィルタ,이름별 필터,Filtrar por nombre,filter label
-" ",ALL_STATUS,All Status,所有状态,All Status,すべてのステータス,모든 상태,Todos los estados,filter option
+# Search and filter strings,,,,,,,,,
+ ,SEARCH_PLACEHOLDER,Search...,搜索...,搜尋...,Rechercher...,検索...,검색...,Buscar...,search input placeholder
+ ,FILTER,Filter,筛选,篩選,Filtre,フィルタ,필터,Filtro,filter label
+ ,CLEAR_FILTER,Clear Filter,清除筛选,清除篩選,Clear Filter,フィルタをクリア,필터 지우기,Limpiar filtro,button text
+ ,FILTER_BY_STATUS,Filter by Status,按状态筛选,按狀態篩選,Filter by Status,ステータスでフィルタ,상태별 필터,Filtrar por estado,filter label
+ ,FILTER_BY_NAME,Filter by Name,按名称筛选,按名稱篩選,Filter by Name,名前でフィルタ,이름별 필터,Filtrar por nombre,filter label
+ ,ALL_STATUS,All Status,所有状态,所有狀態,All Status,すべてのステータス,모든 상태,Todos los estados,filter option
 
-# Batch operations strings,,,,,,,,
-" ",SELECT_ALL,Select All,全选,Select All,すべて選択,모두 선택,Seleccionar todo,checkbox label
-" ",SELECTED_ITEMS,Selected Items,已选项,Selected Items,選択されたアイテム,선택된 항목,Elementos seleccionados,label
-" ",BATCH_ACTIONS,Batch Actions,批量操作,Batch Actions,一括操作,일괄 작업,Acciones en lote,label
-" ",START_SELECTED,Start Selected,启动所选,Start Selected,選択を起動,선택 항목 시작,Iniciar seleccionados,button text
-" ",STOP_SELECTED,Stop Selected,停止所选,Stop Selected,選択を停止,선택 항목 정지,Detener seleccionados,button text
-" ",REMOVE_SELECTED,Remove Selected,删除所选,Remove Selected,選択を削除,선택 항목 삭제,Eliminar seleccionados,button text
-" ",CONFIRM_REMOVE_SELECTED,"Are you sure you want to remove {0} selected item(s)?",确定要删除 {0} 个所选项吗？,"Are you sure you want to remove {0} selected item(s)?",{0}個の選択されたアイテムを削除してもよろしいですか？,{0}개의 선택된 항목을 삭제하시겠습니까?,"¿Está seguro de que desea eliminar {0} elemento(s) seleccionado(s)?",confirmation message
-" ",NO_ITEMS_SELECTED,No items selected,未选择任何项,No items selected,アイテムが選択されていません,선택된 항목이 없습니다,No hay elementos seleccionados,message
+# Batch operations strings,,,,,,,,,
+ ,SELECT_ALL,Select All,全选,全選,Select All,すべて選択,모두 선택,Seleccionar todo,checkbox label
+ ,SELECTED_ITEMS,Selected Items,已选项,已選項,Selected Items,選択されたアイテム,선택된 항목,Elementos seleccionados,label
+ ,BATCH_ACTIONS,Batch Actions,批量操作,批次操作,Batch Actions,一括操作,일괄 작업,Acciones en lote,label
+ ,START_SELECTED,Start Selected,启动所选,啟動所选,Start Selected,選択を起動,선택 항목 시작,Iniciar seleccionados,button text
+ ,STOP_SELECTED,Stop Selected,停止所选,停止所选,Stop Selected,選択を停止,선택 항목 정지,Detener seleccionados,button text
+ ,REMOVE_SELECTED,Remove Selected,删除所选,刪除所选,Remove Selected,選択を削除,선택 항목 삭제,Eliminar seleccionados,button text
+ ,CONFIRM_REMOVE_SELECTED,Are you sure you want to remove {0} selected item(s)?,确定要删除 {0} 个所选项吗？,確定要刪除 {0} 個所选項嗎？,Are you sure you want to remove {0} selected item(s)?,{0}個の選択されたアイテムを削除してもよろしいですか？,{0}개의 선택된 항목을 삭제하시겠습니까?,¿Está seguro de que desea eliminar {0} elemento(s) seleccionado(s)?,confirmation message
+ ,NO_ITEMS_SELECTED,No items selected,未选择任何项,未選擇任何項,No items selected,アイテムが選択されていません,선택된 항목이 없습니다,No hay elementos seleccionados,message
 
-# Real-time monitoring strings,,,,,,,,
-" ",REAL_TIME_STATS,Real-time Stats,实时统计,Real-time Stats,リアルタイム統計,실시간 통계,Estadísticas en tiempo real,dialog title
-" ",MONITORING,Monitoring,监控,Monitoring,監視,모니터링,Monitoreo,label
-" ",CPU_PERCENT,CPU %,CPU %,CPU %,CPU %,CPU %,CPU %,label
-" ",MEMORY_PERCENT,Memory %,内存 %,Memory %,メモリ %,메모리 %,Memoria %,label
-" ",NETWORK_RX,Network RX,网络接收,Network RX,ネットワーク RX,네트워크 RX,Red RX,label
-" ",NETWORK_TX,Network TX,网络发送,Network TX,ネットワーク TX,네트워크 TX,Red TX,label
-" ",AUTO_REFRESH,Auto Refresh,自动刷新,Auto Refresh,自動更新,자동 새로고침,Actualización automática,label
+# Real-time monitoring strings,,,,,,,,,
+ ,REAL_TIME_STATS,Real-time Stats,实时统计,即時統計,Real-time Stats,リアルタイム統計,실시간 통계,Estadísticas en tiempo real,dialog title
+ ,MONITORING,Monitoring,监控,監控,Monitoring,監視,모니터링,Monitoreo,label
+ ,CPU_PERCENT,CPU %,CPU %,CPU %,CPU %,CPU %,CPU %,CPU %,label
+ ,MEMORY_PERCENT,Memory %,内存 %,記憶體 %,Memory %,メモリ %,메모리 %,Memoria %,label
+ ,NETWORK_RX,Network RX,网络接收,網路接收,Network RX,ネットワーク RX,네트워크 RX,Red RX,label
+ ,NETWORK_TX,Network TX,网络发送,網路發送,Network TX,ネットワーク TX,네트워크 TX,Red TX,label
+ ,AUTO_REFRESH,Auto Refresh,自动刷新,自動重新整理,Auto Refresh,自動更新,자동 새로고침,Actualización automática,label
 
-# Create container dialog strings,,,,,,,,
-" ",CREATE,Create,创建,Créer,作成,생성,Crear,button text for create action
-" ",IMAGE_PLACEHOLDER,"e.g.: nginx:latest, mysql:8.0, ubuntu","例如: nginx:latest, mysql:8.0, ubuntu","ex.: nginx:latest, mysql:8.0, ubuntu","例: nginx:latest, mysql:8.0, ubuntu","예: nginx:latest, mysql:8.0, ubuntu","ej.: nginx:latest, mysql:8.0, ubuntu",placeholder for image field
-" ",AUTO_PULL_IF_MISSING,Auto-pull if missing,本地无镜像时自动拉取,Auto-pull if missing,ローカルにない場合は自動プル,없으면 자동으로 가져오기,Auto-extraer si falta,checkbox label
-" ",AUTO_START_AFTER_CREATE,Auto-start after create,创建后自动启动,Démarrage automatique après création,作成後に自動起動,생성 후 자동 시작,Inicio automático después de crear,checkbox label
-" ",LABELS,Labels,标签,Étiquettes,ラベル,레이블,Etiquetas,section header
-" ",ADD_LABEL,Add Label,添加标签,Add Label,ラベルを追加,레이블 추가,Agregar etiqueta,button text
-" ",PORTS,Ports,端口,Ports,ポート,포트,Puertos,tab title
-" ",ADD_PORT,Add Port,添加端口,Add Port,ポートを追加,포트 추가,Agregar puerto,button text
-" ",HOST_PORT,Host Port,宿主机端口,Host Port,ホストポート,호스트 포트,Puerto del host,label
-" ",CONTAINER_PORT,Container Port,容器端口,Container Port,コンテナポート,컨테이너 포트,Puerto del contenedor,label
-" ",PROTOCOL,Protocol,协议,Protocol,プロトコル,프로토콜,Protocolo,label
-" ",TCP,TCP,TCP,TCP,TCP,TCP,TCP,protocol option
-" ",UDP,UDP,UDP,UDP,UDP,UDP,UDP,protocol option
-" ",REMOVE_ROW,Remove Row,移除行,Remove Row,行を削除,행 삭제,Eliminar fila,button text
-" ",VOLUMES,Volumes,卷,Volumes,ボリューム,볼륨,Volúmenes,tab title
-" ",ADD_VOLUME,Add Volume,添加卷,Add Volume,ボリュームを追加,볼륨 추가,Agregar volumen,button text
-" ",HOST_PATH_OR_VOLUME,Host Path or Volume,宿主机路径或卷名,Host Path or Volume,ホストパスまたはボリューム,호스트 경로 또는 볼륨,Ruta del host o volumen,label
-" ",CONTAINER_PATH,Container Path,容器路径,Container Path,コンテナパス,컨테이너 경로,Ruta del contenedor,label
-" ",MODE,Mode,模式,Mode,モード,모드,Modo,label
-" ",READ_ONLY,Read Only,只读,Read Only,読み取り専用,읽기 전용,Solo lectura,mode option
-" ",READ_WRITE,Read/Write,读写,Read/Write,読み書き,읽기/쓰기,Lectura/escritura,mode option
-" ",ENV_VARIABLES,Environment Variables,环境变量,Environment Variables,環境変数,환경 변수,Variables de entorno,tab title
-" ",ADD_ENV,Add Environment Variable,添加环境变量,Add Environment Variable,環境変数を追加,환경 변수 추가,Agregar variable de entorno,button text
-" ",KEY,Key,键,Key,キー,키,Clave,label
-" ",VALUE,Value,值,Value,値,값,Valor,label
-" ",NETWORK,Network,网络,Network,ネットワーク,네트워크,Red,tab title
-" ",SELECT_NETWORK,Select Network,选择网络,Select Network,ネットワークを選択,네트워크 선택,Seleccionar red,label
-" ",ALIASES,Aliases,别名,Aliases,エイリアス,별칭,Alias,label
-" ",ADD_ALIAS,Add Alias,添加别名,Add Alias,エイリアスを追加,별칭 추가,Agregar alias,button text
-" ",IPV4_ADDRESS,IPv4 Address,IPv4 地址,IPv4 Address,IPv4 アドレス,IPv4 주소,Dirección IPv4,label
-" ",RESOURCES,Resources,资源,Resources,リソース,리소스,Recursos,tab title
-" ",CPU_LIMIT,CPU Limit (cores),CPU 限制（核数）,CPU Limit (cores),CPU 制限（コア）,CPU 제한(코어),Límite de CPU (núcleos),label
-" ",MEMORY_LIMIT_MIB,Memory Limit (MiB),内存限制（MiB）,Memory Limit (MiB),メモリ制限（MiB）,메모리 제한(MiB),Límite de memoria (MiB),label
-" ",RESTART_POLICY,Restart Policy,重启策略,Restart Policy,再起動ポリシー,재시작 정책,Política de reinicio,label
-" ",NO_RESTART,No,无,No,なし,없음,No,restart policy option
-" ",ALWAYS,Always,总是,Always,常に,항상,Siempre,restart policy option
-" ",UNLESS_STOPPED,Unless Stopped,除非停止,Unless Stopped,停止されていない限り,중지되지 않는 한,A menos que se detenga,restart policy option
-" ",ON_FAILURE,On Failure,失败时,On Failure,失敗時,실패 시,En caso de fallo,restart policy option
-" ",MAX_RETRY,Max Retry Count,最大重试次数,Max Retry Count,最大リトライ回数,최대 재시도 횟수,Número máximo de reintentos,label
-" ",ADVANCED,Advanced,高级,Advanced,高度,고급,Avanzado,tab title
-" ",ENTRYPOINT,Entrypoint,入口点,Entrypoint,エントリーポイント,진입점,Punto de entrada,label
-" ",COMMAND,Command,命令,Command,コマンド,명령,Comando,label
-" ",WORKING_DIR,Working Directory,工作目录,Working Directory,作業ディレクトリ,작업 디렉토리,Directorio de trabajo,label
-" ",TTY,TTY,TTY,TTY,TTY,TTY,TTY,label
-" ",ATTACH_STDIN,Attach STDIN,附加 STDIN,Attach STDIN,STDIN をアタッチ,STDIN 연결,Adjuntar STDIN,label
-" ",ATTACH_STDOUT,Attach STDOUT,附加 STDOUT,Attach STDOUT,STDOUT をアタッチ,STDOUT 연결,Adjuntar STDOUT,label
-" ",ATTACH_STDERR,Attach STDERR,附加 STDERR,Attach STDERR,STDERR をアタッチ,STDERR 연결,Adjuntar STDERR,label
-" ",BASIC,Basic,基础,Basic,基本,기본,Básico,tab title
-" ",VALIDATION_REQUIRED,This field is required,此字段为必填项,This field is required,このフィールドは必須です,이 필드는 필수입니다,Este campo es obligatorio,validation message
-" ",VALIDATION_INVALID_NAME,Invalid container name,无效的容器名称,Invalid container name,無効なコンテナ名,잘못된 컨테이너 이름,Nombre de contenedor no válido,validation message
-" ",VALIDATION_INVALID_PORT,Invalid port number,无效的端口号,Invalid port number,無効なポート番号,잘못된 포트 번호,Número de puerto no válido,validation message
-" ",VALIDATION_DUP_PORT,Duplicate port mapping,重复的端口映射,Duplicate port mapping,重複するポートマッピング,중복된 포트 매핑,Mapeo de puerto duplicado,validation message
-" ",VALIDATION_INVALID_IP,Invalid IP address,无效的 IP 地址,Invalid IP address,無効な IP アドレス,잘못된 IP 주소,Dirección IP no válida,validation message
-" ",PULLING_IMAGE,Pulling image...,拉取镜像中...,Pulling image...,イメージをプル中...,이미지를 가져오는 중...,Extrayendo imagen...,status message
-" ",CREATE_IN_PROGRESS,Creating container...,创建容器中...,Creating container...,コンテナを作成中...,컨테이너 생성 중...,Creando contenedor...,status message
-" ",CREATE_SUCCESS,Container created successfully,容器创建成功,Container created successfully,コンテナが正常に作成されました,컨테이너가 성공적으로 생성되었습니다,Contenedor creado correctamente,success message
-" ",CREATE_FAILED,Failed to create container,容器创建失败,Failed to create container,コンテナの作成に失敗しました,컨테이너 생성 실패,Error al crear el contenedor,error message
-" ",START_AFTER_CREATE,Start after create,创建后启动,Start after create,作成後に起動,생성 후 시작,Iniciar después de crear,label
-" ",START_FAILED,Failed to start container,容器启动失败,Failed to start container,コンテナの起動に失敗しました,컨테이너 시작 실패,Error al iniciar el contenedor,error message
+# Create container dialog strings,,,,,,,,,
+ ,CREATE,Create,创建,建立,Créer,作成,생성,Crear,button text for create action
+ ,IMAGE_PLACEHOLDER,e.g.: nginx:latest, mysql:8.0, ubuntu,例如: nginx:latest, mysql:8.0, ubuntu,"例如: nginx:latest, mysql:8.0, ubuntu",ex.: nginx:latest, mysql:8.0, ubuntu,例: nginx:latest, mysql:8.0, ubuntu,예: nginx:latest, mysql:8.0, ubuntu,ej.: nginx:latest, mysql:8.0, ubuntu,placeholder for image field
+ ,AUTO_PULL_IF_MISSING,Auto-pull if missing,本地无镜像时自动拉取,本機無映像时自動拉取,Auto-pull if missing,ローカルにない場合は自動プル,없으면 자동으로 가져오기,Auto-extraer si falta,checkbox label
+ ,AUTO_START_AFTER_CREATE,Auto-start after create,创建后自动启动,建立後自動啟動,Démarrage automatique après création,作成後に自動起動,생성 후 자동 시작,Inicio automático después de crear,checkbox label
+ ,LABELS,Labels,标签,標籤,Étiquettes,ラベル,레이블,Etiquetas,section header
+ ,ADD_LABEL,Add Label,添加标签,新增標籤,Add Label,ラベルを追加,레이블 추가,Agregar etiqueta,button text
+ ,PORTS,Ports,端口,埠,Ports,ポート,포트,Puertos,tab title
+ ,ADD_PORT,Add Port,添加端口,新增埠,Add Port,ポートを追加,포트 추가,Agregar puerto,button text
+ ,HOST_PORT,Host Port,宿主机端口,主機埠,Host Port,ホストポート,호스트 포트,Puerto del host,label
+ ,CONTAINER_PORT,Container Port,容器端口,容器埠,Container Port,コンテナポート,컨테이너 포트,Puerto del contenedor,label
+ ,PROTOCOL,Protocol,协议,協定,Protocol,プロトコル,프로토콜,Protocolo,label
+ ,TCP,TCP,TCP,TCP,TCP,TCP,TCP,TCP,protocol option
+ ,UDP,UDP,UDP,UDP,UDP,UDP,UDP,UDP,protocol option
+ ,REMOVE_ROW,Remove Row,移除行,移除行,Remove Row,行を削除,행 삭제,Eliminar fila,button text
+ ,VOLUMES,Volumes,卷,卷,Volumes,ボリューム,볼륨,Volúmenes,tab title
+ ,ADD_VOLUME,Add Volume,添加卷,新增卷,Add Volume,ボリュームを追加,볼륨 추가,Agregar volumen,button text
+ ,HOST_PATH_OR_VOLUME,Host Path or Volume,宿主机路径或卷名,主機路徑或卷名,Host Path or Volume,ホストパスまたはボリューム,호스트 경로 또는 볼륨,Ruta del host o volumen,label
+ ,CONTAINER_PATH,Container Path,容器路径,容器路徑,Container Path,コンテナパス,컨테이너 경로,Ruta del contenedor,label
+ ,MODE,Mode,模式,模式,Mode,モード,모드,Modo,label
+ ,READ_ONLY,Read Only,只读,唯讀,Read Only,読み取り専用,읽기 전용,Solo lectura,mode option
+ ,READ_WRITE,Read/Write,读写,讀寫,Read/Write,読み書き,읽기/쓰기,Lectura/escritura,mode option
+ ,ENV_VARIABLES,Environment Variables,环境变量,環境變數,Environment Variables,環境変数,환경 변수,Variables de entorno,tab title
+ ,ADD_ENV,Add Environment Variable,添加环境变量,新增環境變數,Add Environment Variable,環境変数を追加,환경 변수 추가,Agregar variable de entorno,button text
+ ,KEY,Key,键,鍵,Key,キー,키,Clave,label
+ ,VALUE,Value,值,值,Value,値,값,Valor,label
+ ,NETWORK,Network,网络,網路,Network,ネットワーク,네트워크,Red,tab title
+ ,SELECT_NETWORK,Select Network,选择网络,選擇網路,Select Network,ネットワークを選択,네트워크 선택,Seleccionar red,label
+ ,ALIASES,Aliases,别名,別名,Aliases,エイリアス,별칭,Alias,label
+ ,ADD_ALIAS,Add Alias,添加别名,新增別名,Add Alias,エイリアスを追加,별칭 추가,Agregar alias,button text
+ ,IPV4_ADDRESS,IPv4 Address,IPv4 地址,IPv4 位址,IPv4 Address,IPv4 アドレス,IPv4 주소,Dirección IPv4,label
+ ,RESOURCES,Resources,资源,資源,Resources,リソース,리소스,Recursos,tab title
+ ,CPU_LIMIT,CPU Limit (cores),CPU 限制（核数）,CPU 限制（核數）,CPU Limit (cores),CPU 制限（コア）,CPU 제한(코어),Límite de CPU (núcleos),label
+ ,MEMORY_LIMIT_MIB,Memory Limit (MiB),内存限制（MiB）,記憶體限制（MiB）,Memory Limit (MiB),メモリ制限（MiB）,메모리 제한(MiB),Límite de memoria (MiB),label
+ ,RESTART_POLICY,Restart Policy,重启策略,重啟原則,Restart Policy,再起動ポリシー,재시작 정책,Política de reinicio,label
+ ,NO_RESTART,No,无,無,No,なし,없음,No,restart policy option
+ ,ALWAYS,Always,总是,總是,Always,常に,항상,Siempre,restart policy option
+ ,UNLESS_STOPPED,Unless Stopped,除非停止,除非停止,Unless Stopped,停止されていない限り,중지되지 않는 한,A menos que se detenga,restart policy option
+ ,ON_FAILURE,On Failure,失败时,失敗时,On Failure,失敗時,실패 시,En caso de fallo,restart policy option
+ ,MAX_RETRY,Max Retry Count,最大重试次数,最大重试次數,Max Retry Count,最大リトライ回数,최대 재시도 횟수,Número máximo de reintentos,label
+ ,ADVANCED,Advanced,高级,進階,Advanced,高度,고급,Avanzado,tab title
+ ,ENTRYPOINT,Entrypoint,入口点,入口點,Entrypoint,エントリーポイント,진입점,Punto de entrada,label
+ ,COMMAND,Command,命令,命令,Command,コマンド,명령,Comando,label
+ ,WORKING_DIR,Working Directory,工作目录,工作目錄,Working Directory,作業ディレクトリ,작업 디렉토리,Directorio de trabajo,label
+ ,TTY,TTY,TTY,TTY,TTY,TTY,TTY,TTY,label
+ ,ATTACH_STDIN,Attach STDIN,附加 STDIN,附加 STDIN,Attach STDIN,STDIN をアタッチ,STDIN 연결,Adjuntar STDIN,label
+ ,ATTACH_STDOUT,Attach STDOUT,附加 STDOUT,附加 STDOUT,Attach STDOUT,STDOUT をアタッチ,STDOUT 연결,Adjuntar STDOUT,label
+ ,ATTACH_STDERR,Attach STDERR,附加 STDERR,附加 STDERR,Attach STDERR,STDERR をアタッチ,STDERR 연결,Adjuntar STDERR,label
+ ,BASIC,Basic,基础,基礎,Basic,基本,기본,Básico,tab title
+ ,VALIDATION_REQUIRED,This field is required,此字段为必填项,此欄位為必填項,This field is required,このフィールドは必須です,이 필드는 필수입니다,Este campo es obligatorio,validation message
+ ,VALIDATION_INVALID_NAME,Invalid container name,无效的容器名称,無效的容器名稱,Invalid container name,無効なコンテナ名,잘못된 컨테이너 이름,Nombre de contenedor no válido,validation message
+ ,VALIDATION_INVALID_PORT,Invalid port number,无效的端口号,無效的埠號,Invalid port number,無効なポート番号,잘못된 포트 번호,Número de puerto no válido,validation message
+ ,VALIDATION_DUP_PORT,Duplicate port mapping,重复的端口映射,重複的埠映射,Duplicate port mapping,重複するポートマッピング,중복된 포트 매핑,Mapeo de puerto duplicado,validation message
+ ,VALIDATION_INVALID_IP,Invalid IP address,无效的 IP 地址,無效的 IP 位址,Invalid IP address,無効な IP アドレス,잘못된 IP 주소,Dirección IP no válida,validation message
+ ,PULLING_IMAGE,Pulling image...,拉取镜像中...,拉取映像中...,Pulling image...,イメージをプル中...,이미지를 가져오는 중...,Extrayendo imagen...,status message
+ ,CREATE_IN_PROGRESS,Creating container...,创建容器中...,建立容器中...,Creating container...,コンテナを作成中...,컨테이너 생성 중...,Creando contenedor...,status message
+ ,CREATE_SUCCESS,Container created successfully,容器创建成功,容器建立成功,Container created successfully,コンテナが正常に作成されました,컨테이너가 성공적으로 생성되었습니다,Contenedor creado correctamente,success message
+ ,CREATE_FAILED,Failed to create container,容器创建失败,容器建立失敗,Failed to create container,コンテナの作成に失敗しました,컨테이너 생성 실패,Error al crear el contenedor,error message
+ ,START_AFTER_CREATE,Start after create,创建后启动,建立後啟動,Start after create,作成後に起動,생성 후 시작,Iniciar después de crear,label
+ ,START_FAILED,Failed to start container,容器启动失败,容器啟動失敗,Failed to start container,コンテナの起動に失敗しました,컨테이너 시작 실패,Error al iniciar el contenedor,error message
 
-# Docker Run Parser tab strings,,,,,,,,
-" ",DOCKER_RUN_PARSER,Docker Run Parser,Docker Run 解析器,Docker Run Parser,Docker Run パーサー,Docker Run 파서,Analizador de Docker Run,tab title
-" ",DOCKER_RUN_COMMAND,Docker Run Command,Docker Run 命令,Docker Run Command,Docker Run コマンド,Docker Run 명령,Comando Docker Run,label
-" ",DOCKER_RUN_PLACEHOLDER,"Paste your docker run command here...","在此粘贴您的 docker run 命令...","Paste your docker run command here...","docker run コマンドをここに貼り付けてください...","여기에 docker run 명령을 붙여넣으세요...","Pegue su comando docker run aquí...",placeholder
-" ",PARSE_COMMAND,Parse Command,解析命令,Parse Command,コマンドを解析,명령 파싱,Analizar comando,button text
-" ",PARSING,Parsing...,解析中...,Parsing...,解析中...,파싱 중...,Analizando...,status message
-" ",PARSE_SUCCESS,Command parsed successfully,命令解析成功,Command parsed successfully,コマンドが正常に解析されました,명령이 성공적으로 파싱되었습니다,Comando analizado correctamente,success message
-" ",PARSE_FAILED,Failed to parse command,命令解析失败,Failed to parse command,コマンドの解析に失敗しました,명령 파싱 실패,Error al analizar el comando,error message
-" ",PARSE_HELP,"Enter a complete docker run command to automatically parse and populate the form fields","输入完整的 docker run 命令以自动解析并填充表单字段","Enter a complete docker run command to automatically parse and populate the form fields","完全な docker run コマンドを入力すると、自動的に解析してフォームフィールドに入力されます","완전한 docker run 명령을 입력하면 자동으로 파싱하여 양식 필드를 채웁니다","Ingrese un comando docker run completo para analizar y completar automáticamente los campos del formulario",help text
+# Docker Run Parser tab strings,,,,,,,,,
+ ,DOCKER_RUN_PARSER,Docker Run Parser,Docker Run 解析器,Docker Run 解析器,Docker Run Parser,Docker Run パーサー,Docker Run 파서,Analizador de Docker Run,tab title
+ ,DOCKER_RUN_COMMAND,Docker Run Command,Docker Run 命令,Docker Run 命令,Docker Run Command,Docker Run コマンド,Docker Run 명령,Comando Docker Run,label
+ ,DOCKER_RUN_PLACEHOLDER,Paste your docker run command here...,在此粘贴您的 docker run 命令...,在此貼上您的 docker run 命令...,Paste your docker run command here...,docker run コマンドをここに貼り付けてください...,여기에 docker run 명령을 붙여넣으세요...,Pegue su comando docker run aquí...,placeholder
+ ,PARSE_COMMAND,Parse Command,解析命令,解析命令,Parse Command,コマンドを解析,명령 파싱,Analizar comando,button text
+ ,PARSING,Parsing...,解析中...,解析中...,Parsing...,解析中...,파싱 중...,Analizando...,status message
+ ,PARSE_SUCCESS,Command parsed successfully,命令解析成功,命令解析成功,Command parsed successfully,コマンドが正常に解析されました,명령이 성공적으로 파싱되었습니다,Comando analizado correctamente,success message
+ ,PARSE_FAILED,Failed to parse command,命令解析失败,命令解析失敗,Failed to parse command,コマンドの解析に失敗しました,명령 파싱 실패,Error al analizar el comando,error message
+ ,PARSE_HELP,Enter a complete docker run command to automatically parse and populate the form fields,输入完整的 docker run 命令以自动解析并填充表单字段,輸入完整的 docker run 命令以自動解析并填充表單欄位,Enter a complete docker run command to automatically parse and populate the form fields,完全な docker run コマンドを入力すると、自動的に解析してフォームフィールドに入力されます,완전한 docker run 명령을 입력하면 자동으로 파싱하여 양식 필드를 채웁니다,Ingrese un comando docker run completo para analizar y completar automáticamente los campos del formulario,help text
 
-# Container Exec Terminal strings,,,,,,,,
-" ",TERMINAL,Terminal,终端,Terminal,ターミナル,터미널,Terminal,menu item / button tooltip
-" ",OPEN_TERMINAL,Open Terminal,打开终端,Open Terminal,ターミナルを開く,터미널 열기,Abrir terminal,button text
-" ",OPEN_IN_NEW_PAGE,Open in New Page,在新页面中打开,Open in New Page,新しいページで開く,새 페이지에서 열기,Abrir en nueva página,link text
-" ",CONTAINER_TERMINAL,Container Terminal,容器终端,Container Terminal,コンテナターミナル,컨테이너 터미널,Terminal del contenedor,dialog/page title
-" ",EXEC_CONNECTING,Connecting...,连接中...,Connecting...,接続中...,연결 중...,Conectando...,status message
-" ",EXEC_CONNECTED,Connected,已连接,Connected,接続済み,연결됨,Conectado,status message
-" ",EXEC_DISCONNECTED,Disconnected,已断开,Disconnected,切断済み,연결 끊김,Desconectado,status message
-" ",EXEC_RECONNECT,Reconnect,重新连接,Reconnect,再接続,재연결,Reconectar,button text
-" ",EXEC_CLEAR,Clear,清屏,Clear,クリア,지우기,Limpiar,button text
-" ",EXEC_COPY_ALL,Copy All,复制全部,Copy All,すべてコピー,모두 복사,Copiar todo,button text
-" ",EXEC_SETTINGS,Settings,设置,Settings,設定,설정,Configuración,button text
-" ",EXEC_SHELL,Shell,Shell,Shell,シェル,셸,Shell,label
-" ",EXEC_WORKDIR,Working Directory,工作目录,Working Directory,作業ディレクトリ,작업 디렉토리,Directorio de trabajo,label
-" ",EXEC_USER,User,用户,User,ユーザー,사용자,Usuario,label
-" ",EXEC_TTY,TTY,TTY,TTY,TTY,TTY,TTY,label
-" ",CONTAINER_NOT_RUNNING,Container is not running. Cannot open terminal.,容器未运行，无法打开终端。,Container is not running. Cannot open terminal.,コンテナが実行されていません。ターミナルを開けません。,컨테이너가 실행 중이 아닙니다. 터미널을 열 수 없습니다.,El contenedor no se está ejecutando. No se puede abrir el terminal.,error message
-" ",EXEC_UNAVAILABLE_SHELL,Shell not available in container,容器中 Shell 不可用,Shell not available in container,コンテナで Shell が利用できません,컨테이너에서 셸을 사용할 수 없습니다,Shell no disponible en el contenedor,error message
-" ",RESIZE,Resize,调整大小,Resize,サイズ変更,크기 조정,Redimensionar,button text
-" ",ROWS,Rows,行数,Rows,行数,행 수,Filas,label
-" ",COLS,Columns,列数,Columns,列数,열 수,Columnas,label
-" ",EXEC_SESSION_ENDED,Session ended. Container may have stopped or exec process terminated.,会话已结束。容器可能已停止或执行进程已终止。,Session ended. Container may have stopped or exec process terminated.,セッションが終了しました。コンテナが停止したか、exec プロセスが終了した可能性があります。,세션이 종료되었습니다. 컨테이너가 중지되었거나 exec 프로세스가 종료되었을 수 있습니다.,Sesión finalizada. El contenedor puede haberse detenido o el proceso exec ha terminado.,status message
-" ",DISCONNECT,Disconnect,断开连接,Disconnect,切断,연결 끊기,Desconectar,button text
-" ",TYPE_COMMAND,Type command and press Enter...,输入命令并按回车...,Type command and press Enter...,コマンドを入力して Enter キーを押してください...,명령을 입력하고 Enter를 누르세요...,Escriba el comando y presione Enter...,placeholder text
+# Container Exec Terminal strings,,,,,,,,,
+ ,TERMINAL,Terminal,终端,終端機,Terminal,ターミナル,터미널,Terminal,menu item / button tooltip
+ ,OPEN_TERMINAL,Open Terminal,打开终端,開啟終端機,Open Terminal,ターミナルを開く,터미널 열기,Abrir terminal,button text
+ ,OPEN_IN_NEW_PAGE,Open in New Page,在新页面中打开,在新頁面中開啟,Open in New Page,新しいページで開く,새 페이지에서 열기,Abrir en nueva página,link text
+ ,CONTAINER_TERMINAL,Container Terminal,容器终端,容器終端機,Container Terminal,コンテナターミナル,컨테이너 터미널,Terminal del contenedor,dialog/page title
+ ,EXEC_CONNECTING,Connecting...,连接中...,連線中...,Connecting...,接続中...,연결 중...,Conectando...,status message
+ ,EXEC_CONNECTED,Connected,已连接,已連線,Connected,接続済み,연결됨,Conectado,status message
+ ,EXEC_DISCONNECTED,Disconnected,已断开,已斷開,Disconnected,切断済み,연결 끊김,Desconectado,status message
+ ,EXEC_RECONNECT,Reconnect,重新连接,重新連線,Reconnect,再接続,재연결,Reconectar,button text
+ ,EXEC_CLEAR,Clear,清屏,清除畫面,Clear,クリア,지우기,Limpiar,button text
+ ,EXEC_COPY_ALL,Copy All,复制全部,複製全部,Copy All,すべてコピー,모두 복사,Copiar todo,button text
+ ,EXEC_SETTINGS,Settings,设置,設定,Settings,設定,설정,Configuración,button text
+ ,EXEC_SHELL,Shell,Shell,Shell,Shell,シェル,셸,Shell,label
+ ,EXEC_WORKDIR,Working Directory,工作目录,工作目錄,Working Directory,作業ディレクトリ,작업 디렉토리,Directorio de trabajo,label
+ ,EXEC_USER,User,用户,用户,User,ユーザー,사용자,Usuario,label
+ ,EXEC_TTY,TTY,TTY,TTY,TTY,TTY,TTY,TTY,label
+ ,CONTAINER_NOT_RUNNING,Container is not running. Cannot open terminal.,容器未运行，无法打开终端。,容器未執行，無法開啟終端機。,Container is not running. Cannot open terminal.,コンテナが実行されていません。ターミナルを開けません。,컨테이너가 실행 중이 아닙니다. 터미널을 열 수 없습니다.,El contenedor no se está ejecutando. No se puede abrir el terminal.,error message
+ ,EXEC_UNAVAILABLE_SHELL,Shell not available in container,容器中 Shell 不可用,容器中 Shell 不可用,Shell not available in container,コンテナで Shell が利用できません,컨테이너에서 셸을 사용할 수 없습니다,Shell no disponible en el contenedor,error message
+ ,RESIZE,Resize,调整大小,調整大小,Resize,サイズ変更,크기 조정,Redimensionar,button text
+ ,ROWS,Rows,行数,行數,Rows,行数,행 수,Filas,label
+ ,COLS,Columns,列数,列數,Columns,列数,열 수,Columnas,label
+ ,EXEC_SESSION_ENDED,Session ended. Container may have stopped or exec process terminated.,会话已结束。容器可能已停止或执行进程已终止。,工作階段已結束。容器可能已停止或執行處理程序已終止。,Session ended. Container may have stopped or exec process terminated.,セッションが終了しました。コンテナが停止したか、exec プロセスが終了した可能性があります。,세션이 종료되었습니다. 컨테이너가 중지되었거나 exec 프로세스가 종료되었을 수 있습니다.,Sesión finalizada. El contenedor puede haberse detenido o el proceso exec ha terminado.,status message
+ ,DISCONNECT,Disconnect,断开连接,斷開連線,Disconnect,切断,연결 끊기,Desconectar,button text
+ ,TYPE_COMMAND,Type command and press Enter...,输入命令并按回车...,輸入命令并按回车...,Type command and press Enter...,コマンドを入力して Enter キーを押してください...,명령을 입력하고 Enter를 누르세요...,Escriba el comando y presione Enter...,placeholder text
