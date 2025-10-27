@@ -112,8 +112,8 @@ jobs:
           fi
 
           # GitHub Container Registry (always included)
-          add_tag "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"
-          add_tag "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${VERSION}"
+          add_tag "ghcr.io/${{ env.IMAGE_NAME }}:latest"
+          add_tag "ghcr.io/${{ env.IMAGE_NAME }}:${VERSION}"
 
           # 自定义镜像仓库 1
           if [ -n "${{ vars.CUSTOM_REGISTRY_1 }}" ]; then
